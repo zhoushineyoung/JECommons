@@ -10,9 +10,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import javax.measure.quantity.*;
+import javax.measure.unit.BaseUnit;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
+import org.jevis.jeapi.JEVisAttribute;
+import org.jevis.jeapi.JEVisException;
+import org.jevis.jeapi.JEVisType;
+import org.jscience.economics.money.Money;
 
 /**
  *
@@ -51,7 +56,27 @@ public class UnitManager {
         public static String ATTO = "ATTO";
         public static String ZEPTO = "ZEPTO";
         public static String YOCTO = "YOCTO";
-
+        /*
+         public static String ZETTA = "Z";
+         public static String EXA = "E";
+         public static String PETA = "P";
+         public static String TERA = "T";
+         public static String GIGA = "G";
+         public static String MEGA = "M";
+         public static String KILO = "k";
+         public static String HECTO = "h";
+         public static String DEKA = "da";
+         public static String DECI = "d";
+         public static String CENTI = "c";
+         public static String MILLI = "m";
+         public static String MICRO = "µ";
+         public static String NANO = "n";
+         public static String PICO = "p";
+         public static String FEMTO = "f";
+         public static String ATTO = "a";
+         public static String ZEPTO = "z";
+         public static String YOCTO = "y";
+         */
     }
 
     /* A private Constructor prevents any other 
@@ -70,6 +95,8 @@ public class UnitManager {
             return quantities;
         }
         quantities = new ArrayList<>();
+
+        quantities.add(Money.BASE_UNIT);
 
         quantities.add(Acceleration.UNIT);
         quantities.add(AngularVelocity.UNIT);
@@ -129,6 +156,29 @@ public class UnitManager {
         }
         prefixes2 = new ArrayList<>();
 
+        /*
+         prefixes2.add("");
+         prefixes2.add(Prefix.ZETTA);
+         prefixes2.add(Prefix.EXA);
+         prefixes2.add(Prefix.PETA);
+         prefixes2.add(Prefix.TERA);
+         prefixes2.add(Prefix.GIGA);
+         prefixes2.add(Prefix.MEGA);
+         prefixes2.add(Prefix.KILO);
+         prefixes2.add(Prefix.HECTO);
+         prefixes2.add(Prefix.DEKA);
+         prefixes2.add(Prefix.DECI);
+         prefixes2.add(Prefix.CENTI);
+         prefixes2.add(Prefix.MILLI);
+         prefixes2.add(Prefix.MICRO);
+         prefixes2.add(Prefix.NANO);
+         prefixes2.add(Prefix.PICO);
+         prefixes2.add(Prefix.FEMTO);
+         prefixes2.add(Prefix.ATTO);
+         prefixes2.add(Prefix.ZEPTO);
+         prefixes2.add(Prefix.YOCTO);
+
+         */
         prefixes2.add("");
         prefixes2.add("ZETTA");
         prefixes2.add("EXA");
@@ -290,54 +340,103 @@ public class UnitManager {
         return nonSI;
     }
 
+    public Unit parseUnit(String unitString) {
+        //1. try basic parsing
+        try {
+            return Unit.valueOf(unitString);
+        } catch (Exception ex) {
+            //2. Maybe it aniregilar unit of ours?
+            //ToDo: remove hardcode do proper code
+            for (Unit au : getAdditonalUnits()) {
+                if (au.toString().equals(unitString)) {
+                    System.out.println("Is Additonal Unit: " + unitString);
+                    return au;
+                }
+            }
+
+            //3. is unknown, we cound return Unit.ONE with alternative synbol 
+            // but i want to know which have problem so a mark them in the beta
+            return Unit.ONE.alternate("E|" + unitString);
+
+        }
+
+    }
+
     public boolean hasTimes(Unit unit) {
         return (unit.getDimension()).toString().contains("T");
     }
 
-//    public boolean removeTime(Unit){
-//        
-//    }
-//    
-    public void magic(Unit unit, Unit dur) {
-        System.out.println(String.format("do magic for %s to %s", unit.toString(), dur.toString()));
-        try {
-            Unit sunit = unit.getStandardUnit();
-            System.out.println("default dimesion: " + sunit.getDimension());
-            Unit searchFor = null;
-            if (sunit.getDimension().toString().contains("T")) {
-                System.out.println("has Time");
+    public String formate(JEVisAttribute att) throws JEVisException {
+        return formate(att.getUnit(), att.getAlternativSymbol());
+    }
 
-                Unit s = sunit.divide(SI.SECOND);
-                System.out.println("devid s: " + s);
-                Unit h = sunit.divide(NonSI.HOUR);
-                System.out.println("....");
-                System.out.println("dim1: " + s.getDimension());
-                System.out.println("dim2: " + h.getDimension());
-                System.out.println("..");
+    public String formate(JEVisType type) throws JEVisException {
+        return formate(type.getUnit(), type.getAlternativSymbol());
+    }
 
-                if (!s.getDimension().toString().contains("T")) {
-                    System.out.println("is secound based");
-                    searchFor = s;
-                } else if (!h.getDimension().toString().contains("T")) {
-                    System.out.println("is hour based");
-                    searchFor = h;
-                }
+    public String formate(Unit unit) {
+        return formate(unit, "");
+    }
 
-                System.out.println(String.format("Now in %s: %s",
-                        dur.toString(),
-                        searchFor.times(dur).toString())
-                );
+    public String formate(Unit unit, String altSymbol) {
+//        String u1 = unit.getStandardUnit().toString().replace("·", "");
+        String u1 = unit.toString().replace("·", "");
+        u1 = u1.replace("(", "");
+        u1 = u1.replace(")", "");
+        u1 = u1.replace("/", "");
 
-            } else {
-                System.out.println("has NO time");
-            }
-        } catch (Exception ex) {
-            System.out.println("sorry Dave in can not do this");
-//            ex.printStackTrace();
+        String prefix = "";
 
+        //dirty part... basic and hour based. 
+        if (false) {
+
+        } else if (unit.toString().contains("*1.0E24") || unit.toString().contains("*3.6E24")) {//YOTTA
+            prefix = "Y";
+        } else if (unit.toString().contains("*1.0E21") || unit.toString().contains("*3.6E21")) {//ZETTA
+            prefix = "Z";
+        } else if (unit.toString().contains("*1000000000000000000") || unit.toString().contains("*3.6E21")) {//EXA
+            prefix = "E";
+        } else if (unit.toString().contains("*1000000000000000") || unit.toString().contains("*3600000000000000000")) {//PETA
+            prefix = "P";
+        } else if (unit.toString().contains("*1000000000000") || unit.toString().contains("*3600000000000000")) {//TERA
+            prefix = "T";
+        } else if (unit.toString().contains("*1000000000") || unit.toString().contains("*3600000000000")) {//GIGA
+            prefix = "G";
+        } else if (unit.toString().contains("*1000000") || unit.toString().contains("*3600000000")) {//MEGA
+            prefix = "M";
+        } else if (unit.toString().contains("*1000") || unit.toString().contains("*3600000")) {//KILO
+            prefix = "k";
+        } else if (unit.toString().contains("*100") || unit.toString().contains("*360000")) {//HECTO
+            prefix = "h";
+        } else if (unit.toString().contains("*10") || unit.toString().contains("*36000")) {//DEKA
+            prefix = "da"; ///-----------------------
+        } else if (unit.toString().contains("/1.0E-24") || unit.toString().contains("/3.6E27")) {//Yokto
+            prefix = "y";
+        } else if (unit.toString().contains("/1.0E-21") || unit.toString().contains("/3.599999999999999E-18")) {//ZEPTO
+            prefix = "z";
+        } else if (unit.toString().contains("/1000000000000000000") || unit.toString().contains("*9/2500000000000000")) {//ATTO
+            prefix = "a";
+        } else if (unit.toString().contains("/1000000000000000") || unit.toString().contains("*9/2500000000000")) {//FEMTO
+            prefix = "f";
+        } else if (unit.toString().contains("/1000000000000") || unit.toString().contains("*9/2500000000")) {//PICO
+            prefix = "p";
+        } else if (unit.toString().contains("/1000000000") || unit.toString().contains("*9/2500000")) {//NANO
+            prefix = "n";
+        } else if (unit.toString().contains("/1000000") || unit.toString().contains("*9/2500")) {//MICRO
+            prefix = "µ";
+        } else if (unit.toString().contains("/1000") || unit.toString().contains("*18/5")) {//MILLI
+            prefix = "m";
+        } else if (unit.toString().contains("/100") || unit.toString().contains("*36")) {//CENTI
+            prefix = "c";
+        } else if (unit.toString().contains("/10") || unit.toString().contains("*360")) {//DECI
+            prefix = "d";
         }
 
-        System.out.println("");
+        if (altSymbol != null && !altSymbol.equals("")) {
+            return prefix + altSymbol;
+        }
+
+        return prefix + u1;
 
     }
 
@@ -352,41 +451,47 @@ public class UnitManager {
         additonalUnits.add(SI.WATT.times(SI.SECOND));
         additonalUnits.add(SI.WATT.times(NonSI.HOUR));
 
-        Unit ws = SI.WATT.times(SI.SECOND);
-        Unit s = SI.SECOND;
-        Unit wh = SI.WATT.times(NonSI.HOUR);
-        Unit kwh = SI.KILO(SI.WATT.times(NonSI.HOUR));
+        additonalUnits.add(Money.BASE_UNIT.alternate("€"));
+        additonalUnits.add(Money.BASE_UNIT.alternate("$"));
+        additonalUnits.add(Money.BASE_UNIT.alternate("£"));
+        additonalUnits.add(Money.BASE_UNIT.alternate("¥"));
+        additonalUnits.add(Money.BASE_UNIT.alternate("₦"));
+        additonalUnits.add(Money.BASE_UNIT.alternate("₹"));
 
-        System.out.println("=========Testing============");
-        magic(ws, NonSI.HOUR);
-        magic(wh, SI.SECOND);
-        magic(SI.GRAM, SI.SECOND);
-        magic(kwh, NonSI.YEAR);
-        System.out.println("=======end===========");
-
-        Unit x = wh;
-
-        if (x.isStandardUnit()) {
-            System.out.println("Standard Unit");
-        } else {
-            System.out.println("keine Standard Unit, Faktor = " + x.divide(x.getStandardUnit()));
-        }
-
-        System.out.println(
-                "ws: " + ws.divide(ws));
-        System.out.println(
-                "kwh: " + kwh.divide(ws));
-
-        System.out.println(
-                "wh: " + wh.divide(s));
-        System.out.println(
-                "kwh: " + kwh.divide(s));
-
-        System.out.println(
-                "is Ws time: " + hasTimes(ws));
-        System.out.println(
-                "is W time: " + hasTimes(SI.WATT));
-
+//        Unit ws = SI.WATT.times(SI.SECOND);
+//        Unit s = SI.SECOND;
+//        Unit wh = SI.WATT.times(NonSI.HOUR);
+//        Unit kwh = SI.KILO(SI.WATT.times(NonSI.HOUR));
+//
+//        System.out.println("=========Testing============");
+//        magic(ws, NonSI.HOUR);
+//        magic(wh, SI.SECOND);
+//        magic(SI.GRAM, SI.SECOND);
+//        magic(kwh, NonSI.YEAR);
+//        System.out.println("=======end===========");
+//
+//        Unit x = wh;
+//
+//        if (x.isStandardUnit()) {
+//            System.out.println("Standard Unit");
+//        } else {
+//            System.out.println("keine Standard Unit, Faktor = " + x.divide(x.getStandardUnit()));
+//        }
+//
+//        System.out.println(
+//                "ws: " + ws.divide(ws));
+//        System.out.println(
+//                "kwh: " + kwh.divide(ws));
+//
+//        System.out.println(
+//                "wh: " + wh.divide(s));
+//        System.out.println(
+//                "kwh: " + kwh.divide(s));
+//
+//        System.out.println(
+//                "is Ws time: " + hasTimes(ws));
+//        System.out.println(
+//                "is W time: " + hasTimes(SI.WATT));
         return additonalUnits;
     }
 
@@ -448,6 +553,8 @@ public class UnitManager {
             return dimNames;
         }
         dimNames = new HashMap<>();
+
+        dimNames.put(Money.BASE_UNIT, "Currency");
 
         dimNames.put(Acceleration.UNIT, "Acceleration");
         dimNames.put(AngularVelocity.UNIT, "Angular Velocity");
@@ -654,6 +761,16 @@ public class UnitManager {
         names.put(SI.ATTO(Unit.ONE), "ATTO");
         names.put(SI.YOCTO(Unit.ONE), "YOCTO");
 
+        //money does not work with the rest of the system. The API will store € but cannot parse it again....
+        // we have to use Currency + alt symbol :(
+        names.put(Money.BASE_UNIT.alternate("€"), "Euro");
+        names.put(Money.BASE_UNIT.alternate("£"), "Pound");
+        names.put(Money.BASE_UNIT.alternate("$"), "US-Dollar");
+        names.put(Money.BASE_UNIT.alternate("£"), "Yen");
+        names.put(Money.BASE_UNIT.alternate("¥"), "Yuan");
+        names.put(Money.BASE_UNIT.alternate("₦"), "Naira");
+        names.put(Money.BASE_UNIT.alternate("元"), "Renminbi");
+        names.put(Money.BASE_UNIT.alternate("₹"), "Rupee");
         ///--additonal
 //        name.put
         return names;
@@ -674,7 +791,7 @@ public class UnitManager {
         if (name != null && !name.isEmpty()) {
             return name;
         } else {
-            return "Unknown Unit: " + unit.toString();
+            return unit.toString();
         }
 
     }
@@ -729,15 +846,15 @@ public class UnitManager {
 
     public List<Unit> getCompatibleAdditionalUnit(Unit unit) {
         List<Unit> units = new ArrayList<Unit>();
-        System.out.println("Found add units for: " + unit);
+//        System.out.println("Found add units for: " + unit);
 
         for (Unit other : getAdditonalUnits()) {
-            System.out.print(other + " ? ...");
+//            System.out.print(other + " ? ...");
             if (unit.getStandardUnit().isCompatible(other) && !other.equals(unit)) {
-                System.out.println("is");
+//                System.out.println("is");
                 units.add(other);
             }
-            System.out.println("NOT");
+//            System.out.println("NOT");
         }
 
         return units;
