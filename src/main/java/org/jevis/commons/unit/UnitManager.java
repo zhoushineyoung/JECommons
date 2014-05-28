@@ -1,9 +1,23 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * Copyright (C) 2014 Envidatec GmbH <info@envidatec.com>
+ *
+ * This file is part of JEApplication.
+ *
+ * JECommons is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation in version 3.
+ *
+ * JECommons is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * JECommons. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * JECommons is part of the OpenJEVis project, further project information are
+ * published at <http://www.OpenJEVis.org/>.
  */
-package org.jevis.jecommon.unit;
+package org.jevis.commons.unit;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,9 +28,9 @@ import javax.measure.unit.BaseUnit;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
-import org.jevis.jeapi.JEVisAttribute;
-import org.jevis.jeapi.JEVisException;
-import org.jevis.jeapi.JEVisType;
+import org.jevis.api.JEVisAttribute;
+import org.jevis.api.JEVisException;
+import org.jevis.api.JEVisType;
 import org.jscience.economics.money.Money;
 
 /**
