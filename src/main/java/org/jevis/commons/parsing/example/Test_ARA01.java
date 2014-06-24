@@ -11,6 +11,7 @@ import org.jevis.commons.parsing.DataCollectorParser;
 import org.jevis.commons.parsing.GeneralDateParser;
 import org.jevis.commons.parsing.GeneralMappingParser;
 import org.jevis.commons.parsing.GeneralValueParser;
+import org.jevis.commons.parsing.ParsingRequestGenerator;
 import org.jevis.commons.parsing.Result;
 import org.jevis.commons.parsing.SampleParserContainer;
 import org.jevis.commons.parsing.csvParsing.CSVParsing;
@@ -19,7 +20,10 @@ import org.jevis.commons.parsing.csvParsing.MappingFixCSVParser;
 import org.jevis.commons.parsing.csvParsing.ValueCSVParser;
 import org.jevis.commons.parsing.inputHandler.FileInputHandler;
 import org.jevis.commons.parsing.inputHandler.InputHandler;
+import org.jevis.commons.parsing.outputHandler.JEVisOutputHandler;
+import org.jevis.commons.parsing.outputHandler.OutputHandler;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -48,6 +52,12 @@ public class Test_ARA01 {
         fileParser.parse(inputHandler);
 
         List<Result> resultList = fileParser.getResults();
+        
+//        OutputHandler output = new JEVisOutputHandler();
+//        output.writeOutput(ParsingRequestGenerator.generateJEVisParsingRequest(DateTimeZone.UTC, null), resultList);
+        
+        
+        
         List<Double> realValues = new ArrayList<Double>();
         List<DateTime> realDateTimes = new ArrayList<DateTime>();
         List<Long> realDatapoints = new ArrayList<Long>();
