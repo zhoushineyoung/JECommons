@@ -94,16 +94,16 @@ public class JEVisCommandLine {
     public int getPort() {
         return Integer.parseInt(_cmd.getOptionValue(PORT, "80"));
     }
-    
-    public String getUser(){
+
+    public String getUser() {
         return _cmd.getOptionValue(USER);
     }
-    
-    public String getPassword(){
+
+    public String getPassword() {
         return _cmd.getOptionValue(PASSWORD);
     }
-    
-    public String getConfigPath(){
+
+    public String getConfigPath() {
         return _cmd.getOptionValue(CONFIG);
     }
 
@@ -113,6 +113,7 @@ public class JEVisCommandLine {
     }
 
     public Level getDebugLevel() {
-        return Level.toLevel(_cmd.getOptionValue("debug").toUpperCase());
+        String optionValue = _cmd.getOptionValue("debug", "WARN");
+        return Level.toLevel(optionValue.toUpperCase());
     }
 }
