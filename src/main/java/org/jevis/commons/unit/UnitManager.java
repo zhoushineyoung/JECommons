@@ -363,7 +363,7 @@ public class UnitManager {
             //ToDo: remove hardcode do proper code
             for (Unit au : getAdditonalUnits()) {
                 if (au.toString().equals(unitString)) {
-                    System.out.println("Is Additonal Unit: " + unitString);
+//                    System.out.println("Is Additonal Unit: " + unitString);
                     return au;
                 }
             }
