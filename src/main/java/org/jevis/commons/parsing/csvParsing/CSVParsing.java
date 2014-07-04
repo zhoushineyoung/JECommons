@@ -142,8 +142,8 @@ public class CSVParsing extends DataCollectorParser {
                 _quote = (String) pn.getAttribute(enclosedBy).getLatestSample().getValue();
             }
 
-            if (pn.getAttribute(ignoreFirstNLines).getLatestSample() != null) {
-                _headerLines = Integer.parseInt((String) pn.getAttribute(ignoreFirstNLines).getLatestSample().getValue());
+            if (pn.getAttribute(ignoreFirstNLines).getLatestSample() != null && !((String)pn.getAttribute(ignoreFirstNLines).getLatestSample().getValue()).equals("")) {
+                _headerLines = Integer.parseInt((String)pn.getAttribute(ignoreFirstNLines).getLatestSample().getValue());
             }
 
             JEVisType indexDateType = jeClass.getType(JEVisParsingAttributes.DATE_CSV_DATEINDEX);
