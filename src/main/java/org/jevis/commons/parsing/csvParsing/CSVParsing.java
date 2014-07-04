@@ -153,7 +153,7 @@ public class CSVParsing extends DataCollectorParser {
             }
             System.out.println("Dateindex" + _dateIndex);
 
-            if (pn.getAttribute(indexTimeType) != null) {
+            if (pn.getAttribute(indexTimeType) != null && !((String)pn.getAttribute(indexTimeType).getLatestSample().getValue()).equals("")) {
                 _timeIndex = (int) (long) pn.getAttribute(indexTimeType).getLatestSample().getValueAsLong();
             }
             System.out.println("Timeindex" + _timeIndex);
