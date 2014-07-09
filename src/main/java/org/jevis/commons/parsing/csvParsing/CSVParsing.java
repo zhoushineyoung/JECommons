@@ -157,12 +157,12 @@ public class CSVParsing extends DataCollectorParser {
             }
             Logger.getLogger(this.getClass().getName()).log(Level.ALL, "DateIndex" + _dateIndex);
 
-            if (pn.getAttribute(indexTimeType) != null && !((String) pn.getAttribute(indexTimeType).getLatestSample().getValue()).equals("")) {
+            if (pn.getAttribute(indexTimeType).hasSample() && !((String) pn.getAttribute(indexTimeType).getLatestSample().getValue()).equals("")) {
                 _timeIndex = (int) (long) pn.getAttribute(indexTimeType).getLatestSample().getValueAsLong();
             }
             Logger.getLogger(this.getClass().getName()).log(Level.ALL, "TimeIndex" + _timeIndex);
 
-            if (pn.getAttribute(indexTimeType) != null && !((String) pn.getAttribute(dpIndexType).getLatestSample().getValue()).equals("")) {
+            if (pn.getAttribute(dpIndexType).getLatestSample() != null && !((String) pn.getAttribute(dpIndexType).getLatestSample().getValue()).equals("")) {
                 _dpIndex = (int) (long) pn.getAttribute(dpIndexType).getLatestSample().getValueAsLong();
             }
             Logger.getLogger(this.getClass().getName()).log(Level.ALL, "DpIndex" + _dpIndex);
@@ -210,7 +210,10 @@ public class CSVParsing extends DataCollectorParser {
 
             String date = dateObject.getAttribute(dateFormatType).getLatestSample().getValueAsString();
             Logger.getLogger(CSVParsing.class.getName()).log(Level.ALL, "date Value: " + date);
-            String time = dateObject.getAttribute(timeFormatType).getLatestSample().getValueAsString();
+            String time = null;
+            if (dateObject.getAttribute(timeFormatType).hasSample()) {
+                time = dateObject.getAttribute(timeFormatType).getLatestSample().getValueAsString();
+            }
             Logger.getLogger(CSVParsing.class.getName()).log(Level.ALL, "time Value: " + time);
 //            DateTimeZone timezone = DateTimeZone.forTimeZone(TimeZone.getTimeZone(dateObject.getAttribute(timeZoneType).getLatestSample().getValueAsString()));
 
