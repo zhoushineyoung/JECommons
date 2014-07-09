@@ -32,6 +32,7 @@ public class CSVParsing extends DataCollectorParser {
     private int _headerLines;
     private int _dateIndex;
     private int _timeIndex;
+    private int _dpIndex;
 
     public CSVParsing(String quote, String delim, int headerlines) {
         _quote = quote;
@@ -107,7 +108,10 @@ public class CSVParsing extends DataCollectorParser {
 
                 boolean datapointIsValid = ValuePolicy.checkDatapoint(parser);
                 if (!datapointIsValid) {
-                    Logger.getLogger(this.getClass().getName()).log(Level.WARN, "Datapoint is invalid: " + datapoint);
+                    Logger.getLogger(this.getClass().getName()).log(Level.WARN, "------Datapoint is invalid!!!------");
+                    Logger.getLogger(this.getClass().getName()).log(Level.WARN, "OnlineID:" + datapoint);
+                    Logger.getLogger(this.getClass().getName()).log(Level.WARN, "ChannelID:" + dpParser.getMappingValue());
+                    Logger.getLogger(this.getClass().getName()).log(Level.WARN, "------------------------------------");
                     continue;
                 }
                 Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Parsed DP" + datapoint);
@@ -134,6 +138,7 @@ public class CSVParsing extends DataCollectorParser {
             JEVisType seperatorColumn = jeClass.getType(JEVisParsingAttributes.CSV_DELIM);
             JEVisType enclosedBy = jeClass.getType(JEVisParsingAttributes.CSV_QUOTE);
             JEVisType ignoreFirstNLines = jeClass.getType(JEVisParsingAttributes.CSV_HEADERLINES);
+            JEVisType dpIndexType = jeClass.getType(JEVisParsingAttributes.MAPPING_CSV_DPINDEX);
 
             _delim = (String) pn.getAttribute(seperatorColumn).getLatestSample().getValue();
 
@@ -156,6 +161,11 @@ public class CSVParsing extends DataCollectorParser {
                 _timeIndex = (int) (long) pn.getAttribute(indexTimeType).getLatestSample().getValueAsLong();
             }
             Logger.getLogger(this.getClass().getName()).log(Level.ALL, "TimeIndex" + _timeIndex);
+
+            if (pn.getAttribute(indexTimeType) != null && !((String) pn.getAttribute(dpIndexType).getLatestSample().getValue()).equals("")) {
+                _dpIndex = (int) (long) pn.getAttribute(dpIndexType).getLatestSample().getValueAsLong();
+            }
+            Logger.getLogger(this.getClass().getName()).log(Level.ALL, "DpIndex" + _dpIndex);
         } catch (JEVisException ex) {
             Logger.getLogger(CSVParsing.class.getName()).log(Level.ERROR, null, ex);
         }
@@ -256,7 +266,7 @@ public class CSVParsing extends DataCollectorParser {
             //            }
             //entweder den einen oder den anderen Parser!!!!! am besten als factory
             if (mappingNecessary) {
-                datapointParser = new MappingCSVParser(true, onlineID, mapping, indexValue);
+                datapointParser = new MappingCSVParser(true, onlineID, mapping, _dpIndex);
             } else {
                 datapointParser = new MappingFixCSVParser(false, onlineID);
             }

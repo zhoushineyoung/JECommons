@@ -68,7 +68,8 @@ public class JEVisOutputHandler extends OutputHandler {
                 }
                 List<JEVisSample> samples = onlineToSampleMap.get(onlineData);
                 DateTime convertedDate = TimeConverter.convertTime(request.getTimezone(), s.getDate());
-                JEVisSample sample = onlineData.getAttribute("Raw Data").buildSample(convertedDate, s.getValue());
+//                JEVisSample sample = onlineData.getAttribute("Raw Data").buildSample(convertedDate, s.getValue());
+                JEVisSample sample = onlineData.getAttribute("Raw Data").buildSample(convertedDate, s.getValue(), "Imported by JEVisDataCollector");
                 samples.add(sample);
             }
 
