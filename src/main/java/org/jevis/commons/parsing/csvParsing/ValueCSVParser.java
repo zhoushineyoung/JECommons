@@ -7,7 +7,6 @@ package org.jevis.commons.parsing.csvParsing;
 import org.jevis.commons.parsing.GeneralValueParser;
 import org.jevis.commons.parsing.inputHandler.InputHandler;
 
-
 /**
  *
  * @author broder
@@ -25,7 +24,7 @@ public class ValueCSVParser implements GeneralValueParser {
         _valueIndex = valueIndex - 1;
         _decSep = decS;
         _thousandSep = thousSep;
-        
+
     }
 
     public int getValueIndex() {
@@ -55,8 +54,12 @@ public class ValueCSVParser implements GeneralValueParser {
         String sVal = null;
         try {
             sVal = line[_valueIndex];
-            sVal = sVal.replaceAll("\\" + _thousandSep, "");
-            sVal = sVal.replaceAll("\\" + _decSep, ".");
+            if (_thousandSep != null && !_thousandSep.equals("")) {
+                sVal = sVal.replaceAll("\\" + _thousandSep, "");
+            }
+            if (_decSep != null && !_decSep.equals("")) {
+                sVal = sVal.replaceAll("\\" + _decSep, ".");
+            }
             _value = Double.parseDouble(sVal);
             _valueValid = true;
         } catch (NumberFormatException nfe) {
