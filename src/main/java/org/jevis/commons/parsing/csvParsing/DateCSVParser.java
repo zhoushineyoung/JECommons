@@ -69,7 +69,7 @@ public class DateCSVParser implements GeneralDateParser {
         String pattern = _dateFormat;
         String format = date;
 
-        if (_timeFormat != null && _timeIndex < 0) {
+        if (_timeFormat != null && _timeIndex > -1) {
             String time = line[_timeIndex];
             pattern += " " + _timeFormat;
             format += " " + time;
