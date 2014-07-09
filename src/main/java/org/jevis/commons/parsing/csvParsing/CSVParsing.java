@@ -4,7 +4,6 @@ package org.jevis.commons.parsing.csvParsing;
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.jevis.api.JEVisClass;
@@ -142,8 +141,8 @@ public class CSVParsing extends DataCollectorParser {
                 _quote = (String) pn.getAttribute(enclosedBy).getLatestSample().getValue();
             }
 
-            if (pn.getAttribute(ignoreFirstNLines).getLatestSample() != null && !((String)pn.getAttribute(ignoreFirstNLines).getLatestSample().getValue()).equals("")) {
-                _headerLines = Integer.parseInt((String)pn.getAttribute(ignoreFirstNLines).getLatestSample().getValue());
+            if (pn.getAttribute(ignoreFirstNLines).getLatestSample() != null && !((String) pn.getAttribute(ignoreFirstNLines).getLatestSample().getValue()).equals("")) {
+                _headerLines = Integer.parseInt((String) pn.getAttribute(ignoreFirstNLines).getLatestSample().getValue());
             }
 
             JEVisType indexDateType = jeClass.getType(JEVisParsingAttributes.DATE_CSV_DATEINDEX);
@@ -151,12 +150,12 @@ public class CSVParsing extends DataCollectorParser {
             if (pn.getAttribute(indexDateType) != null) {
                 _dateIndex = (int) (long) pn.getAttribute(indexDateType).getLatestSample().getValueAsLong();
             }
-            System.out.println("Dateindex" + _dateIndex);
+            Logger.getLogger(this.getClass().getName()).log(Level.ALL, "DateIndex" + _dateIndex);
 
-            if (pn.getAttribute(indexTimeType) != null && !((String)pn.getAttribute(indexTimeType).getLatestSample().getValue()).equals("")) {
+            if (pn.getAttribute(indexTimeType) != null && !((String) pn.getAttribute(indexTimeType).getLatestSample().getValue()).equals("")) {
                 _timeIndex = (int) (long) pn.getAttribute(indexTimeType).getLatestSample().getValueAsLong();
             }
-            System.out.println("Timeindex" + _timeIndex);
+            Logger.getLogger(this.getClass().getName()).log(Level.ALL, "TimeIndex" + _timeIndex);
         } catch (JEVisException ex) {
             Logger.getLogger(CSVParsing.class.getName()).log(Level.ERROR, null, ex);
         }
