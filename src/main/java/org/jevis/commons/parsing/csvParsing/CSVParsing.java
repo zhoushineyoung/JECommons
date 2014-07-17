@@ -108,10 +108,10 @@ public class CSVParsing extends DataCollectorParser {
 
                 boolean datapointIsValid = ValuePolicy.checkDatapoint(parser);
                 if (!datapointIsValid) {
-                    Logger.getLogger(this.getClass().getName()).log(Level.WARN, "------Datapoint is invalid!!!------");
-                    Logger.getLogger(this.getClass().getName()).log(Level.WARN, "OnlineID:" + datapoint);
-                    Logger.getLogger(this.getClass().getName()).log(Level.WARN, "ChannelID:" + dpParser.getMappingValue());
-                    Logger.getLogger(this.getClass().getName()).log(Level.WARN, "------------------------------------");
+                    Logger.getLogger(this.getClass().getName()).log(Level.ALL, "------Datapoint is invalid!!!------");
+                    Logger.getLogger(this.getClass().getName()).log(Level.ALL, "OnlineID:" + datapoint);
+                    Logger.getLogger(this.getClass().getName()).log(Level.ALL, "ChannelID:" + dpParser.getMappingValue());
+                    Logger.getLogger(this.getClass().getName()).log(Level.ALL, "------------------------------------");
                     continue;
                 }
                 Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Parsed DP" + datapoint);
