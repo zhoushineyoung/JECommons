@@ -10,6 +10,7 @@ import org.jevis.api.JEVisClass;
 import org.jevis.api.JEVisException;
 import org.jevis.api.JEVisObject;
 import org.jevis.api.JEVisType;
+import org.jevis.commons.DatabaseHelper;
 import org.jevis.commons.parsing.DataCollectorParser;
 import org.jevis.commons.parsing.GeneralDateParser;
 import org.jevis.commons.parsing.GeneralMappingParser;
@@ -29,10 +30,10 @@ public class CSVParsing extends DataCollectorParser {
 
     private String _quote;
     private String _delim;
-    private int _headerLines;
-    private int _dateIndex;
-    private int _timeIndex;
-    private int _dpIndex;
+    private Integer _headerLines;
+    private Integer _dateIndex;
+    private Integer _timeIndex;
+    private Integer _dpIndex;
 
     public CSVParsing(String quote, String delim, int headerlines) {
         _quote = quote;
@@ -70,11 +71,13 @@ public class CSVParsing extends DataCollectorParser {
         String[] stringArrayInput = ic.getStringArrayInput();
         Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Count of date/value/mapping variations" + _sampleParsers.size());
         Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Count of lines" + stringArrayInput.length);
+        System.out.println("Quote," + _quote);
         for (int i = _headerLines; i < stringArrayInput.length; i++) {
             String line[] = stringArrayInput[i].split(String.valueOf(_delim), -1);
             Logger.getLogger(this.getClass().getName()).log(Level.ALL, "line: " + stringArrayInput[i]);
             if (_quote != null) {
                 line = removeQuotes(line);
+                System.out.println("Date," + line[0]);
             }
 
             //line noch setzen im InputConverter als temp oder so
@@ -140,32 +143,22 @@ public class CSVParsing extends DataCollectorParser {
             JEVisType ignoreFirstNLines = jeClass.getType(JEVisParsingAttributes.CSV_HEADERLINES);
             JEVisType dpIndexType = jeClass.getType(JEVisParsingAttributes.MAPPING_CSV_DPINDEX);
 
-            _delim = (String) pn.getAttribute(seperatorColumn).getLatestSample().getValue();
+            _delim = DatabaseHelper.getObjectAsString(pn, seperatorColumn);
+            _quote = DatabaseHelper.getObjectAsString(pn, enclosedBy);
+            _headerLines = DatabaseHelper.getObjectAsInteger(pn, ignoreFirstNLines);
 
-            if (pn.getAttribute(enclosedBy).getLatestSample() != null) {
-                _quote = (String) pn.getAttribute(enclosedBy).getLatestSample().getValue();
-            }
-
-            if (pn.getAttribute(ignoreFirstNLines).getLatestSample() != null && !((String) pn.getAttribute(ignoreFirstNLines).getLatestSample().getValue()).equals("")) {
-                _headerLines = Integer.parseInt((String) pn.getAttribute(ignoreFirstNLines).getLatestSample().getValue());
-            }
-
+            
             JEVisType indexDateType = jeClass.getType(JEVisParsingAttributes.DATE_CSV_DATEINDEX);
             JEVisType indexTimeType = jeClass.getType(JEVisParsingAttributes.DATE_CSV_TIMEINDEX);
-            if (pn.getAttribute(indexDateType) != null) {
-                _dateIndex = (int) (long) pn.getAttribute(indexDateType).getLatestSample().getValueAsLong();
-            }
+            _dateIndex = DatabaseHelper.getObjectAsInteger(pn, indexDateType);
             Logger.getLogger(this.getClass().getName()).log(Level.ALL, "DateIndex" + _dateIndex);
 
-            if (pn.getAttribute(indexTimeType).hasSample() && !((String) pn.getAttribute(indexTimeType).getLatestSample().getValue()).equals("")) {
-                _timeIndex = (int) (long) pn.getAttribute(indexTimeType).getLatestSample().getValueAsLong();
-            }
+            _timeIndex = DatabaseHelper.getObjectAsInteger(pn, indexTimeType);
             Logger.getLogger(this.getClass().getName()).log(Level.ALL, "TimeIndex" + _timeIndex);
 
-            if (pn.getAttribute(dpIndexType).getLatestSample() != null && !((String) pn.getAttribute(dpIndexType).getLatestSample().getValue()).equals("")) {
-                _dpIndex = (int) (long) pn.getAttribute(dpIndexType).getLatestSample().getValueAsLong();
-            }
+            _dpIndex = DatabaseHelper.getObjectAsInteger(pn, dpIndexType);
             Logger.getLogger(this.getClass().getName()).log(Level.ALL, "DpIndex" + _dpIndex);
+            
         } catch (JEVisException ex) {
             Logger.getLogger(CSVParsing.class.getName()).log(Level.ERROR, null, ex);
         }
@@ -208,12 +201,10 @@ public class CSVParsing extends DataCollectorParser {
             JEVisType timeFormatType = dateClass.getType(JEVisParsingAttributes.DATE_TIMEFORMAT);
             JEVisType timeZoneType = dateClass.getType(JEVisParsingAttributes.DATE_TIMEZONE);
 
-            String date = dateObject.getAttribute(dateFormatType).getLatestSample().getValueAsString();
+            String date = DatabaseHelper.getObjectAsString(dateObject, dateFormatType);
             Logger.getLogger(CSVParsing.class.getName()).log(Level.ALL, "date Value: " + date);
-            String time = null;
-            if (dateObject.getAttribute(timeFormatType).hasSample()) {
-                time = dateObject.getAttribute(timeFormatType).getLatestSample().getValueAsString();
-            }
+
+            String time = DatabaseHelper.getObjectAsString(dateObject, timeFormatType);
             Logger.getLogger(CSVParsing.class.getName()).log(Level.ALL, "time Value: " + time);
 //            DateTimeZone timezone = DateTimeZone.forTimeZone(TimeZone.getTimeZone(dateObject.getAttribute(timeZoneType).getLatestSample().getValueAsString()));
 
@@ -255,14 +246,11 @@ public class CSVParsing extends DataCollectorParser {
             }
             Logger.getLogger(CSVParsing.class.getName()).log(Level.ALL, "online ID: " + onlineID);
 
-            String mapping = mappingObject.getAttribute(mappingType).getLatestSample().getValueAsString();
+            String mapping = DatabaseHelper.getObjectAsString(mappingObject, mappingType);
             Logger.getLogger(CSVParsing.class.getName()).log(Level.ALL, "mapping Value: " + mapping);
 
-            boolean mappingNecessary = false;
-            if (mappingObject.getAttribute(mappingNecessaryType).getLatestSample() != null) {
-                mappingNecessary = mappingObject.getAttribute(mappingNecessaryType).getLatestSample().getValueAsBoolean();
+            boolean mappingNecessary = DatabaseHelper.getObjectAsBoolean(mappingObject, mappingNecessaryType);
 
-            }
             //            boolean inFile = false;
             //            if (mapping.getAttribute(datapointInFileType) != null) {
             //                inFile = Boolean.parseBoolean((String) mapping.getAttribute(datapointInFileType).getLatestSample().getValue());
@@ -297,11 +285,12 @@ public class CSVParsing extends DataCollectorParser {
             JEVisClass valueClass = valueObject.getJEVisClass();
             JEVisType seperatorDecimalType = valueClass.getType(JEVisParsingAttributes.VALUE_DECIMSEPERATOR);
             JEVisType seperatorThousandType = valueClass.getType(JEVisParsingAttributes.VALUE_THOUSANDSEPERATOR);
-
-            String seperatorDecimal = valueObject.getAttribute(seperatorDecimalType).getLatestSample().getValueAsString();
+            String seperatorDecimal = DatabaseHelper.getObjectAsString(valueObject, seperatorDecimalType);
             Logger.getLogger(CSVParsing.class.getName()).log(Level.ALL, "decimal seperator: " + seperatorDecimal);
-            String seperatorThousand = valueObject.getAttribute(seperatorThousandType).getLatestSample().getValueAsString();
+
+            String seperatorThousand = DatabaseHelper.getObjectAsString(valueObject, seperatorThousandType);
             Logger.getLogger(CSVParsing.class.getName()).log(Level.ALL, "thousand seperator: " + seperatorThousand);
+
             valueParser = new ValueCSVParser(indexValue, seperatorDecimal, seperatorThousand);
         } catch (JEVisException ex) {
             Logger.getLogger(CSVParsing.class.getName()).log(Level.ERROR, null, ex);
