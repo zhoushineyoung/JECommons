@@ -4,8 +4,10 @@
  */
 package org.jevis.commons.parsing.inputHandler;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -66,8 +68,17 @@ public abstract class InputHandler implements Iterable<Object> {
             for (InputStream s : _inputStream) {
                 try {
                     //            String inputStreamString = new Scanner(s, "UTF-8").useDelimiter("\\A").next();
-                    String inputStreamString = IOUtils.toString(s, "UTF-8");
-                    stringInput.add(inputStreamString);
+                    String tmp = null;
+                    BufferedReader buf = new BufferedReader(new InputStreamReader(s));
+                    while ((tmp = buf.readLine()) != null) {
+                        System.out.println(tmp);
+                        stringInput.add(tmp);
+                    }
+
+//                    String inputStreamString = IOUtils.toString(s, "UTF-8");
+//                    for (int i = 0; i < inputStreamString.length; i++) {
+//                        stringInput.add(inputStreamString[i]);
+//                    }
                 } catch (IOException ex) {
                     Logger.getLogger(InputHandler.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -82,15 +93,15 @@ public abstract class InputHandler implements Iterable<Object> {
     public void setCSVInput(String[] input) {
         _csvInput = input;
     }
-    
-    public void setTmpInput(Object o){
+
+    public void setTmpInput(Object o) {
         _tmpInput = o;
     }
 
-    public Object getTmpInput(){
+    public Object getTmpInput() {
         return _tmpInput;
     }
-    
+
     public String[] getCSVInput() {
         return _csvInput;
     }
@@ -112,8 +123,16 @@ public abstract class InputHandler implements Iterable<Object> {
 
             StringBuilder buffer = new StringBuilder();
             for (InputStream s : _inputStream) {
-                String inputStreamString = new Scanner(s, "UTF-8").useDelimiter("\\A").next();
-                buffer.append(inputStreamString);
+                String tmp = null;
+                BufferedReader buf = new BufferedReader(new InputStreamReader(s));
+                try {
+                    while ((tmp = buf.readLine()) != null) {
+                        System.out.println(tmp);
+                        buffer.append(tmp);
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(InputHandler.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
             _stringOutput = buffer.toString();
             _stringOutputParsed = true;
