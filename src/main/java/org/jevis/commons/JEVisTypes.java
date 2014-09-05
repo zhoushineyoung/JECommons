@@ -79,12 +79,13 @@ public interface JEVisTypes {
         interface HTTP extends Connection {
 
             public final static String Name = "HTTP";
-            public final static String SSLType = "SSL";
+            public final static String SSL = "SSL";
         }
 
         interface FTP extends Connection {
 
             public final static String Name = "FTP";
+            public final static String SSL = "SSL";
             public final static String FileNameScheme = "File Name Scheme";
         }
 
