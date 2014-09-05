@@ -15,9 +15,9 @@ import org.jevis.commons.parsing.inputHandler.InputHandler;
 public class DatapointFixXMLParsing implements GeneralMappingParser {
 
     private boolean _isInFile;
-    private long _datapoint;
+    private Long _datapoint;
 
-    public DatapointFixXMLParsing(boolean incsv, long datapoint) {
+    public DatapointFixXMLParsing(boolean incsv, Long datapoint) {
         _isInFile = incsv;
         _datapoint = datapoint;
     }
@@ -28,7 +28,7 @@ public class DatapointFixXMLParsing implements GeneralMappingParser {
     }
 
     @Override
-    public long getDatapoint() {
+    public Long getDatapoint() {
         return _datapoint;
     }
 

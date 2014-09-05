@@ -20,7 +20,7 @@ public class DatapointXMLParsing implements GeneralMappingParser{
     }
 
     @Override
-    public long getDatapoint() {
+    public Long getDatapoint() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

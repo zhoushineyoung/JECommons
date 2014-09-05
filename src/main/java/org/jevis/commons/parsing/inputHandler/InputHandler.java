@@ -37,6 +37,7 @@ public abstract class InputHandler implements Iterable<Object> {
     private boolean _stringOutputParsed;
     private Node _xmlInput;
     protected List<Document> _document;
+    private Object _tmpInput;
 
     public InputHandler(Object rawInput) {
         _inputStream = new ArrayList<InputStream>();
@@ -81,7 +82,15 @@ public abstract class InputHandler implements Iterable<Object> {
     public void setCSVInput(String[] input) {
         _csvInput = input;
     }
+    
+    public void setTmpInput(Object o){
+        _tmpInput = o;
+    }
 
+    public Object getTmpInput(){
+        return _tmpInput;
+    }
+    
     public String[] getCSVInput() {
         return _csvInput;
     }

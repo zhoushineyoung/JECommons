@@ -11,7 +11,8 @@ import org.jevis.api.JEVisException;
 import org.jevis.api.JEVisObject;
 import org.jevis.api.JEVisType;
 import org.jevis.commons.DatabaseHelper;
-import org.jevis.commons.parsing.DataCollectorParser;
+import org.jevis.commons.JEVisTypes;
+import org.jevis.commons.parsing.GenericParser;
 import org.jevis.commons.parsing.GeneralDateParser;
 import org.jevis.commons.parsing.GeneralMappingParser;
 import org.jevis.commons.parsing.GeneralValueParser;
@@ -26,7 +27,7 @@ import org.joda.time.DateTime;
  *
  * @author broder
  */
-public class CSVParsing extends DataCollectorParser {
+public class CSVParsing extends GenericParser {
 
     private String _quote;
     private String _delim;
@@ -134,72 +135,45 @@ public class CSVParsing extends DataCollectorParser {
     }
 
     @Override
-    public void initialize(JEVisObject pn) {
-        _jevisParser = pn;
+    public void initialize(JEVisObject equipmentObject) {
         try {
-            JEVisClass jeClass = pn.getJEVisClass();
-            JEVisType seperatorColumn = jeClass.getType(JEVisParsingAttributes.CSV_DELIM);
-            JEVisType enclosedBy = jeClass.getType(JEVisParsingAttributes.CSV_QUOTE);
-            JEVisType ignoreFirstNLines = jeClass.getType(JEVisParsingAttributes.CSV_HEADERLINES);
-            JEVisType dpIndexType = jeClass.getType(JEVisParsingAttributes.MAPPING_CSV_DPINDEX);
+            JEVisClass parser = equipmentObject.getDataSource().getJEVisClass(JEVisTypes.Parser.CSVParser.NAME);
+            JEVisObject parserObject = equipmentObject.getChildren(parser, true).get(0);
+            JEVisClass jeClass = parserObject.getJEVisClass();
+            JEVisType seperatorColumn = jeClass.getType(JEVisTypes.Parser.CSVParser.CSV_DELIM);
+            JEVisType enclosedBy = jeClass.getType(JEVisTypes.Parser.CSVParser.CSV_QUOTE);
+            JEVisType ignoreFirstNLines = jeClass.getType(JEVisTypes.Parser.CSVParser.CSV_HEADERLINES);
+            JEVisType dpIndexType = jeClass.getType(JEVisTypes.Parser.CSVParser.MAPPING_CSV_DPINDEX);
 
-            _delim = DatabaseHelper.getObjectAsString(pn, seperatorColumn);
-            _quote = DatabaseHelper.getObjectAsString(pn, enclosedBy);
-            _headerLines = DatabaseHelper.getObjectAsInteger(pn, ignoreFirstNLines);
+            _delim = DatabaseHelper.getObjectAsString(parserObject, seperatorColumn);
+            _quote = DatabaseHelper.getObjectAsString(parserObject, enclosedBy);
+            _headerLines = DatabaseHelper.getObjectAsInteger(parserObject, ignoreFirstNLines);
 
-            
-            JEVisType indexDateType = jeClass.getType(JEVisParsingAttributes.DATE_CSV_DATEINDEX);
-            JEVisType indexTimeType = jeClass.getType(JEVisParsingAttributes.DATE_CSV_TIMEINDEX);
-            _dateIndex = DatabaseHelper.getObjectAsInteger(pn, indexDateType);
+
+            JEVisType indexDateType = jeClass.getType(JEVisTypes.Parser.CSVParser.DATE_CSV_DATEINDEX);
+            JEVisType indexTimeType = jeClass.getType(JEVisTypes.Parser.CSVParser.DATE_CSV_TIMEINDEX);
+            _dateIndex = DatabaseHelper.getObjectAsInteger(parserObject, indexDateType);
             Logger.getLogger(this.getClass().getName()).log(Level.ALL, "DateIndex" + _dateIndex);
 
-            _timeIndex = DatabaseHelper.getObjectAsInteger(pn, indexTimeType);
+            _timeIndex = DatabaseHelper.getObjectAsInteger(parserObject, indexTimeType);
             Logger.getLogger(this.getClass().getName()).log(Level.ALL, "TimeIndex" + _timeIndex);
 
-            _dpIndex = DatabaseHelper.getObjectAsInteger(pn, dpIndexType);
+            _dpIndex = DatabaseHelper.getObjectAsInteger(parserObject, dpIndexType);
             Logger.getLogger(this.getClass().getName()).log(Level.ALL, "DpIndex" + _dpIndex);
-            
+
         } catch (JEVisException ex) {
             Logger.getLogger(CSVParsing.class.getName()).log(Level.ERROR, null, ex);
         }
     }
 
-//    public SampleParserContainer extractSampleContainer(JEVisObject mapping, JEVisObject dateObject, JEVisObject valueObject) {
-//        SampleParserContainer container = null;
-//        try {
-//            //DateObject 
-//
-//
-//
-//           
-//
-//            //ValueObject
-//            GeneralValueParser valueParser = null;
-//            JEVisClass valueClass = valueObject.getJEVisClass();
-//            JEVisType seperatorDecimalType = valueClass.getType(JevisAttributes.VALUE_DECIMSEPERATOR);
-//            JEVisType seperatorThousandType = valueClass.getType(JevisAttributes.VALUE_THOUSANDSEPERATOR);
-//
-//            String seperatorDecimal = valueObject.getAttribute(seperatorDecimalType).getLatestSample().getValueAsString();
-//            System.out.println("sepDecimal" + seperatorDecimal);
-//            String seperatorThousand = valueObject.getAttribute(seperatorThousandType).getLatestSample().getValueAsString();
-//            System.out.println("sepThousand" + seperatorThousand);
-//            valueParser = new ValueCSVParser(indexValue, seperatorDecimal, seperatorThousand);
-//
-//            container = new SampleParserContainer(datapointParser, dateParser, valueParser);
-//        } catch (JEVisException ex) {
-//            Logger.getLogger(DataCollectorParser.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//        return container;
-//    }
     @Override
     public GeneralDateParser initializeDateParser(JEVisObject dateObject, JEVisObject valueObject, JEVisObject mapping) {
         DateCSVParser dateParser = null;
         try {
             JEVisClass dateClass = dateObject.getJEVisClass();
 
-            JEVisType dateFormatType = dateClass.getType(JEVisParsingAttributes.DATE_DATEFORMAT);
-            JEVisType timeFormatType = dateClass.getType(JEVisParsingAttributes.DATE_TIMEFORMAT);
-            JEVisType timeZoneType = dateClass.getType(JEVisParsingAttributes.DATE_TIMEZONE);
+            JEVisType dateFormatType = dateClass.getType(JEVisTypes.Date.DATE_DATEFORMAT);
+            JEVisType timeFormatType = dateClass.getType(JEVisTypes.Date.DATE_TIMEFORMAT);
 
             String date = DatabaseHelper.getObjectAsString(dateObject, dateFormatType);
             Logger.getLogger(CSVParsing.class.getName()).log(Level.ALL, "date Value: " + date);
@@ -224,12 +198,12 @@ public class CSVParsing extends DataCollectorParser {
         try {
             //Mappingclass
             JEVisClass mappingClass = mappingObject.getJEVisClass();
-            JEVisType indexValueType = mappingClass.getType(JEVisParsingAttributes.MAPPING_VALUE_SPECIFICATION);
+            JEVisType indexValueType = mappingClass.getType(JEVisTypes.DataPoint.VALUE_SPEC);
             //            JEVisType indexDatapointType = mappingClass.getType("Index Datapoint");
             //            JEVisType datapointInFileType = mappingClass.getType("infile");
-            JEVisType datapointType = mappingClass.getType(JEVisParsingAttributes.MAPPING_ONLINEID);
-            JEVisType mappingType = mappingClass.getType(JEVisParsingAttributes.MAPPING_VALUE_MAPPING);
-            JEVisType mappingNecessaryType = mappingClass.getType(JEVisParsingAttributes.MAPPING_NECESSARY);
+            JEVisType datapointType = mappingClass.getType(JEVisTypes.DataPoint.ONLINE_ID);
+            JEVisType mappingType = mappingClass.getType(JEVisTypes.DataPoint.CHANNEL_ID);
+            JEVisType mappingNecessaryType = mappingClass.getType(JEVisTypes.DataPoint.MAPPING_NECESSARY);
 
             int indexValue = -1;
             if (mappingObject.getAttribute(indexValueType) != null) {
@@ -273,7 +247,7 @@ public class CSVParsing extends DataCollectorParser {
         try {
             //get the index from the mapping object
             JEVisClass mappingClass = mapping.getJEVisClass();
-            JEVisType indexValueType = mappingClass.getType(JEVisParsingAttributes.MAPPING_VALUE_SPECIFICATION);
+            JEVisType indexValueType = mappingClass.getType(JEVisTypes.DataPoint.VALUE_SPEC);
             //            JEVisType indexDatapointType = mappingClass.getType("Index Datapoint");
             //            JEVisType datapointInFileType = mappingClass.getType("infile");
             int indexValue = -1;
@@ -283,8 +257,8 @@ public class CSVParsing extends DataCollectorParser {
 
             //ValueObject
             JEVisClass valueClass = valueObject.getJEVisClass();
-            JEVisType seperatorDecimalType = valueClass.getType(JEVisParsingAttributes.VALUE_DECIMSEPERATOR);
-            JEVisType seperatorThousandType = valueClass.getType(JEVisParsingAttributes.VALUE_THOUSANDSEPERATOR);
+            JEVisType seperatorDecimalType = valueClass.getType(JEVisTypes.Value.VALUE_DECIMSEPERATOR);
+            JEVisType seperatorThousandType = valueClass.getType(JEVisTypes.Value.VALUE_THOUSANDSEPERATOR);
             String seperatorDecimal = DatabaseHelper.getObjectAsString(valueObject, seperatorDecimalType);
             Logger.getLogger(CSVParsing.class.getName()).log(Level.ALL, "decimal seperator: " + seperatorDecimal);
 

@@ -18,7 +18,7 @@ public class MappingCSVParser implements GeneralMappingParser {
 
     private boolean _inCSV;
     private int _indexDatapoint;
-    private long _datapoint;
+    private Long _datapoint;
     private boolean _mappingIsSuccessfull;
     private String _mappingValue;
 
@@ -41,7 +41,7 @@ public class MappingCSVParser implements GeneralMappingParser {
     }
 
     @Override
-    public long getDatapoint() {
+    public Long getDatapoint() {
         return _datapoint;
     }
 

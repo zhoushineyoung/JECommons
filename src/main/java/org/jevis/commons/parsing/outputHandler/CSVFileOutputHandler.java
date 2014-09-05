@@ -22,14 +22,15 @@ public class CSVFileOutputHandler extends OutputHandler {
     public void writeOutput(ParsingRequest request, List<Result> results) {
         try {
             String outputPath = request.getFileOutputPath();
-            if(outputPath == null){
+            if (outputPath == null) {
                 outputPath = "output.csv";
             }
             File output = new File(outputPath);
 
             BufferedWriter write = new BufferedWriter(new FileWriter(output));
+             write.write("value,date\n");
             for (Result r : results) {
-                write.write(r.getValue() + "," + r.getOnlineID() + "," + r.getDate()+"\n");
+                write.write(r.getValue() + "," + r.getDate() + "\n");
             }
             write.close();
         } catch (IOException e) {

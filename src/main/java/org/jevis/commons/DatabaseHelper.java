@@ -4,12 +4,9 @@
  */
 package org.jevis.commons;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.jevis.api.JEVisException;
 import org.jevis.api.JEVisObject;
 import org.jevis.api.JEVisType;
-import org.jevis.commons.parsing.csvParsing.CSVParsing;
 
 /**
  *

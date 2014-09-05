@@ -15,9 +15,9 @@ public class MappingFixCSVParser implements GeneralMappingParser {
 
     private boolean _inFile;
     private int _index;
-    private long _datapoint;
+    private Long _datapoint;
 
-    public MappingFixCSVParser(boolean incsv, long datapoint) {
+    public MappingFixCSVParser(boolean incsv, Long datapoint) {
         _inFile = incsv;
         _datapoint = datapoint;
     }
@@ -32,7 +32,7 @@ public class MappingFixCSVParser implements GeneralMappingParser {
     }
 
     @Override
-    public long getDatapoint() {
+    public Long getDatapoint() {
         return _datapoint;
     }
 
