@@ -21,6 +21,7 @@ public class MappingCSVParser implements GeneralMappingParser {
     private Long _datapoint;
     private boolean _mappingIsSuccessfull;
     private String _mappingValue;
+    private boolean _isValid;
 
     public MappingCSVParser(boolean incsv, Long datapoint, String mappingValue, Integer indexDatapoint) {
         _inCSV = incsv;
@@ -47,14 +48,19 @@ public class MappingCSVParser implements GeneralMappingParser {
 
     @Override
     public void parse(InputHandler ic) {
-        _mappingIsSuccessfull = false;
         String[] line = ic.getCSVInput();
-        String currentMappingValue = line[_indexDatapoint];
-        Logger.getLogger(this.getClass().getName()).log(Level.ALL, "##Line: " + line);
-        Logger.getLogger(this.getClass().getName()).log(Level.ALL, "##currentMappingValue: " + currentMappingValue);
-        Logger.getLogger(this.getClass().getName()).log(Level.ALL, "##_mappingValue: " + _mappingValue);
-        if (currentMappingValue.equals(_mappingValue)) {
-            _mappingIsSuccessfull = true;
+        try {
+            _mappingIsSuccessfull = false;
+            String currentMappingValue = line[_indexDatapoint];
+            Logger.getLogger(this.getClass().getName()).log(Level.ALL, "##Line: " + line);
+            Logger.getLogger(this.getClass().getName()).log(Level.ALL, "##currentMappingValue: " + currentMappingValue);
+            Logger.getLogger(this.getClass().getName()).log(Level.ALL, "##_mappingValue: " + _mappingValue);
+            if (currentMappingValue.equals(_mappingValue)) {
+                _mappingIsSuccessfull = true;
+            }
+        } catch (Exception ex) {
+            _isValid = false;
+            Logger.getLogger(this.getClass().getName()).log(Level.WARN, "Date not valud in line: " + line);
         }
     }
 
@@ -66,5 +72,10 @@ public class MappingCSVParser implements GeneralMappingParser {
     @Override
     public boolean isMappingSuccessfull() {
         return _mappingIsSuccessfull;
+    }
+
+    @Override
+    public boolean isValueValid() {
+        return _isValid;
     }
 }

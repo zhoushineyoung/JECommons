@@ -71,7 +71,6 @@ public abstract class InputHandler implements Iterable<Object> {
                     String tmp = null;
                     BufferedReader buf = new BufferedReader(new InputStreamReader(s));
                     while ((tmp = buf.readLine()) != null) {
-                        System.out.println(tmp);
                         stringInput.add(tmp);
                     }
 

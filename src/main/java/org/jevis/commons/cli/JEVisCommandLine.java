@@ -34,7 +34,7 @@ public class JEVisCommandLine {
     private static String CONFIG = "jevis-config";
     private static String HELP = "help";
     private static String DEBUG = "debug";
-    private boolean _isUsed = true;
+    private boolean _isUsed = false;
 
     private JEVisCommandLine() {
         _options = new Options();

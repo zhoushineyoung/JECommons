@@ -29,7 +29,7 @@ public class JEVisOutputHandler extends OutputHandler {
     public void writeOutput(ParsingRequest request, List<Result> results) {
         JEVisDataSource client = request.getClient();
         try {
-            Logger.getLogger(JEVisOutputHandler.class.getName()).log(Level.ALL, "Number of results: " + results.size());
+            Logger.getLogger(JEVisOutputHandler.class.getName()).log(Level.INFO, "Start JEVis OutputHandler");
 //            Map<JEVisObject, List<JEVisSample>> onlineToSampleMap = new HashMap<JEVisObject, List<JEVisSample>>();
 
             //extract all online nodes and save them in a map

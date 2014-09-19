@@ -46,4 +46,9 @@ public class DatapointFixXMLParsing implements GeneralMappingParser {
     public boolean isMappingSuccessfull() {
         return true; //no mapping needed
     }
+
+    @Override
+    public boolean isValueValid() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

@@ -4,6 +4,8 @@ package org.jevis.commons.parsing.csvParsing;
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.jevis.api.JEVisClass;
@@ -16,7 +18,6 @@ import org.jevis.commons.parsing.GenericParser;
 import org.jevis.commons.parsing.GeneralDateParser;
 import org.jevis.commons.parsing.GeneralMappingParser;
 import org.jevis.commons.parsing.GeneralValueParser;
-import org.jevis.commons.parsing.JEVisParsingAttributes;
 import org.jevis.commons.parsing.Result;
 import org.jevis.commons.parsing.SampleParserContainer;
 import org.jevis.commons.parsing.ValuePolicy;
@@ -70,60 +71,64 @@ public class CSVParsing extends GenericParser {
     public void parse(InputHandler ic) {
         Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Start CSV parsing");
         String[] stringArrayInput = ic.getStringArrayInput();
-        Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Count of date/value/mapping variations" + _sampleParsers.size());
-        Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Count of lines" + stringArrayInput.length);
+        Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Count of date/value/mapping variations" + _sampleParsers.size());
+        Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Count of lines" + stringArrayInput.length);
         System.out.println("Quote," + _quote);
         for (int i = _headerLines; i < stringArrayInput.length; i++) {
-            String line[] = stringArrayInput[i].split(String.valueOf(_delim), -1);
-            Logger.getLogger(this.getClass().getName()).log(Level.ALL, "line: " + stringArrayInput[i]);
-            if (_quote != null) {
-                line = removeQuotes(line);
-                System.out.println("Date," + line[0]);
-            }
-
-            //line noch setzen im InputConverter als temp oder so
-            ic.setCSVInput(line);
-
-            DateTime dateTime;
-            Double value;
-            Long datapoint;
-            for (SampleParserContainer parser : _sampleParsers) {
-                GeneralDateParser dateParser = parser.getDateParser();
-                dateParser.parse(ic);
-                dateTime = dateParser.getDateTime();
-                GeneralValueParser valueParser = parser.getValueParser();
-                valueParser.parse(ic);
-                value = valueParser.getValue();
-                GeneralMappingParser dpParser = parser.getDpParser();
-                dpParser.parse(ic);
-                datapoint = dpParser.getDatapoint();
-
-
-                if (((ValueCSVParser) valueParser).outOfBounce()) {
-                    Logger.getLogger(this.getClass().getName()).log(Level.WARN, "Date for value out of bounce: " + dateTime);
-                    Logger.getLogger(this.getClass().getName()).log(Level.WARN, "Value out of bounce: " + value);
-                }
-                boolean valueIsValid = ValuePolicy.checkValue(parser);
-                if (!valueIsValid) {
-                    Logger.getLogger(this.getClass().getName()).log(Level.WARN, "Date for value is invalid: " + dateTime);
-                    Logger.getLogger(this.getClass().getName()).log(Level.WARN, "Value is invalid: " + value);
-                    continue;
+            try {
+                String line[] = stringArrayInput[i].split(String.valueOf(_delim), -1);
+                Logger.getLogger(this.getClass().getName()).log(Level.ALL, "line: " + stringArrayInput[i]);
+                if (_quote != null) {
+                    line = removeQuotes(line);
                 }
 
-                boolean datapointIsValid = ValuePolicy.checkDatapoint(parser);
-                if (!datapointIsValid) {
-                    Logger.getLogger(this.getClass().getName()).log(Level.ALL, "------Datapoint is invalid!!!------");
-                    Logger.getLogger(this.getClass().getName()).log(Level.ALL, "OnlineID:" + datapoint);
-                    Logger.getLogger(this.getClass().getName()).log(Level.ALL, "ChannelID:" + dpParser.getMappingValue());
-                    Logger.getLogger(this.getClass().getName()).log(Level.ALL, "------------------------------------");
-                    continue;
+                //line noch setzen im InputConverter als temp oder so
+                ic.setCSVInput(line);
+
+                DateTime dateTime;
+                Double value;
+                Long datapoint;
+                for (SampleParserContainer parser : _sampleParsers) {
+                    GeneralDateParser dateParser = parser.getDateParser();
+                    dateParser.parse(ic);
+                    dateTime = dateParser.getDateTime();
+                    GeneralValueParser valueParser = parser.getValueParser();
+                    valueParser.parse(ic);
+                    value = valueParser.getValue();
+                    GeneralMappingParser dpParser = parser.getDpParser();
+                    dpParser.parse(ic);
+                    datapoint = dpParser.getDatapoint();
+
+
+                    if (((ValueCSVParser) valueParser).outOfBounce()) {
+                        Logger.getLogger(this.getClass().getName()).log(Level.WARN, "Date for value out of bounce: " + dateTime);
+                        Logger.getLogger(this.getClass().getName()).log(Level.WARN, "Value out of bounce: " + value);
+                    }
+                    boolean valueIsValid = ValuePolicy.checkValue(parser);
+                    if (!valueIsValid) {
+                        Logger.getLogger(this.getClass().getName()).log(Level.WARN, "Date for value is invalid: " + dateTime);
+                        Logger.getLogger(this.getClass().getName()).log(Level.WARN, "Value is invalid: " + value);
+                        continue;
+                    }
+
+                    boolean datapointIsValid = ValuePolicy.checkDatapoint(parser);
+                    if (!datapointIsValid) {
+                        Logger.getLogger(this.getClass().getName()).log(Level.ALL, "------Datapoint is invalid!!!------");
+                        Logger.getLogger(this.getClass().getName()).log(Level.ALL, "OnlineID:" + datapoint);
+                        Logger.getLogger(this.getClass().getName()).log(Level.ALL, "ChannelID:" + dpParser.getMappingValue());
+                        Logger.getLogger(this.getClass().getName()).log(Level.ALL, "------------------------------------");
+                        continue;
+                    }
+                    Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Parsed DP" + datapoint);
+                    Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Parsed value" + value);
+                    Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Parsed date" + dateTime);
+                    _results.add(new Result(datapoint, value, dateTime));
                 }
-                Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Parsed DP" + datapoint);
-                Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Parsed value" + value);
-                Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Parsed date" + dateTime);
-                _results.add(new Result(datapoint, value, dateTime));
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
+        Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Number of Results: " + _results.size());
     }
 
     private String[] removeQuotes(String[] line) {
@@ -148,6 +153,9 @@ public class CSVParsing extends GenericParser {
             _delim = DatabaseHelper.getObjectAsString(parserObject, seperatorColumn);
             _quote = DatabaseHelper.getObjectAsString(parserObject, enclosedBy);
             _headerLines = DatabaseHelper.getObjectAsInteger(parserObject, ignoreFirstNLines);
+            if(_headerLines == null){
+                _headerLines = 0;
+            }
 
 
             JEVisType indexDateType = jeClass.getType(JEVisTypes.Parser.CSVParser.DATE_CSV_DATEINDEX);
@@ -161,8 +169,11 @@ public class CSVParsing extends GenericParser {
             _dpIndex = DatabaseHelper.getObjectAsInteger(parserObject, dpIndexType);
             Logger.getLogger(this.getClass().getName()).log(Level.ALL, "DpIndex" + _dpIndex);
 
+
+
         } catch (JEVisException ex) {
-            Logger.getLogger(CSVParsing.class.getName()).log(Level.ERROR, null, ex);
+            Logger.getLogger(CSVParsing.class
+                    .getName()).log(Level.ERROR, null, ex);
         }
     }
 
@@ -176,10 +187,14 @@ public class CSVParsing extends GenericParser {
             JEVisType timeFormatType = dateClass.getType(JEVisTypes.Date.DATE_TIMEFORMAT);
 
             String date = DatabaseHelper.getObjectAsString(dateObject, dateFormatType);
-            Logger.getLogger(CSVParsing.class.getName()).log(Level.ALL, "date Value: " + date);
+            Logger
+                    .getLogger(CSVParsing.class
+                    .getName()).log(Level.ALL, "date Value: " + date);
 
             String time = DatabaseHelper.getObjectAsString(dateObject, timeFormatType);
-            Logger.getLogger(CSVParsing.class.getName()).log(Level.ALL, "time Value: " + time);
+
+            Logger.getLogger(CSVParsing.class
+                    .getName()).log(Level.ALL, "time Value: " + time);
 //            DateTimeZone timezone = DateTimeZone.forTimeZone(TimeZone.getTimeZone(dateObject.getAttribute(timeZoneType).getLatestSample().getValueAsString()));
 
 
@@ -208,23 +223,31 @@ public class CSVParsing extends GenericParser {
             int indexValue = -1;
             if (mappingObject.getAttribute(indexValueType) != null) {
                 indexValue = (int) (long) mappingObject.getAttribute(indexValueType).getLatestSample().getValueAsLong();
+
+
             }
-            Logger.getLogger(CSVParsing.class.getName()).log(Level.ALL, "index Value: " + indexValue);
+            Logger.getLogger(CSVParsing.class
+                    .getName()).log(Level.ALL, "index Value: " + indexValue);
             //            int indexDatapoint = 0;
             //            if (mapping.getAttribute(indexDatapointType) != null) {
             //                indexDatapoint = Integer.parseInt((String) mapping.getAttribute(indexDatapointType).getLatestSample().getValue());
             //            }
             long onlineID = -1;
-            if (mappingObject.getAttribute(datapointType) != null) {
+
+            if (mappingObject.getAttribute(datapointType)
+                    != null) {
                 onlineID = mappingObject.getAttribute(datapointType).getLatestSample().getValueAsLong();
             }
-            Logger.getLogger(CSVParsing.class.getName()).log(Level.ALL, "online ID: " + onlineID);
+
+            Logger.getLogger(CSVParsing.class
+                    .getName()).log(Level.ALL, "online ID: " + onlineID);
 
             String mapping = DatabaseHelper.getObjectAsString(mappingObject, mappingType);
-            Logger.getLogger(CSVParsing.class.getName()).log(Level.ALL, "mapping Value: " + mapping);
+
+            Logger.getLogger(CSVParsing.class
+                    .getName()).log(Level.ALL, "mapping Value: " + mapping);
 
             boolean mappingNecessary = DatabaseHelper.getObjectAsBoolean(mappingObject, mappingNecessaryType);
-
             //            boolean inFile = false;
             //            if (mapping.getAttribute(datapointInFileType) != null) {
             //                inFile = Boolean.parseBoolean((String) mapping.getAttribute(datapointInFileType).getLatestSample().getValue());

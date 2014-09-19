@@ -50,4 +50,9 @@ public class MappingFixCSVParser implements GeneralMappingParser {
     public boolean isMappingSuccessfull() {
         return true;
     }
+
+    @Override
+    public boolean isValueValid() {
+        return true;
+    }
 }

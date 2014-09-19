@@ -24,6 +24,7 @@ public class DateCSVParser implements GeneralDateParser {
     private Integer _dateIndex;
     private DateTime _dateTime;
 //    private DateTimeZone _timeZone;
+    private boolean _isValid;
 
     public DateCSVParser(String timeFormat, Integer timeIndex, String dateFormat, Integer dateIndex) {
         _timeFormat = timeFormat;
@@ -63,27 +64,36 @@ public class DateCSVParser implements GeneralDateParser {
     @Override
     public void parse(InputHandler ic) {
         String[] line = ic.getCSVInput();
-        String date = line[_dateIndex];
+        try {
+            String date = line[_dateIndex];
 //        String dateFormat = _dateFormat;
 
-        String pattern = _dateFormat;
-        String format = date;
+            String pattern = _dateFormat;
+            String format = date;
 
-        if (_timeFormat != null && _timeIndex > -1) {
-            String time = line[_timeIndex];
-            pattern += " " + _timeFormat;
-            format += " " + time;
-        }
-        Logger.getLogger(this.getClass().getName()).log(Level.ALL, "complete time " + format);
-        Logger.getLogger(this.getClass().getName()).log(Level.ALL, "complete pattern " + pattern);
+            if (_timeFormat != null && _timeIndex > -1) {
+                String time = line[_timeIndex];
+                pattern += " " + _timeFormat;
+                format += " " + time;
+            }
+            Logger.getLogger(this.getClass().getName()).log(Level.ALL, "complete time " + format);
+            Logger.getLogger(this.getClass().getName()).log(Level.ALL, "complete pattern " + pattern);
 
-        DateTimeFormatter fmt = DateTimeFormat.forPattern(pattern);
-        _dateTime = fmt.parseDateTime(format);
+            DateTimeFormatter fmt = DateTimeFormat.forPattern(pattern);
+            _dateTime = fmt.parseDateTime(format);
 //        DateTimeZone.setDefault(DateTimeZone.forTimeZone(TimeZone.getTimeZone("CET")));
+        } catch (Exception ex) {
+            _isValid = false;
+            Logger.getLogger(this.getClass().getName()).log(Level.WARN, "Date not valud in line: " + line);
+        }
     }
 
 //    @Override
 //    public DateTimeZone getTimeZone() {
 //        return _timeZone;
 //    }
+    @Override
+    public boolean isValueValid() {
+        return _isValid;
+    }
 }

@@ -15,4 +15,6 @@ import org.jevis.commons.parsing.inputHandler.InputHandler;
 interface GeneralParser {
 
     public void parse(InputHandler ic);
+    
+    public boolean isValueValid();
 }

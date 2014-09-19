@@ -113,4 +113,9 @@ public class DateXMLParsing implements GeneralDateParser {
 //    public DateTimeZone getTimeZone() {
 //        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 //    }
+
+    @Override
+    public boolean isValueValid() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
