@@ -4,10 +4,11 @@ package org.jevis.commons.parsing;
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.List;
+import org.jevis.api.JEVisClass;
 import org.jevis.api.JEVisException;
 import org.jevis.api.JEVisObject;
+import org.jevis.commons.JEVisTypes;
 import org.jevis.commons.parsing.csvParsing.CSVParsing;
 
 /**
@@ -24,10 +25,25 @@ public class ParsingFactory {
     private static final String XML_MULTI_PARSER = ("XML Multi");
     private static final String SQL_PARSER = ("SQL");
 
-    public static GenericParser getParsing(JEVisObject parsingData) throws JEVisException {
+    public static GenericParser getParsing(JEVisObject jevisObject) throws JEVisException {
+
+        JEVisClass parserClass = jevisObject.getDataSource().getJEVisClass(JEVisTypes.Parser.CSVParser.NAME);
+        JEVisObject parsingObject = null;
+
+        if (jevisObject.getJEVisClass().getName().equals(parserClass.getName())) {
+            parsingObject = jevisObject;
+        } else {
+            List<JEVisObject> parserObjects = jevisObject.getChildren(parserClass, true);
+            if (parserObjects.size() != 1) {
+                throw new JEVisException("Number of Parsing Objects != 1 under: " + jevisObject.getID(), 1);
+            } else {
+                parsingObject = parserObjects.get(0);
+            }
+        }
 
         GenericParser parsing = null;
-        String identifier = parsingData.getJEVisClass().getName();
+        String identifier = parsingObject.getJEVisClass().getName();
+        org.apache.log4j.Logger.getLogger(ParsingFactory.class.getName()).log(org.apache.log4j.Level.INFO, identifier +" Parser");
         if (identifier.equals(CSV_PARSER)) {
             parsing = new CSVParsing();
         } else if (identifier.equals(CSV_MULTI_TIME_PARSER)) {

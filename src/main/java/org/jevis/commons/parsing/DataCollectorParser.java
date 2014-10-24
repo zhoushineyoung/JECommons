@@ -23,4 +23,6 @@ public interface DataCollectorParser {
     public void createSampleContainers(JEVisObject parser, List<JEVisObject> datapoints);
     
     public List<SampleParserContainer> getSampleParserContianers();
+    
+    public JEVisObject getJEVisParser();
 }

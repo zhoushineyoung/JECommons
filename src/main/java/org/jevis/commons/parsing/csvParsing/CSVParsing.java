@@ -129,6 +129,9 @@ public class CSVParsing extends GenericParser {
             }
         }
         Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Number of Results: " + _results.size());
+        if (!_results.isEmpty()) {
+            Logger.getLogger(this.getClass().getName()).log(Level.INFO, "First Result: " + _results.get(0).getDate() + "," + _results.get(0).getOnlineID() + "," + _results.get(0).getValue());
+        }
     }
 
     private String[] removeQuotes(String[] line) {
@@ -144,6 +147,7 @@ public class CSVParsing extends GenericParser {
         try {
             JEVisClass parser = equipmentObject.getDataSource().getJEVisClass(JEVisTypes.Parser.CSVParser.NAME);
             JEVisObject parserObject = equipmentObject.getChildren(parser, true).get(0);
+            _jevisParser = parserObject;
             JEVisClass jeClass = parserObject.getJEVisClass();
             JEVisType seperatorColumn = jeClass.getType(JEVisTypes.Parser.CSVParser.CSV_DELIM);
             JEVisType enclosedBy = jeClass.getType(JEVisTypes.Parser.CSVParser.CSV_QUOTE);
@@ -153,10 +157,9 @@ public class CSVParsing extends GenericParser {
             _delim = DatabaseHelper.getObjectAsString(parserObject, seperatorColumn);
             _quote = DatabaseHelper.getObjectAsString(parserObject, enclosedBy);
             _headerLines = DatabaseHelper.getObjectAsInteger(parserObject, ignoreFirstNLines);
-            if(_headerLines == null){
+            if (_headerLines == null) {
                 _headerLines = 0;
             }
-
 
             JEVisType indexDateType = jeClass.getType(JEVisTypes.Parser.CSVParser.DATE_CSV_DATEINDEX);
             JEVisType indexTimeType = jeClass.getType(JEVisTypes.Parser.CSVParser.DATE_CSV_TIMEINDEX);
@@ -168,8 +171,6 @@ public class CSVParsing extends GenericParser {
 
             _dpIndex = DatabaseHelper.getObjectAsInteger(parserObject, dpIndexType);
             Logger.getLogger(this.getClass().getName()).log(Level.ALL, "DpIndex" + _dpIndex);
-
-
 
         } catch (JEVisException ex) {
             Logger.getLogger(CSVParsing.class

@@ -46,6 +46,7 @@ public abstract class GenericParser implements DataCollectorParser {
         _sampleParsers.add(parser);
     }
 
+    @Override
     public List<SampleParserContainer> getSampleParserContianers() {
         return _sampleParsers;
     }
@@ -53,6 +54,11 @@ public abstract class GenericParser implements DataCollectorParser {
     @Override
     public List<Result> getResults() {
         return _results;
+    }
+
+    @Override
+    public JEVisObject getJEVisParser() {
+        return _jevisParser;
     }
 
     @Override
