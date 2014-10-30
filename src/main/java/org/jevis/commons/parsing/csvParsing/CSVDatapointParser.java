@@ -46,7 +46,8 @@ public class CSVDatapointParser implements GeneralMappingParser {
         }
         _mappingValue = mappingIdentifier;
         _datapoint = datapointID;
-        _valueIndex = Integer.parseInt(valueIdentifier);
+        Integer valuIdent = Integer.parseInt(valueIdentifier);
+        _valueIndex = valuIdent - 1;
         _decimalSep = decimalSep;
         _thousandSep = thousandSep;
         _targetID = Long.parseLong(target);
