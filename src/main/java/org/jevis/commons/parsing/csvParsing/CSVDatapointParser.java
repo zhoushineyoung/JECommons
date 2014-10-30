@@ -14,7 +14,7 @@ import org.jevis.commons.parsing.inputHandler.InputHandler;
  *
  * @author broder
  */
-public class MappingCSVParser implements GeneralMappingParser {
+public class CSVDatapointParser implements GeneralMappingParser {
 
     private boolean _inCSV;
     private int _indexDatapoint;
@@ -22,14 +22,34 @@ public class MappingCSVParser implements GeneralMappingParser {
     private boolean _mappingIsSuccessfull;
     private String _mappingValue;
     private boolean _isValid;
+    private int _valueIndex;
+    private boolean _valueValid;
+    private boolean _outofBounce;
+    private String _decimalSep;
+    private String _thousandSep;
+    private double _value;
+    private long _targetID;
 
-    public MappingCSVParser(boolean incsv, Long datapoint, String mappingValue, Integer indexDatapoint) {
+    public CSVDatapointParser(boolean incsv, Long datapoint, String mappingValue, Integer indexDatapoint) {
         _inCSV = incsv;
         if (indexDatapoint != null) {
             _indexDatapoint = indexDatapoint - 1;
         }
         _mappingValue = mappingValue;
         _datapoint = datapoint;
+
+    }
+
+    CSVDatapointParser(Long datapointID, Integer indexDatapoint, String target, String mappingIdentifier, String valueIdentifier, String decimalSep, String thousandSep) {
+        if (indexDatapoint != null) {
+            _indexDatapoint = indexDatapoint;
+        }
+        _mappingValue = mappingIdentifier;
+        _datapoint = datapointID;
+        _valueIndex = Integer.parseInt(valueIdentifier);
+        _decimalSep = decimalSep;
+        _thousandSep = thousandSep;
+        _targetID = Long.parseLong(target);
     }
 
     public int getDatapointIndex() {
@@ -62,6 +82,26 @@ public class MappingCSVParser implements GeneralMappingParser {
             _isValid = false;
             Logger.getLogger(this.getClass().getName()).log(Level.WARN, "Date not valud in line: " + line);
         }
+
+
+        _valueValid = false;
+        _outofBounce = false;
+        String sVal = null;
+        try {
+            sVal = line[_valueIndex];
+            if (_thousandSep != null && !_thousandSep.equals("")) {
+                sVal = sVal.replaceAll("\\" + _thousandSep, "");
+            }
+            if (_decimalSep != null && !_decimalSep.equals("")) {
+                sVal = sVal.replaceAll("\\" + _decimalSep, ".");
+            }
+            _value = Double.parseDouble(sVal);
+            _valueValid = true;
+        } catch (NumberFormatException nfe) {
+//            System.out.println("Value is wrong " + sVal);
+        } catch (ArrayIndexOutOfBoundsException oob) {
+            _outofBounce = true;
+        }
     }
 
     @Override
@@ -77,5 +117,17 @@ public class MappingCSVParser implements GeneralMappingParser {
     @Override
     public boolean isValueValid() {
         return _isValid;
+    }
+
+    public boolean outOfBounce() {
+        return _outofBounce;
+    }
+    
+    public double getValue(){
+        return _value;
+    }
+
+    public Long getTarget() {
+        return _targetID;
     }
 }

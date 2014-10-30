@@ -14,9 +14,9 @@ public interface JEVisTypes {
 
         public final static String NAME = "Data Server";
         public static String SINGLE_CONNECTION = "Single Reader";
-        public static String TIMEZONE = "Timezone";
         public static String STARTDATE = "Start Data Collecting";
         public static String STARTDATEFORMAT = "Start Date Format";
+        public static String TIMEZONE = "Timezone";
     }
 
     interface Parser {
@@ -24,16 +24,26 @@ public interface JEVisTypes {
         public final static String NAME = "Parser";
         public final static String PARSER_DATE = "Date";
         public final static String PARSER_VALUE = "Value";
+        public final static String DATE_FORMAT = "Date Format";
+        public final static String DECIMAL_SEPERATOR = "Decimal Seperator";
+        public final static String TIME_FORMAT = "Time Format";
+        public final static String THOUSAND_SEPERATOR = "Thousand Seperator";
 
         interface CSVParser extends Parser {
 
-            public final static String NAME = "CSV";
+            public final static String NAME = "CSV Parser";
             public final static String CSV_QUOTE = "Quote";
             public final static String CSV_DELIM = "Delimiter";
             public final static String CSV_HEADERLINES = "Number Of Headerlines";
             public final static String MAPPING_CSV_DPINDEX = "Datapoint Index";
             public final static String DATE_CSV_TIMEINDEX = "Time Index";
             public final static String DATE_CSV_DATEINDEX = "Date Index";
+            public final static String DATAPOINT_INDEX = "Datapoint Index";
+            public final static String DATE_INDEX = "Date Index";
+            public final static String DELIMITER = "Delimiter";
+            public final static String NUMBER_HEADLINES = "Number Of Headlines";
+            public final static String QUOTE = "Quote";
+            public final static String TIME_INDEX = "Time Index";
         }
 
         interface XMLParser extends Parser {
@@ -106,6 +116,41 @@ public interface JEVisTypes {
         }
     }
 
+    interface DataServer {
+
+        public final static String NAME = "Data Server";
+        public final static String CONNECTION_TIMEOUT = "Connection Timeout";
+        public final static String HOST = "Host";
+        public final static String START_DATA_COLLECTING = "Start Data Collecting";
+        public final static String READ_TIMEOUT = "Read Timeout";
+        public final static String TIMEZONE = "Timezone";
+        public final static String PORT = "Port";
+
+        interface HTTP extends DataServer {
+
+            public final static String NAME = "HTTP Server";
+            public final static String PASSWORD = "Password";
+            public final static String SSL = "SSL";
+            public final static String USER = "User";
+        }
+
+        interface FTP extends DataServer {
+
+            public final static String NAME = "FTP Server";
+            public final static String PASSWORD = "Password";
+            public final static String SSL = "SSL";
+            public final static String USER = "User";
+        }
+
+        interface sFTP extends DataServer {
+
+            public final static String NAME = "sFTP Server";
+            public final static String PASSWORD = "Password";
+            public final static String SSL = "SSL";
+            public final static String USER = "User";
+        }
+    }
+
     interface DataPointDirectory {
 
         public final static String NAME = "Data Point Directory";
@@ -119,5 +164,12 @@ public interface JEVisTypes {
         public final static String ONLINE_ID = "OnlineID";
         public final static String VALUE_SPEC = "Value Specification";
         public final static String MAPPING_NECESSARY = "Mapping Necessary";
+        public final static String FILE_PATH = "File Path";
+        public final static String MAPPING_IDENTIFIER = "Mapping Identifier";
+        public final static String TARGET = "Target";
+        public final static String VALUE_IDENTIFIER = "Value Identifier";
+        public final static String DATE_FORMAT = "Date Format";
+        public final static String LAST_READOUT = "Last Readout";
+        public final static String PERIODICALLY_SAMPLING = "Periodically Sampling";
     }
 }

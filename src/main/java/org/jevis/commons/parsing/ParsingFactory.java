@@ -17,7 +17,7 @@ import org.jevis.commons.parsing.csvParsing.CSVParsing;
  */
 public class ParsingFactory {
 
-    private static final String CSV_PARSER = ("CSV");
+    private static final String CSV_PARSER = ("CSV Parser");
     private static final String CSV_MULTI_TIME_PARSER = ("CSV Multi Time");
     private static final String CSV_MULTI_DATA_PARSER = ("CSV Multi Data");
     private static final String MULTI_DATA_PARSER = ("Multi Data");
@@ -44,7 +44,7 @@ public class ParsingFactory {
         GenericParser parsing = null;
         String identifier = parsingObject.getJEVisClass().getName();
         org.apache.log4j.Logger.getLogger(ParsingFactory.class.getName()).log(org.apache.log4j.Level.INFO, identifier +" Parser");
-        if (identifier.equals(CSV_PARSER)) {
+        if (identifier.equals(JEVisTypes.Parser.CSVParser.NAME)) {
             parsing = new CSVParsing();
         } else if (identifier.equals(CSV_MULTI_TIME_PARSER)) {
 // parsing = new MultipleDataCoherentTimeCSV();

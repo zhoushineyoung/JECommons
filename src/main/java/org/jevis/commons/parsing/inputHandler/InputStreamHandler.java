@@ -29,6 +29,19 @@ public class InputStreamHandler extends InputHandler {
 
     @Override
     public void convertInput() {
+//        byte[] contents = new byte[1024];
+//
+//        int bytesRead = 0;
+//        String strFileContents = null;
+//        try {
+//            while ((bytesRead = ((InputStream) _rawInput).read(contents)) != -1) {
+//                strFileContents = new String(contents, 0, bytesRead);
+//            }
+//        } catch (IOException ex) {
+//            Logger.getLogger(InputStreamHandler.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        System.out.print(strFileContents);
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
         byte[] buffer = new byte[1024];

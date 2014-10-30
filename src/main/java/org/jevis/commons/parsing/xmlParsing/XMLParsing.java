@@ -237,4 +237,10 @@ public class XMLParsing extends GenericParser {
         }
         return valueParser;
     }
+
+    @Override
+    public void addDataPointParser(Long datapointID, String target, String mappingIdentifier, String valueIdentifier) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

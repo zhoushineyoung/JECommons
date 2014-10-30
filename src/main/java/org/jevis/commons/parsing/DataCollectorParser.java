@@ -25,4 +25,8 @@ public interface DataCollectorParser {
     public List<SampleParserContainer> getSampleParserContianers();
     
     public JEVisObject getJEVisParser();
+    
+    public void addDataPointParser(Long datapointID, String target, String mappingIdentifier, String valueIdentifier);
+
+
 }

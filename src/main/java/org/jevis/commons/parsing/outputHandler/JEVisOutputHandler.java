@@ -68,8 +68,7 @@ public class JEVisOutputHandler extends OutputHandler {
                 }
                 List<JEVisSample> samples = onlineToSampleMap.get(onlineData);
                 DateTime convertedDate = TimeConverter.convertTime(request.getTimezone(), s.getDate());
-//                JEVisSample sample = onlineData.getAttribute("Raw Data").buildSample(convertedDate, s.getValue());
-                JEVisSample sample = onlineData.getAttribute("Raw Data").buildSample(convertedDate, s.getValue(), "Imported by JEVisDataCollector");
+                JEVisSample sample = onlineData.getAttribute("Value").buildSample(convertedDate, s.getValue(), "Imported by JEVisDataCollector");
                 samples.add(sample);
             }
 
@@ -77,7 +76,7 @@ public class JEVisOutputHandler extends OutputHandler {
                 List<JEVisSample> samples = onlineToSampleMap.get(o);
                 Logger.getLogger(JEVisOutputHandler.class.getName()).log(Level.INFO, "ID: " + o.getID());
                 Logger.getLogger(JEVisOutputHandler.class.getName()).log(Level.INFO, "Number of imported Samples: " + samples.size());
-                o.getAttribute("Raw Data").addSamples(samples);
+                o.getAttribute("Value").addSamples(samples);
             }
         } catch (JEVisException ex) {
             Logger.getLogger(JEVisOutputHandler.class.getName()).log(Level.ERROR, null, ex);
