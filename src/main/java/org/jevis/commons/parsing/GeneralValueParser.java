@@ -15,6 +15,4 @@ public interface GeneralValueParser extends GeneralParser {
     public String getThousandSeperator();
 
     public String getDecimalSeperator();
-
-    public boolean isValueValid();
 }

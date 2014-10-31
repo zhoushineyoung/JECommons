@@ -11,7 +11,8 @@ import org.jevis.api.JEVisClass;
 import org.jevis.api.JEVisException;
 import org.jevis.api.JEVisObject;
 import org.jevis.api.JEVisType;
-import org.jevis.commons.parsing.DataCollectorParser;
+import org.jevis.commons.JEVisTypes;
+import org.jevis.commons.parsing.GenericParser;
 import org.jevis.commons.parsing.GeneralDateParser;
 import org.jevis.commons.parsing.GeneralMappingParser;
 import org.jevis.commons.parsing.GeneralValueParser;
@@ -31,7 +32,7 @@ import org.w3c.dom.NodeList;
  *
  * @author bf
  */
-public class XMLParsing extends DataCollectorParser {
+public class XMLParsing extends GenericParser {
 
     private String _generalTag;
     private String _specificationTag;
@@ -108,9 +109,9 @@ public class XMLParsing extends DataCollectorParser {
         _jevisParser = parser;
         try {
             JEVisClass jeClass = parser.getJEVisClass();
-            JEVisType generalTag = jeClass.getType(JEVisParsingAttributes.XML_GENERAL_TAG);
-            JEVisType specificationTag = jeClass.getType(JEVisParsingAttributes.XML_SPECIFICATION_TAG);
-            JEVisType specificationIsAttribute = jeClass.getType(JEVisParsingAttributes.XML_SPECIFICATION_ATTRIBUTE);
+            JEVisType generalTag = jeClass.getType(JEVisTypes.Parser.XMLParser.XML_GENERAL_TAG);
+            JEVisType specificationTag = jeClass.getType(JEVisTypes.Parser.XMLParser.XML_SPECIFICATION_TAG);
+            JEVisType specificationIsAttribute = jeClass.getType(JEVisTypes.Parser.XMLParser.XML_SPECIFICATION_ATTRIBUTE);
 
             _generalTag = parser.getAttribute(generalTag).getLatestSample().getValueAsString();
 
@@ -133,12 +134,12 @@ public class XMLParsing extends DataCollectorParser {
             JEVisClass dateClass = dateObject.getJEVisClass();
             System.out.println("Dateobjectid " + dateObject.getID());
 
-            JEVisType dateFormatType = dateClass.getType(JEVisParsingAttributes.DATE_DATEFORMAT);
-            JEVisType dateTagType = dateClass.getType(JEVisParsingAttributes.XML_DATE_TAG);
-            JEVisType dateInAttributeType = dateClass.getType(JEVisParsingAttributes.XML_DATE_ATTRIBUTE);
-            JEVisType timeFormatType = dateClass.getType(JEVisParsingAttributes.DATE_TIMEFORMAT);
-            JEVisType timeTagType = dateClass.getType(JEVisParsingAttributes.XML_TIME_TAG);
-            JEVisType timeInAttributeType = dateClass.getType(JEVisParsingAttributes.XML_TIME_ATTRIBUTE);
+            JEVisType dateFormatType = dateClass.getType(JEVisTypes.Date.DATE_DATEFORMAT);
+            JEVisType dateTagType = dateClass.getType(JEVisTypes.Parser.XMLParser.XML_DATE_TAG);
+            JEVisType dateInAttributeType = dateClass.getType(JEVisTypes.Parser.XMLParser.XML_DATE_ATTRIBUTE);
+            JEVisType timeFormatType = dateClass.getType(JEVisTypes.Date.DATE_TIMEFORMAT);
+            JEVisType timeTagType = dateClass.getType(JEVisTypes.Parser.XMLParser.XML_TIME_TAG);
+            JEVisType timeInAttributeType = dateClass.getType(JEVisTypes.Parser.XMLParser.XML_TIME_ATTRIBUTE);
 
             String dateFormat = dateObject.getAttribute(dateFormatType).getLatestSample().getValueAsString();
             System.out.println("Dateformat" + dateFormat);
@@ -169,10 +170,10 @@ public class XMLParsing extends DataCollectorParser {
         try {
             //Mappingclass
             JEVisClass mappingClass = mapping.getJEVisClass();
-            JEVisType indexValueType = mappingClass.getType(JEVisParsingAttributes.MAPPING_VALUE_SPECIFICATION);
+            JEVisType indexValueType = mappingClass.getType(JEVisTypes.DataPoint.VALUE_SPEC);
             //            JEVisType indexDatapointType = mappingClass.getType("Index Datapoint");
             //            JEVisType datapointInFileType = mappingClass.getType("infile");
-            JEVisType datapointType = mappingClass.getType(JEVisParsingAttributes.MAPPING_ONLINEID);
+            JEVisType datapointType = mappingClass.getType(JEVisTypes.DataPoint.ONLINE_ID);
 
             String valueSpecification = null;
             if (mapping.getAttribute(indexValueType) != null) {
@@ -206,14 +207,14 @@ public class XMLParsing extends DataCollectorParser {
         try {
             //get the index from the mapping object
             JEVisClass mappingClass = mapping.getJEVisClass();
-            JEVisType indexValueType = mappingClass.getType(JEVisParsingAttributes.MAPPING_VALUE_SPECIFICATION);
+            JEVisType indexValueType = mappingClass.getType(JEVisTypes.DataPoint.VALUE_SPEC);
             //            JEVisType indexDatapointType = mappingClass.getType("Index Datapoint");
             //            JEVisType datapointInFileType = mappingClass.getType("infile");
             String valueSpecification = null;
             if (mapping.getAttribute(indexValueType) != null) {
                 valueSpecification = mapping.getAttribute(indexValueType).getLatestSample().getValueAsString();
             }
-            JEVisType valueInAttributeType = mappingClass.getType(JEVisParsingAttributes.XML_VALUE_ATTRIBUTE);
+            JEVisType valueInAttributeType = mappingClass.getType(JEVisTypes.Parser.XMLParser.XML_VALUE_ATTRIBUTE);
             //            JEVisType indexDatapointType = mappingClass.getType("Index Datapoint");
             //            JEVisType datapointInFileType = mappingClass.getType("infile");
             boolean valueInAttribute = false;
@@ -223,8 +224,8 @@ public class XMLParsing extends DataCollectorParser {
 
             //ValueObject
             JEVisClass valueClass = valueObject.getJEVisClass();
-            JEVisType seperatorDecimalType = valueClass.getType(JEVisParsingAttributes.VALUE_DECIMSEPERATOR);
-            JEVisType seperatorThousandType = valueClass.getType(JEVisParsingAttributes.VALUE_THOUSANDSEPERATOR);
+            JEVisType seperatorDecimalType = valueClass.getType(JEVisTypes.Value.VALUE_DECIMSEPERATOR);
+            JEVisType seperatorThousandType = valueClass.getType(JEVisTypes.Value.VALUE_THOUSANDSEPERATOR);
 
             String seperatorDecimal = valueObject.getAttribute(seperatorDecimalType).getLatestSample().getValueAsString();
             System.out.println("sepDecimal" + seperatorDecimal);
@@ -236,4 +237,10 @@ public class XMLParsing extends DataCollectorParser {
         }
         return valueParser;
     }
+
+    @Override
+    public void addDataPointParser(Long datapointID, String target, String mappingIdentifier, String valueIdentifier) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

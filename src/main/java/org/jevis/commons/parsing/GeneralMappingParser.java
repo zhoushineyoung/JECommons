@@ -12,7 +12,7 @@ public interface GeneralMappingParser extends GeneralParser{
 
     public boolean isInFile();
 
-    public long getDatapoint();
+    public Long getDatapoint();
     
     public String getMappingValue();
     

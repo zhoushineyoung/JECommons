@@ -5,7 +5,7 @@
 package org.jevis.commons.parsing.inputHandler;
 
 import java.io.File;
-import java.util.LinkedList;
+import java.io.InputStream;
 import java.util.List;
 import javax.xml.soap.SOAPMessage;
 
@@ -16,6 +16,7 @@ import javax.xml.soap.SOAPMessage;
 public class InputHandlerFactory {
 
     public static InputHandler getInputConverter(Object input) {
+        System.out.println("class," + input.getClass().toString());
         if (input instanceof List) {
             List tmp = (List) input;
             if (tmp.isEmpty()) {
@@ -40,6 +41,10 @@ public class InputHandlerFactory {
         }
         if (input instanceof File) {
             return new FileInputHandler((File) input);
+        }
+        if (input instanceof InputStream) {
+            System.out.println("This is a inputstream!!!!!");
+            return new InputStreamHandler((InputStream) input);
         }
         return null;
 

@@ -12,17 +12,17 @@ import org.joda.time.DateTime;
  */
 public class Result implements Comparable<Result> {
 
-    private double _value;
+    private Double _value;
     private DateTime _date;
-    private long _datapoint;
+    private Long _datapoint;
 
-    public Result(long datapoint, double val, DateTime date) {
+    public Result(Long datapoint, Double val, DateTime date) {
         _datapoint = datapoint;
         _value = val;
         _date = date;
     }
 
-    public double getValue() {
+    public Double getValue() {
         return _value;
     }
 
@@ -30,7 +30,7 @@ public class Result implements Comparable<Result> {
         return _date;
     }
 
-    public long getOnlineID() {
+    public Long getOnlineID() {
         return _datapoint;
     }
 

@@ -34,6 +34,7 @@ public class JEVisCommandLine {
     private static String CONFIG = "jevis-config";
     private static String HELP = "help";
     private static String DEBUG = "debug";
+    private boolean _isUsed = false;
 
     private JEVisCommandLine() {
         _options = new Options();
@@ -115,5 +116,12 @@ public class JEVisCommandLine {
     public Level getDebugLevel() {
         String optionValue = _cmd.getOptionValue("debug", "WARN");
         return Level.toLevel(optionValue.toUpperCase());
+    }
+    public void setIsUsed(boolean isUsed){
+        _isUsed = isUsed;
+    }
+    
+    public boolean isUsed(){
+        return _isUsed;
     }
 }
