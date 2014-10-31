@@ -21,7 +21,7 @@ public class FileInputHandler extends InputHandler {
     //input is file
     @Override
     public void convertInput() {
-         System.out.println("--Convert Array Input--");
+        System.out.println("--Convert Array Input--");
         try {
             File file = (File) _rawInput;
             FileReader reader = null;
