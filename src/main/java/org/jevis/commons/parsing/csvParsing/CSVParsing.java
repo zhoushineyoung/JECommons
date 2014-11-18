@@ -55,7 +55,20 @@ public class CSVParsing extends GenericParser {
         _timeIndex = -1;
     }
 
-    //this should be easier.. perhaps with a JEObject?
+    public CSVParsing(String quote, String delim, Integer headerlines, Integer dateIndex, Integer timeIndex, Integer dpIndex, String dateFormat, String timeFormat, String decimalSep, String thousandSep) {
+        _quote = quote;
+        _delim = delim;
+        _headerLines = headerlines;
+        _dateIndex = dateIndex;
+        _timeIndex = timeIndex;
+        _dpIndex = dpIndex;
+        _dateFormat = dateFormat;
+        _timeFormat = timeFormat;
+        _decimalSeperator = decimalSep;
+        _thousandSeperator = thousandSep;
+    }
+
+//this should be easier.. perhaps with a JEObject?
     public void setQuote(String q) {
         _quote = q;
     }
@@ -105,12 +118,10 @@ public class CSVParsing extends GenericParser {
                     datapoint = dpParser.getTarget();
                     value = dpParser.getValue();
 
-
                     if (dpParser.outOfBounce()) {
                         Logger.getLogger(this.getClass().getName()).log(Level.WARN, "Date for value out of bounce: " + dateTime);
                         Logger.getLogger(this.getClass().getName()).log(Level.WARN, "Value out of bounce: " + value);
                     }
-
 
                     Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Parsed DP" + datapoint);
                     Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Parsed value" + value);
@@ -186,8 +197,6 @@ public class CSVParsing extends GenericParser {
             _thousandSeperator = DatabaseHelper.getObjectAsString(parserObject, thousandSeperatorType);
             Logger.getLogger(this.getClass().getName()).log(Level.ALL, "ThousandSeperator: " + _thousandSeperator);
 
-
-
         } catch (JEVisException ex) {
             Logger.getLogger(CSVParsing.class
                     .getName()).log(Level.ERROR, null, ex);
@@ -206,16 +215,13 @@ public class CSVParsing extends GenericParser {
             String date = DatabaseHelper.getObjectAsString(dateObject, dateFormatType);
             Logger
                     .getLogger(CSVParsing.class
-                    .getName()).log(Level.ALL, "date Value: " + date);
+                            .getName()).log(Level.ALL, "date Value: " + date);
 
             String time = DatabaseHelper.getObjectAsString(dateObject, timeFormatType);
 
             Logger.getLogger(CSVParsing.class
                     .getName()).log(Level.ALL, "time Value: " + time);
 //            DateTimeZone timezone = DateTimeZone.forTimeZone(TimeZone.getTimeZone(dateObject.getAttribute(timeZoneType).getLatestSample().getValueAsString()));
-
-
-
 
             dateParser = new DateCSVParser(time, _timeIndex, date, _dateIndex);
         } catch (JEVisException ex) {
@@ -240,7 +246,6 @@ public class CSVParsing extends GenericParser {
             int indexValue = -1;
             if (mappingObject.getAttribute(indexValueType) != null) {
                 indexValue = (int) (long) mappingObject.getAttribute(indexValueType).getLatestSample().getValueAsLong();
-
 
             }
             Logger.getLogger(CSVParsing.class
