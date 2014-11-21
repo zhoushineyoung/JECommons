@@ -50,7 +50,9 @@ public class CSVDatapointParser implements GeneralMappingParser {
         _valueIndex = valuIdent - 1;
         _decimalSep = decimalSep;
         _thousandSep = thousandSep;
-        _targetID = Long.parseLong(target);
+        if (target != null) {
+            _targetID = Long.parseLong(target);
+        }
     }
 
     public int getDatapointIndex() {
@@ -123,8 +125,8 @@ public class CSVDatapointParser implements GeneralMappingParser {
     public boolean outOfBounce() {
         return _outofBounce;
     }
-    
-    public double getValue(){
+
+    public double getValue() {
         return _value;
     }
 

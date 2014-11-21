@@ -40,6 +40,7 @@ public abstract class InputHandler implements Iterable<Object> {
     private Node _xmlInput;
     protected List<Document> _document;
     private Object _tmpInput;
+    private String _filePath;
 
     public InputHandler(Object rawInput) {
         _inputStream = new ArrayList<InputStream>();
@@ -158,5 +159,14 @@ public abstract class InputHandler implements Iterable<Object> {
 
         }
         return _document;
+    }
+
+    public void setFilePath(String fileName) {
+        _filePath = fileName;
+    }
+
+    
+    public String getFilePath() {
+        return _filePath;
     }
 }
