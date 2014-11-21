@@ -59,9 +59,15 @@ public class CSVParsing extends GenericParser {
         _quote = quote;
         _delim = delim;
         _headerLines = headerlines;
-        _dateIndex = dateIndex;
-        _timeIndex = timeIndex;
-        _dpIndex = dpIndex;
+        if (dateIndex != null) {
+            _dateIndex = dateIndex - 1;
+        }
+        if (timeIndex != null) {
+            _timeIndex = timeIndex - 1;
+        }
+        if (dpIndex != null) {
+            _dpIndex = dpIndex - 1;
+        }
         _dateFormat = dateFormat;
         _timeFormat = timeFormat;
         _decimalSeperator = decimalSep;
@@ -215,7 +221,7 @@ public class CSVParsing extends GenericParser {
             String date = DatabaseHelper.getObjectAsString(dateObject, dateFormatType);
             Logger
                     .getLogger(CSVParsing.class
-                            .getName()).log(Level.ALL, "date Value: " + date);
+                    .getName()).log(Level.ALL, "date Value: " + date);
 
             String time = DatabaseHelper.getObjectAsString(dateObject, timeFormatType);
 
