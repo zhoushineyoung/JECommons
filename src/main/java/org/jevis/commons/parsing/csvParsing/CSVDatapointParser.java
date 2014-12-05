@@ -122,14 +122,17 @@ public class CSVDatapointParser implements GeneralMappingParser {
         return _isValid;
     }
 
+    @Override
     public boolean outOfBounce() {
         return _outofBounce;
     }
 
+    @Override
     public double getValue() {
         return _value;
     }
 
+    @Override
     public Long getTarget() {
         return _targetID;
     }

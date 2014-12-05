@@ -12,12 +12,12 @@ import org.jevis.commons.parsing.inputHandler.InputHandler;
  *
  * @author bf
  */
-public class DatapointFixXMLParsing implements GeneralMappingParser {
+public class XMLDatapointParser implements GeneralMappingParser {
 
     private boolean _isInFile;
     private Long _datapoint;
 
-    public DatapointFixXMLParsing(boolean incsv, Long datapoint) {
+    public XMLDatapointParser(boolean incsv, Long datapoint) {
         _isInFile = incsv;
         _datapoint = datapoint;
     }
@@ -49,6 +49,21 @@ public class DatapointFixXMLParsing implements GeneralMappingParser {
 
     @Override
     public boolean isValueValid() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean outOfBounce() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public double getValue() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public Long getTarget() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

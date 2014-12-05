@@ -46,10 +46,10 @@ public abstract class GenericParser implements DataCollectorParser {
         _sampleParsers.add(parser);
     }
 
-    @Override
-    public List<SampleParserContainer> getSampleParserContianers() {
-        return _sampleParsers;
-    }
+//    @Override
+//    public List<SampleParserContainer> getSampleParserContianers() {
+//        return _sampleParsers;
+//    }
 
     @Override
     public List<Result> getResults() {
@@ -87,39 +87,39 @@ public abstract class GenericParser implements DataCollectorParser {
      *
      * @param parser
      */
-    public void createSampleContainers(JEVisObject parser, List<JEVisObject> datapoints) {
-        try {
-            List<JEVisObject> mappingObjects = datapoints;
-            List<JEVisObject> dateObjects = parser.getChildren(parser.getDataSource().getJEVisClass(JEVisTypes.Date.NAME), true);
-            List<JEVisObject> valueObjects = parser.getChildren(parser.getDataSource().getJEVisClass(JEVisTypes.Value.NAME), true);
-
-            JEVisObject dateObject = null;
-            JEVisObject valueObject = null;
-            if (dateObjects.size() == 1 && valueObjects.size() == 1) {
-                dateObject = dateObjects.get(0);
-                valueObject = valueObjects.get(0);
-            } else {
-                System.out.println("more than one dateobject or valueobject"); //should be an exception
-            }
-
-            GeneralDateParser dateParser = null;
-            GeneralValueParser valueParser = null;
-            GeneralMappingParser datapointParser = null;
-            for (JEVisObject o : mappingObjects) {
-                datapointParser = initializeDatapointParser(dateObject, valueObject, o);
-                dateParser = initializeDateParser(dateObject, valueObject, o);
-                valueParser = initializeValueParser(dateObject, valueObject, o);
-                _sampleParsers.add(new SampleParserContainer(datapointParser, dateParser, valueParser));
-            }
-        } catch (JEVisException ex) {
-            Logger.getLogger(GenericParser.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
+//    public void createSampleContainers(JEVisObject parser, List<JEVisObject> datapoints) {
+//        try {
+//            List<JEVisObject> mappingObjects = datapoints;
+//            List<JEVisObject> dateObjects = parser.getChildren(parser.getDataSource().getJEVisClass(JEVisTypes.Date.NAME), true);
+//            List<JEVisObject> valueObjects = parser.getChildren(parser.getDataSource().getJEVisClass(JEVisTypes.Value.NAME), true);
+//
+//            JEVisObject dateObject = null;
+//            JEVisObject valueObject = null;
+//            if (dateObjects.size() == 1 && valueObjects.size() == 1) {
+//                dateObject = dateObjects.get(0);
+//                valueObject = valueObjects.get(0);
+//            } else {
+//                System.out.println("more than one dateobject or valueobject"); //should be an exception
+//            }
+//
+//            GeneralDateParser dateParser = null;
+//            GeneralValueParser valueParser = null;
+//            GeneralMappingParser datapointParser = null;
+//            for (JEVisObject o : mappingObjects) {
+//                datapointParser = initializeDatapointParser(dateObject, valueObject, o);
+//                dateParser = initializeDateParser(dateObject, valueObject, o);
+//                valueParser = initializeValueParser(dateObject, valueObject, o);
+//                _sampleParsers.add(new SampleParserContainer(datapointParser, dateParser, valueParser));
+//            }
+//        } catch (JEVisException ex) {
+//            Logger.getLogger(GenericParser.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//    }
 
 //    abstract public SampleParserContainer extractSampleContainer(JEVisObject mapping, JEVisObject dateObject, JEVisObject valueObject);
-    abstract public GeneralDateParser initializeDateParser(JEVisObject dateObject, JEVisObject valueObject, JEVisObject datapointObject);
+//    abstract public GeneralDateParser initializeDateParser(JEVisObject dateObject, JEVisObject valueObject, JEVisObject datapointObject);
 
-    abstract public GeneralMappingParser initializeDatapointParser(JEVisObject dateObject, JEVisObject valueObject, JEVisObject datapointObject);
+//    abstract public GeneralMappingParser initializeDatapointParser(JEVisObject dateObject, JEVisObject valueObject, JEVisObject datapointObject);
 
-    abstract public GeneralValueParser initializeValueParser(JEVisObject dateObject, JEVisObject valueObject, JEVisObject datapointObject);
+//    abstract public GeneralValueParser initializeValueParser(JEVisObject dateObject, JEVisObject valueObject, JEVisObject datapointObject);
 }

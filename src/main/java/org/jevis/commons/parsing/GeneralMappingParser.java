@@ -8,13 +8,19 @@ package org.jevis.commons.parsing;
  *
  * @author broder
  */
-public interface GeneralMappingParser extends GeneralParser{
+public interface GeneralMappingParser extends GeneralParser {
 
     public boolean isInFile();
 
     public Long getDatapoint();
-    
+
     public String getMappingValue();
-    
+
     public boolean isMappingSuccessfull();
+
+    public boolean outOfBounce();
+
+    public double getValue();
+
+    public Long getTarget();
 }

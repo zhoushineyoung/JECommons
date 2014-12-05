@@ -4,6 +4,7 @@
  */
 package org.jevis.commons.parsing.xmlParsing;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -16,15 +17,10 @@ import org.jevis.commons.parsing.GenericParser;
 import org.jevis.commons.parsing.GeneralDateParser;
 import org.jevis.commons.parsing.GeneralMappingParser;
 import org.jevis.commons.parsing.GeneralValueParser;
-import org.jevis.commons.parsing.JEVisParsingAttributes;
 import org.jevis.commons.parsing.Result;
-import org.jevis.commons.parsing.SampleParserContainer;
-import org.jevis.commons.parsing.ValuePolicy;
-import org.jevis.commons.parsing.csvParsing.CSVParsing;
 import org.jevis.commons.parsing.inputHandler.InputHandler;
 import org.joda.time.DateTime;
 import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -37,6 +33,7 @@ public class XMLParsing extends GenericParser {
     private String _generalTag;
     private String _specificationTag;
     private Boolean _specificationInAttribute;
+    private List<XMLDatapointParser> _datapointParsers = new ArrayList<XMLDatapointParser>();
 
     public XMLParsing(String generalTag, String specificationTag, Boolean specificationInAttribute) {
         _generalTag = generalTag;
@@ -59,42 +56,23 @@ public class XMLParsing extends GenericParser {
 
                 //single parsing
                 boolean isCorrectNode = true; //eigentl false
-                DateTime dateTime;
-                Double value;
-                Long datapoint;
-                if (_specificationTag == null) {
-                    //should only be one sample parser
-                    for (SampleParserContainer parser : _sampleParsers) {
-                        GeneralDateParser dateParser = parser.getDateParser();
-                        dateParser.parse(ic);
-                        dateTime = dateParser.getDateTime();
-                        GeneralValueParser valueParser = parser.getValueParser();
-                        valueParser.parse(ic);
-                        value = valueParser.getValue();
-                        GeneralMappingParser dpParser = parser.getDpParser();
-                        dpParser.parse(ic);
-                        datapoint = dpParser.getDatapoint();
+                DateTime dateTime = null;
+                Double value = null;
+                Long datapoint = null;
+                for (XMLDatapointParser dpParser : _datapointParsers) {
+                    dpParser.parse(ic);
+                    datapoint = dpParser.getTarget();
+                    value = dpParser.getValue();
 
-                        //should be in an extra method
-                        boolean valueIsValid = ValuePolicy.checkValue(parser);
-                        if (!valueIsValid) {
-                            continue;
-                        }
+                    if (dpParser.outOfBounce()) {
+                        org.apache.log4j.Logger.getLogger(this.getClass().getName()).log(org.apache.log4j.Level.WARN, "Date for value out of bounce: " + dateTime);
+                        org.apache.log4j.Logger.getLogger(this.getClass().getName()).log(org.apache.log4j.Level.WARN, "Value out of bounce: " + value);
+                    }
 
-                        boolean datapointIsValid = ValuePolicy.checkDatapoint(parser);
-                        if (!datapointIsValid) {
-                            continue;
-                        }
-                        _results.add(new Result(datapoint, value, dateTime));
-                    }
-                } else {
-                    //multi parsing
-                    if (_specificationInAttribute) {
-                        NamedNodeMap attributes = currentNode.getAttributes();
-                        for (int j = 0; j < attributes.getLength(); j++) {
-                        }
-                    } else {
-                    }
+                    org.apache.log4j.Logger.getLogger(this.getClass().getName()).log(org.apache.log4j.Level.ALL, "Parsed DP" + datapoint);
+                    org.apache.log4j.Logger.getLogger(this.getClass().getName()).log(org.apache.log4j.Level.ALL, "Parsed value" + value);
+                    org.apache.log4j.Logger.getLogger(this.getClass().getName()).log(org.apache.log4j.Level.ALL, "Parsed date" + dateTime);
+                    _results.add(new Result(datapoint, value, dateTime));
                 }
 
                 //parse the correct node
@@ -123,124 +101,123 @@ public class XMLParsing extends GenericParser {
                 _specificationInAttribute = parser.getAttribute(specificationIsAttribute).getLatestSample().getValueAsBoolean();
             }
         } catch (JEVisException ex) {
-            Logger.getLogger(CSVParsing.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(XMLParsing.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    @Override
-    public GeneralDateParser initializeDateParser(JEVisObject dateObject, JEVisObject valueObject, JEVisObject mapping) {
-        DateXMLParsing dateParser = null;
-        try {
-            JEVisClass dateClass = dateObject.getJEVisClass();
-            System.out.println("Dateobjectid " + dateObject.getID());
-
-            JEVisType dateFormatType = dateClass.getType(JEVisTypes.Date.DATE_DATEFORMAT);
-            JEVisType dateTagType = dateClass.getType(JEVisTypes.Parser.XMLParser.XML_DATE_TAG);
-            JEVisType dateInAttributeType = dateClass.getType(JEVisTypes.Parser.XMLParser.XML_DATE_ATTRIBUTE);
-            JEVisType timeFormatType = dateClass.getType(JEVisTypes.Date.DATE_TIMEFORMAT);
-            JEVisType timeTagType = dateClass.getType(JEVisTypes.Parser.XMLParser.XML_TIME_TAG);
-            JEVisType timeInAttributeType = dateClass.getType(JEVisTypes.Parser.XMLParser.XML_TIME_ATTRIBUTE);
-
-            String dateFormat = dateObject.getAttribute(dateFormatType).getLatestSample().getValueAsString();
-            System.out.println("Dateformat" + dateFormat);
-            String dateTag = dateObject.getAttribute(dateTagType).getLatestSample().getValueAsString();
-            System.out.println("DateTag" + dateTag);
-            boolean dateInAttribute = dateObject.getAttribute(dateInAttributeType).getLatestSample().getValueAsBoolean();
-            System.out.println("DateInAttribute" + dateInAttribute);
-
-
-            String timeFormat = dateObject.getAttribute(timeFormatType).getLatestSample().getValueAsString();
-            System.out.println("Time" + timeFormat);
-            String timeTag = dateObject.getAttribute(timeTagType).getLatestSample().getValueAsString();
-            System.out.println("DateTag" + timeTag);
-            boolean timeInAttribute = dateObject.getAttribute(timeInAttributeType).getLatestSample().getValueAsBoolean();
-            System.out.println("DateInAttribute" + timeInAttribute);
-
-
-            dateParser = new DateXMLParsing(dateFormat, dateTag, dateInAttribute, timeFormat, timeTag, timeInAttribute);
-        } catch (JEVisException ex) {
-            Logger.getLogger(CSVParsing.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return dateParser;
-    }
-
-    @Override
-    public GeneralMappingParser initializeDatapointParser(JEVisObject date, JEVisObject value, JEVisObject mapping) {
-        GeneralMappingParser datapointParser = null;
-        try {
-            //Mappingclass
-            JEVisClass mappingClass = mapping.getJEVisClass();
-            JEVisType indexValueType = mappingClass.getType(JEVisTypes.DataPoint.VALUE_SPEC);
-            //            JEVisType indexDatapointType = mappingClass.getType("Index Datapoint");
-            //            JEVisType datapointInFileType = mappingClass.getType("infile");
-            JEVisType datapointType = mappingClass.getType(JEVisTypes.DataPoint.ONLINE_ID);
-
-            String valueSpecification = null;
-            if (mapping.getAttribute(indexValueType) != null) {
-                valueSpecification = mapping.getAttribute(indexValueType).getLatestSample().getValueAsString();
-            }
-            System.out.println("ValueSpecification" + valueSpecification);
-            //            int indexDatapoint = 0;
-            //            if (mapping.getAttribute(indexDatapointType) != null) {
-            //                indexDatapoint = Integer.parseInt((String) mapping.getAttribute(indexDatapointType).getLatestSample().getValue());
-            //            }
-            long datapoint = -1;
-            if (mapping.getAttribute(datapointType) != null) {
-                datapoint = mapping.getAttribute(datapointType).getLatestSample().getValueAsLong();
-            }
-            System.out.println("Datapoint" + datapoint);
-            //            boolean inFile = false;
-            //            if (mapping.getAttribute(datapointInFileType) != null) {
-            //                inFile = Boolean.parseBoolean((String) mapping.getAttribute(datapointInFileType).getLatestSample().getValue());
-            //            }
-            //entweder den einen oder den anderen Parser!!!!!
-            datapointParser = new DatapointFixXMLParsing(false, datapoint);
-        } catch (JEVisException ex) {
-            Logger.getLogger(CSVParsing.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return datapointParser;
-    }
-
-    @Override
-    public GeneralValueParser initializeValueParser(JEVisObject dateObject, JEVisObject valueObject, JEVisObject mapping) {
-        GeneralValueParser valueParser = null;
-        try {
-            //get the index from the mapping object
-            JEVisClass mappingClass = mapping.getJEVisClass();
-            JEVisType indexValueType = mappingClass.getType(JEVisTypes.DataPoint.VALUE_SPEC);
-            //            JEVisType indexDatapointType = mappingClass.getType("Index Datapoint");
-            //            JEVisType datapointInFileType = mappingClass.getType("infile");
-            String valueSpecification = null;
-            if (mapping.getAttribute(indexValueType) != null) {
-                valueSpecification = mapping.getAttribute(indexValueType).getLatestSample().getValueAsString();
-            }
-            JEVisType valueInAttributeType = mappingClass.getType(JEVisTypes.Parser.XMLParser.XML_VALUE_ATTRIBUTE);
-            //            JEVisType indexDatapointType = mappingClass.getType("Index Datapoint");
-            //            JEVisType datapointInFileType = mappingClass.getType("infile");
-            boolean valueInAttribute = false;
-            if (mapping.getAttribute(indexValueType) != null) {
-                valueInAttribute = mapping.getAttribute(valueInAttributeType).getLatestSample().getValueAsBoolean();
-            }
-
-            //ValueObject
-            JEVisClass valueClass = valueObject.getJEVisClass();
-            JEVisType seperatorDecimalType = valueClass.getType(JEVisTypes.Value.VALUE_DECIMSEPERATOR);
-            JEVisType seperatorThousandType = valueClass.getType(JEVisTypes.Value.VALUE_THOUSANDSEPERATOR);
-
-            String seperatorDecimal = valueObject.getAttribute(seperatorDecimalType).getLatestSample().getValueAsString();
-            System.out.println("sepDecimal" + seperatorDecimal);
-            String seperatorThousand = valueObject.getAttribute(seperatorThousandType).getLatestSample().getValueAsString();
-            System.out.println("sepThousand " + seperatorThousand);
-            valueParser = new ValueXMLParsing(valueSpecification, valueInAttribute, seperatorDecimal, seperatorThousand);
-        } catch (JEVisException ex) {
-            Logger.getLogger(CSVParsing.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return valueParser;
-    }
+//    @Override
+//    public GeneralDateParser initializeDateParser(JEVisObject dateObject, JEVisObject valueObject, JEVisObject mapping) {
+//        DateXMLParsing dateParser = null;
+//        try {
+//            JEVisClass dateClass = dateObject.getJEVisClass();
+//            System.out.println("Dateobjectid " + dateObject.getID());
+//
+//            JEVisType dateFormatType = dateClass.getType(JEVisTypes.Date.DATE_DATEFORMAT);
+//            JEVisType dateTagType = dateClass.getType(JEVisTypes.Parser.XMLParser.XML_DATE_TAG);
+//            JEVisType dateInAttributeType = dateClass.getType(JEVisTypes.Parser.XMLParser.XML_DATE_ATTRIBUTE);
+//            JEVisType timeFormatType = dateClass.getType(JEVisTypes.Date.DATE_TIMEFORMAT);
+//            JEVisType timeTagType = dateClass.getType(JEVisTypes.Parser.XMLParser.XML_TIME_TAG);
+//            JEVisType timeInAttributeType = dateClass.getType(JEVisTypes.Parser.XMLParser.XML_TIME_ATTRIBUTE);
+//
+//            String dateFormat = dateObject.getAttribute(dateFormatType).getLatestSample().getValueAsString();
+//            System.out.println("Dateformat" + dateFormat);
+//            String dateTag = dateObject.getAttribute(dateTagType).getLatestSample().getValueAsString();
+//            System.out.println("DateTag" + dateTag);
+//            boolean dateInAttribute = dateObject.getAttribute(dateInAttributeType).getLatestSample().getValueAsBoolean();
+//            System.out.println("DateInAttribute" + dateInAttribute);
+//
+//
+//            String timeFormat = dateObject.getAttribute(timeFormatType).getLatestSample().getValueAsString();
+//            System.out.println("Time" + timeFormat);
+//            String timeTag = dateObject.getAttribute(timeTagType).getLatestSample().getValueAsString();
+//            System.out.println("DateTag" + timeTag);
+//            boolean timeInAttribute = dateObject.getAttribute(timeInAttributeType).getLatestSample().getValueAsBoolean();
+//            System.out.println("DateInAttribute" + timeInAttribute);
+//
+//
+//            dateParser = new DateXMLParsing(dateFormat, dateTag, dateInAttribute, timeFormat, timeTag, timeInAttribute);
+//        } catch (JEVisException ex) {
+//            Logger.getLogger(XMLParsing.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        return dateParser;
+//    }
+//
+//    @Override
+//    public GeneralMappingParser initializeDatapointParser(JEVisObject date, JEVisObject value, JEVisObject mapping) {
+//        GeneralMappingParser datapointParser = null;
+//        try {
+//            //Mappingclass
+//            JEVisClass mappingClass = mapping.getJEVisClass();
+//            JEVisType indexValueType = mappingClass.getType(JEVisTypes.DataPoint.VALUE_SPEC);
+//            //            JEVisType indexDatapointType = mappingClass.getType("Index Datapoint");
+//            //            JEVisType datapointInFileType = mappingClass.getType("infile");
+//            JEVisType datapointType = mappingClass.getType(JEVisTypes.DataPoint.ONLINE_ID);
+//
+//            String valueSpecification = null;
+//            if (mapping.getAttribute(indexValueType) != null) {
+//                valueSpecification = mapping.getAttribute(indexValueType).getLatestSample().getValueAsString();
+//            }
+//            System.out.println("ValueSpecification" + valueSpecification);
+//            //            int indexDatapoint = 0;
+//            //            if (mapping.getAttribute(indexDatapointType) != null) {
+//            //                indexDatapoint = Integer.parseInt((String) mapping.getAttribute(indexDatapointType).getLatestSample().getValue());
+//            //            }
+//            long datapoint = -1;
+//            if (mapping.getAttribute(datapointType) != null) {
+//                datapoint = mapping.getAttribute(datapointType).getLatestSample().getValueAsLong();
+//            }
+//            System.out.println("Datapoint" + datapoint);
+//            //            boolean inFile = false;
+//            //            if (mapping.getAttribute(datapointInFileType) != null) {
+//            //                inFile = Boolean.parseBoolean((String) mapping.getAttribute(datapointInFileType).getLatestSample().getValue());
+//            //            }
+//            //entweder den einen oder den anderen Parser!!!!!
+//            datapointParser = new XMLDatapointParser(false, datapoint);
+//        } catch (JEVisException ex) {
+//            Logger.getLogger(XMLParsing.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        return datapointParser;
+//    }
+//
+//    @Override
+//    public GeneralValueParser initializeValueParser(JEVisObject dateObject, JEVisObject valueObject, JEVisObject mapping) {
+//        GeneralValueParser valueParser = null;
+//        try {
+//            //get the index from the mapping object
+//            JEVisClass mappingClass = mapping.getJEVisClass();
+//            JEVisType indexValueType = mappingClass.getType(JEVisTypes.DataPoint.VALUE_SPEC);
+//            //            JEVisType indexDatapointType = mappingClass.getType("Index Datapoint");
+//            //            JEVisType datapointInFileType = mappingClass.getType("infile");
+//            String valueSpecification = null;
+//            if (mapping.getAttribute(indexValueType) != null) {
+//                valueSpecification = mapping.getAttribute(indexValueType).getLatestSample().getValueAsString();
+//            }
+//            JEVisType valueInAttributeType = mappingClass.getType(JEVisTypes.Parser.XMLParser.XML_VALUE_ATTRIBUTE);
+//            //            JEVisType indexDatapointType = mappingClass.getType("Index Datapoint");
+//            //            JEVisType datapointInFileType = mappingClass.getType("infile");
+//            boolean valueInAttribute = false;
+//            if (mapping.getAttribute(indexValueType) != null) {
+//                valueInAttribute = mapping.getAttribute(valueInAttributeType).getLatestSample().getValueAsBoolean();
+//            }
+//
+//            //ValueObject
+//            JEVisClass valueClass = valueObject.getJEVisClass();
+//            JEVisType seperatorDecimalType = valueClass.getType(JEVisTypes.Value.VALUE_DECIMSEPERATOR);
+//            JEVisType seperatorThousandType = valueClass.getType(JEVisTypes.Value.VALUE_THOUSANDSEPERATOR);
+//
+//            String seperatorDecimal = valueObject.getAttribute(seperatorDecimalType).getLatestSample().getValueAsString();
+//            System.out.println("sepDecimal" + seperatorDecimal);
+//            String seperatorThousand = valueObject.getAttribute(seperatorThousandType).getLatestSample().getValueAsString();
+//            System.out.println("sepThousand " + seperatorThousand);
+//            valueParser = new ValueXMLParsing(valueSpecification, valueInAttribute, seperatorDecimal, seperatorThousand);
+//        } catch (JEVisException ex) {
+//            Logger.getLogger(XMLParsing.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        return valueParser;
+//    }
 
     @Override
     public void addDataPointParser(Long datapointID, String target, String mappingIdentifier, String valueIdentifier) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
 }
