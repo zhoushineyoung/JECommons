@@ -12,13 +12,12 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.commons.io.IOUtils;
+import org.joda.time.DateTime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -41,6 +40,8 @@ public abstract class InputHandler implements Iterable<Object> {
     protected List<Document> _document;
     private Object _tmpInput;
     private String _filePath;
+    protected String _filePattern;
+    protected DateTime _lastReadout;
 
     public InputHandler(Object rawInput) {
         _inputStream = new ArrayList<InputStream>();
@@ -155,8 +156,6 @@ public abstract class InputHandler implements Iterable<Object> {
             } catch (IOException ex) {
                 Logger.getLogger(InputHandler.class.getName()).log(Level.SEVERE, null, ex);
             }
-
-
         }
         return _document;
     }
@@ -164,9 +163,16 @@ public abstract class InputHandler implements Iterable<Object> {
     public void setFilePath(String fileName) {
         _filePath = fileName;
     }
-
     
+    public void setFilePattern(String filePattern){
+        _filePattern = filePattern;
+    }
+
     public String getFilePath() {
         return _filePath;
+    }
+    
+    public void setDateTime(DateTime lastReadout){
+        _lastReadout = lastReadout;
     }
 }
