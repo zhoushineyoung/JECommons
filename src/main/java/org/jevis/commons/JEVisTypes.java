@@ -125,6 +125,7 @@ public interface JEVisTypes {
         public final static String READ_TIMEOUT = "Read Timeout";
         public final static String TIMEZONE = "Timezone";
         public final static String PORT = "Port";
+        public final static String ENABLE = "Enabled";
 
         interface HTTP extends DataServer {
 
@@ -154,6 +155,13 @@ public interface JEVisTypes {
     interface DataPointDirectory {
 
         public final static String NAME = "Data Point Directory";
+        public final static String FOLDER = "Folder";
+
+        interface DataPointDirectoryCompressed extends DataPointDirectory {
+
+            public final static String NAME = "Data Point Directory Compressed";
+            public final static String ARCHIVE_FORMAT = "Archive Format";
+        }
     }
 
     interface DataPoint {

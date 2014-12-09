@@ -16,7 +16,6 @@ import org.jevis.commons.parsing.Result;
 import org.jevis.commons.parsing.SampleParserContainer;
 import org.jevis.commons.parsing.csvParsing.CSVParsing;
 import org.jevis.commons.parsing.csvParsing.DateCSVParser;
-import org.jevis.commons.parsing.csvParsing.MappingFixCSVParser;
 import org.jevis.commons.parsing.csvParsing.ValueCSVParser;
 import org.jevis.commons.parsing.inputHandler.FileInputHandler;
 import org.jevis.commons.parsing.inputHandler.InputHandler;
@@ -42,12 +41,9 @@ public class Test_ARA01 {
 
         GenericParser fileParser = new CSVParsing(null, ";", 2);
 
-        GeneralMappingParser datapointParser = new MappingFixCSVParser(false, 22l);
         GeneralDateParser dateParser = new DateCSVParser("HH:mm:ss", 2, "dd.MM.yyyy", 3);
         GeneralValueParser valueParser = new ValueCSVParser(1, ".", ",");
 
-        SampleParserContainer sampleContainer = new SampleParserContainer(datapointParser, dateParser, valueParser);
-        fileParser.addSampleContainer(sampleContainer);
 
         fileParser.parse(inputHandler);
 

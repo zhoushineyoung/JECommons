@@ -20,9 +20,9 @@ public interface DataCollectorParser {
 
     abstract public void initialize(JEVisObject equipment);
     
-    public void createSampleContainers(JEVisObject parser, List<JEVisObject> datapoints);
+//    public void createSampleContainers(JEVisObject parser, List<JEVisObject> datapoints);
     
-    public List<SampleParserContainer> getSampleParserContianers();
+//    public List<SampleParserContainer> getSampleParserContianers();
     
     public JEVisObject getJEVisParser();
     
