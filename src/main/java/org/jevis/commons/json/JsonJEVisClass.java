@@ -20,8 +20,17 @@
  */
 package org.jevis.commons.json;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.jevis.api.JEVisClass;
+import org.jevis.api.JEVisClassRelationship;
+import org.jevis.api.JEVisException;
+import org.jevis.api.JEVisType;
 
 /**
  *
@@ -34,8 +43,59 @@ public class JsonJEVisClass {
     private String description;
     private String inheritance;
     private boolean unique;
+    @XmlElementWrapper(name = "JsonType")
+    private List<JsonType> types;
+    @XmlElementWrapper(name = "JsonRelationship")
+    private List<JsonRelationship> relationships;
+    JEVisClass jclass;
 
     public JsonJEVisClass() {
+
+    }
+
+    public JsonJEVisClass(JEVisClass jclass) {
+        try {
+            name = jclass.getName();
+            description = jclass.getDescription();
+            if (jclass.getInheritance() != null) {
+                inheritance = jclass.getInheritance().getName();
+            }
+            unique = jclass.isUnique();
+
+            types = new ArrayList<>();
+            for (JEVisType type : jclass.getTypes()) {
+                types.add(new JsonType(type));
+            }
+
+            relationships = new ArrayList<>();
+            for (JEVisClassRelationship rel : jclass.getRelationships()) {
+                relationships.add(new JsonRelationship(rel));
+            }
+
+        } catch (JEVisException ex) {
+            Logger.getLogger(JsonJEVisClass.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @XmlElement(name = "relationships")
+    public List<JsonRelationship> getRelationships() {
+        return relationships;
+    }
+
+    @XmlElementWrapper(name = "JsonRelationship")
+    public void setRelationships(List<JsonRelationship> relationships) {
+        System.out.println("setrelationship: " + relationships);
+        this.relationships = relationships;
+    }
+
+    @XmlElement(name = "types")
+    public List<JsonType> getTypes() {
+        return types;
+    }
+
+    @XmlElementWrapper(name = "JsonType")
+    public void setTypes(List<JsonType> types) {
+        this.types = types;
     }
 
     @XmlElement(name = "name")

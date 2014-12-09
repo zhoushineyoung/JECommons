@@ -23,7 +23,6 @@ package org.jevis.commons.json;
 import java.util.ArrayList;
 import org.jevis.api.JEVisAttribute;
 import org.jevis.api.JEVisClass;
-import org.jevis.api.JEVisDataSource;
 import org.jevis.api.JEVisException;
 import org.jevis.api.JEVisObject;
 import org.jevis.api.JEVisRelationship;
@@ -81,8 +80,8 @@ public class JsonFactory {
 
     public static JsonRelationship buildRelationship(JEVisRelationship rel) throws JEVisException {
         JsonRelationship json = new JsonRelationship();
-        json.setStart(rel.getStartObject().getID());
-        json.setEnd(rel.getEndObject().getID());
+        json.setFrom(rel.getStartObject().getID().toString());
+        json.setTo(rel.getEndObject().getID().toString());
         json.setType(rel.getType());//or as String lile Link
         return json;
     }

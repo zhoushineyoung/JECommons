@@ -20,7 +20,11 @@
  */
 package org.jevis.commons.json;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlElement;
+import org.jevis.api.JEVisException;
+import org.jevis.api.JEVisType;
 
 /**
  *
@@ -36,6 +40,20 @@ public class JsonType {
     private String description;
 
     public JsonType() {
+    }
+
+    public JsonType(JEVisType jtype) {
+        try {
+            name = jtype.getName();
+            primitiveType = jtype.getPrimitiveType();
+            GUIDisplayType = jtype.getGUIDisplayType();
+            description = jtype.getDescription();
+            GUIPosition = jtype.getGUIPosition();
+
+        } catch (JEVisException ex) {
+            Logger.getLogger(JsonType.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
     @XmlElement(name = "name")

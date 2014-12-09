@@ -20,8 +20,12 @@
  */
 package org.jevis.commons.json;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.jevis.api.JEVisClassRelationship;
+import org.jevis.api.JEVisException;
 
 /**
  *
@@ -30,31 +34,42 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class JsonRelationship {
 
-    private long start;
-    private long end;
+    private String from;
+    private String to;
     private int type;
-    private static String pathObj = "/api/rest/objects/";
+//    private static String pathObj = "/api/rest/objects/";
 
     public JsonRelationship() {
     }
 
-    @XmlElement(name = "start")
-    public String getStart() {
+    public JsonRelationship(JEVisClassRelationship rel) {
+        try {
+            from = rel.getStart().getName();
+            to = rel.getEnd().getName();
+            type = rel.getType();
+        } catch (JEVisException ex) {
+            Logger.getLogger(JsonRelationship.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    @XmlElement(name = "from")
+    public String getFrom() {
 //        return start;
-        return pathObj + start;
+        return from;
     }
 
-    public void setStart(long start) {
-        this.start = start;
+    public void setFrom(String from) {
+        this.from = from;
     }
 
-    @XmlElement(name = "end")
-    public String getEnd() {
-        return pathObj + end;
+    @XmlElement(name = "to")
+    public String getTo() {
+        return to;
     }
 
-    public void setEnd(long end) {
-        this.end = end;
+    public void setTo(String to) {
+        this.to = to;
     }
 
     @XmlElement(name = "type")
