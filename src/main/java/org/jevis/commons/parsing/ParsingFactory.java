@@ -43,7 +43,7 @@ public class ParsingFactory {
 
         GenericParser parsing = null;
         String identifier = parsingObject.getJEVisClass().getName();
-        org.apache.log4j.Logger.getLogger(ParsingFactory.class.getName()).log(org.apache.log4j.Level.INFO, identifier +" Parser");
+        org.apache.log4j.Logger.getLogger(ParsingFactory.class.getName()).log(org.apache.log4j.Level.ALL, "Parser: "+identifier);
         if (identifier.equals(JEVisTypes.Parser.CSVParser.NAME)) {
             parsing = new CSVParsing();
         } else if (identifier.equals(CSV_MULTI_TIME_PARSER)) {

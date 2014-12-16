@@ -4,8 +4,6 @@
  */
 package org.jevis.commons.parsing;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
@@ -18,7 +16,7 @@ public class TimeConverter {
     public static DateTime convertTime(DateTimeZone from, DateTime time) {
         long timeInMillis = time.getMillis();
         DateTime dateTime = new DateTime(timeInMillis, from);
-        Logger.getLogger(TimeConverter.class.getName()).log(Level.ALL, "DateTime before: " + dateTime);
+//        Logger.getLogger(TimeConverter.class.getName()).log(Level.ALL, "DateTime before: " + dateTime);
 //        long nextTransition = from.nextTransition(timeInMillis) - timeInMillis;
 //        long currentOffset = from.getOffset(timeInMillis);
 //        from.getStandardOffset(timeInMillis);
@@ -28,7 +26,7 @@ public class TimeConverter {
 //        }
         dateTime = tmpTime.toDateTime(DateTimeZone.UTC);
 //        _lastDateInUTC = dateTime;
-        Logger.getLogger(TimeConverter.class.getName()).log(Level.ALL, "DateTime after: " + dateTime);
+//        Logger.getLogger(TimeConverter.class.getName()).log(Level.ALL, "DateTime after: " + dateTime);
         return dateTime;
     }
 }

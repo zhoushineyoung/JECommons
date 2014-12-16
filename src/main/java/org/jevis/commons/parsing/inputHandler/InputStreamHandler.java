@@ -71,10 +71,19 @@ public class InputStreamHandler extends InputHandler {
                 isZiped = true;
                 StringBuilder sb = new StringBuilder();
                 String[] pathStream = getPathTokens(_filePattern);
-                DateTime folderTime = getFolderTime(ze.getName(), pathStream);
-                boolean match = matchDateString(ze.getName(), _filePattern);
-                boolean isLater = folderTime.isAfter(_lastReadout);
-                if (match && isLater) {
+                boolean match = false;
+
+                if (containsTokens(_filePattern)) {
+                    DateTime folderTime = getFolderTime(ze.getName(), pathStream);
+                    String regExDateString = returnDateStringRegEx(_filePattern);
+                    boolean isLater = folderTime.isAfter(_lastReadout);
+                    if (isLater) {
+                        match = matchRegEx(regExDateString, _filePattern);
+                    }
+                } else {
+                    match = matchRegEx(ze.getName(), _filePattern);
+                }
+                if (match) {
                     System.out.println("Unzipping " + ze.getName());
                     List<String> tmp = new ArrayList<String>();
                     for (int c = zin.read(); c != -1; c = zin.read()) {
@@ -96,13 +105,20 @@ public class InputStreamHandler extends InputHandler {
         }
     }
 
-    private static boolean matchDateString(String currentFolder, String nextToken) {
+    private static String returnDateStringRegEx(String nextToken) {
         String[] substringsBetween = StringUtils.substringsBetween(nextToken, "${D:", "}");
         for (int i = 0; i < substringsBetween.length; i++) {
             nextToken = nextToken.replace("${D:" + substringsBetween[i] + "}", ".{" + substringsBetween[i].length() + "}");
         }
-        Pattern p = Pattern.compile(nextToken);
-        Matcher m = p.matcher(currentFolder);
+//        Pattern p = Pattern.compile(nextToken);
+//        Matcher m = p.matcher(currentFolder);
+//        return m.matches();
+        return nextToken;
+    }
+
+    public static boolean matchRegEx(String current, String pattern) {
+        Pattern p = Pattern.compile(pattern);
+        Matcher m = p.matcher(current);
         return m.matches();
     }
 
@@ -183,5 +199,13 @@ public class InputStreamHandler extends InputHandler {
             System.out.println(tokens[i]);
         }
         return tokens;
+    }
+
+    private static Boolean containsTokens(String path) {
+        if (path.contains("${")) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

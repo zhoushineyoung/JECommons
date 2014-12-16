@@ -75,15 +75,12 @@ public class CSVDatapointParser implements GeneralMappingParser {
         try {
             _mappingIsSuccessfull = false;
             String currentMappingValue = line[_indexDatapoint];
-            Logger.getLogger(this.getClass().getName()).log(Level.ALL, "##Line: " + line);
-            Logger.getLogger(this.getClass().getName()).log(Level.ALL, "##currentMappingValue: " + currentMappingValue);
-            Logger.getLogger(this.getClass().getName()).log(Level.ALL, "##_mappingValue: " + _mappingValue);
             if (currentMappingValue.equals(_mappingValue)) {
                 _mappingIsSuccessfull = true;
             }
         } catch (Exception ex) {
             _isValid = false;
-            Logger.getLogger(this.getClass().getName()).log(Level.WARN, "Date not valud in line: " + line);
+            Logger.getLogger(this.getClass().getName()).log(Level.WARN, "This line in the file is not valid: " + line);
         }
 
 
@@ -100,11 +97,9 @@ public class CSVDatapointParser implements GeneralMappingParser {
             }
             _value = Double.parseDouble(sVal);
             _valueValid = true;
-        } catch (NumberFormatException nfe) {
-//            System.out.println("Value is wrong " + sVal);
-        } catch (ArrayIndexOutOfBoundsException oob) {
-            _outofBounce = true;
-        }
+        } catch (Exception nfe) {
+            _valueValid = false;
+        } 
     }
 
     @Override
@@ -119,7 +114,7 @@ public class CSVDatapointParser implements GeneralMappingParser {
 
     @Override
     public boolean isValueValid() {
-        return _isValid;
+        return _valueValid;
     }
 
     @Override
@@ -135,5 +130,9 @@ public class CSVDatapointParser implements GeneralMappingParser {
     @Override
     public Long getTarget() {
         return _targetID;
+    }
+    
+    public int getValueIndex(){
+        return _valueIndex;
     }
 }
