@@ -6,6 +6,7 @@ package org.jevis.commons.parsing;
 
 import java.util.List;
 import org.jevis.api.JEVisObject;
+import org.jevis.commons.JEVisTypes.DataPoint;
 import org.jevis.commons.parsing.inputHandler.InputHandler;
 
 /**
@@ -27,6 +28,8 @@ public interface DataCollectorParser {
     public JEVisObject getJEVisParser();
     
     public void addDataPointParser(Long datapointID, String target, String mappingIdentifier, String valueIdentifier);
+
+//    public void addDataPoints(List<DataPoint> dataPoints);
 
 
 }

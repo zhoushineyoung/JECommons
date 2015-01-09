@@ -16,10 +16,24 @@ public class XMLDatapointParser implements GeneralMappingParser {
 
     private boolean _isInFile;
     private Long _datapoint;
+    private final Long _target;
+    private final String _mappingIdentifier;
+    private final String _valueIdentifier;
+    private final String _decimalSep;
+    private final String _thousandSep;
 
-    public XMLDatapointParser(boolean incsv, Long datapoint) {
-        _isInFile = incsv;
-        _datapoint = datapoint;
+//    public XMLDatapointParser(boolean incsv, Long datapoint) {
+//        _isInFile = incsv;
+//        _datapoint = datapoint;
+//    }
+
+    public XMLDatapointParser(Long datapointID, String target, String mappingIdentifier, String valueIdentifier, String decimalSeperator, String thousandSeperator) {
+        _datapoint = datapointID;
+        _target = Long.parseLong(target);
+        _mappingIdentifier = mappingIdentifier;
+        _valueIdentifier = valueIdentifier;
+        _decimalSep = decimalSeperator;
+        _thousandSep = thousandSeperator;
     }
 
     @Override
@@ -64,6 +78,10 @@ public class XMLDatapointParser implements GeneralMappingParser {
 
     @Override
     public Long getTarget() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return _target;
+    }
+    
+    public String getValueIdentifier(){
+        return _valueIdentifier;
     }
 }

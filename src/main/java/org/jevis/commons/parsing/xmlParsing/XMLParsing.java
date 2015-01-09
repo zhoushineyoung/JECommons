@@ -12,15 +12,20 @@ import org.jevis.api.JEVisClass;
 import org.jevis.api.JEVisException;
 import org.jevis.api.JEVisObject;
 import org.jevis.api.JEVisType;
+import org.jevis.commons.DatabaseHelper;
 import org.jevis.commons.JEVisTypes;
 import org.jevis.commons.parsing.GenericParser;
 import org.jevis.commons.parsing.GeneralDateParser;
 import org.jevis.commons.parsing.GeneralMappingParser;
 import org.jevis.commons.parsing.GeneralValueParser;
 import org.jevis.commons.parsing.Result;
+import org.jevis.commons.parsing.csvParsing.CSVDatapointParser;
 import org.jevis.commons.parsing.inputHandler.InputHandler;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.w3c.dom.Document;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
@@ -30,15 +35,30 @@ import org.w3c.dom.NodeList;
  */
 public class XMLParsing extends GenericParser {
 
-    private String _generalTag;
+//    private String _generalTag;
     private String _specificationTag;
     private Boolean _specificationInAttribute;
     private List<XMLDatapointParser> _datapointParsers = new ArrayList<XMLDatapointParser>();
+    private String _dateFormat;
+    private String _timeFormat;
+    private String _decimalSeperator;
+    private String _thousandSeperator;
+    private String _mainElement;
+    private String _mainAttribute;
+    private String _valueElement;
+    private String _valueAtribute;
+    private Boolean _valueInElement;
+    private String _dateElement;
+    private String _dateAttribute;
+    private Boolean _dateInElement;
 
     public XMLParsing(String generalTag, String specificationTag, Boolean specificationInAttribute) {
-        _generalTag = generalTag;
+        _mainElement = generalTag;
         _specificationTag = specificationTag;
         _specificationInAttribute = specificationInAttribute;
+    }
+
+    public XMLParsing() {
     }
 
     @Override
@@ -47,11 +67,20 @@ public class XMLParsing extends GenericParser {
         System.out.println("Sampleparserlist " + _sampleParsers.size());
         List<Document> documents = ic.getDocuments();
         for (Document d : documents) {
-            NodeList elementsByTagName = d.getElementsByTagName(_generalTag);
+            NodeList elementsByTagName = d.getElementsByTagName(_mainElement);
+
 
             //iterate over all nodes with the element name
             for (int i = 0; i < elementsByTagName.getLength(); i++) {
                 Node currentNode = elementsByTagName.item(i);
+                Node mainAttributeNode = null;
+                if (_mainAttribute != null) {
+                    NamedNodeMap attributes = currentNode.getAttributes();
+                    mainAttributeNode = attributes.getNamedItem(_mainAttribute);
+                    if (mainAttributeNode == null) {
+                        continue;
+                    }
+                }
                 ic.setXMLInput(currentNode);
 
                 //single parsing
@@ -60,14 +89,65 @@ public class XMLParsing extends GenericParser {
                 Double value = null;
                 Long datapoint = null;
                 for (XMLDatapointParser dpParser : _datapointParsers) {
-                    dpParser.parse(ic);
-                    datapoint = dpParser.getTarget();
-                    value = dpParser.getValue();
-
-                    if (dpParser.outOfBounce()) {
-                        org.apache.log4j.Logger.getLogger(this.getClass().getName()).log(org.apache.log4j.Level.WARN, "Date for value out of bounce: " + dateTime);
-                        org.apache.log4j.Logger.getLogger(this.getClass().getName()).log(org.apache.log4j.Level.WARN, "Value out of bounce: " + value);
+                    if (mainAttributeNode != null && !mainAttributeNode.getNodeValue().equals(dpParser.getValueIdentifier())) {
+                        continue;
                     }
+
+
+                    //get Date
+                    Node dateNode = null;
+                    if (_dateElement != null) {
+                        for (int j = 0; j < currentNode.getChildNodes().getLength(); j++) {
+                            Node item = currentNode.getChildNodes().item(j);
+                            if (item.getNodeName().equals(_dateElement)) {
+                                dateNode = item;
+                            }
+                        }
+                    } else {
+                        dateNode = currentNode.cloneNode(true);
+                    }
+                    String dateString = null;
+                    if (_dateAttribute != null) {
+                        Node namedItem = dateNode.getAttributes().getNamedItem(_dateAttribute);
+                        dateString = namedItem.getNodeValue();
+                    } else {
+                        dateString = dateNode.getNodeName();
+                    }
+                    String pattern = _dateFormat;
+
+                    DateTimeFormatter fmt = DateTimeFormat.forPattern(pattern);
+                    dateTime = fmt.parseDateTime(dateString);
+
+//                    dpParser.parse(ic);
+//                    value = dpParser.getValue();
+                    datapoint = dpParser.getTarget();
+                    
+                    
+                    //get value
+                    Node valueNode = null;
+                    if (_valueElement != null) {
+                        for (int j = 0; j < currentNode.getChildNodes().getLength(); j++) {
+                            Node item = currentNode.getChildNodes().item(j);
+                            if (item.getNodeName().equals(_valueElement)) {
+                                valueNode = item;
+                            }
+                        }
+                    } else {
+                        valueNode = currentNode.cloneNode(true);
+                    }
+                    String valueString = null;
+                    if (_dateAttribute != null) {
+                        Node namedItem = dateNode.getAttributes().getNamedItem(_valueAtribute);
+                        valueString = namedItem.getNodeValue();
+                    } else {
+                        valueString = dateNode.getNodeName();
+                    }
+                    value = Double.parseDouble(valueString);
+
+//                    if (dpParser.outOfBounce()) {
+//                        org.apache.log4j.Logger.getLogger(this.getClass().getName()).log(org.apache.log4j.Level.WARN, "Date for value out of bounce: " + dateTime);
+//                        org.apache.log4j.Logger.getLogger(this.getClass().getName()).log(org.apache.log4j.Level.WARN, "Value out of bounce: " + value);
+//                    }
 
                     org.apache.log4j.Logger.getLogger(this.getClass().getName()).log(org.apache.log4j.Level.ALL, "Parsed DP" + datapoint);
                     org.apache.log4j.Logger.getLogger(this.getClass().getName()).log(org.apache.log4j.Level.ALL, "Parsed value" + value);
@@ -83,23 +163,53 @@ public class XMLParsing extends GenericParser {
     }
 
     @Override
-    public void initialize(JEVisObject parser) {
-        _jevisParser = parser;
+    public void initialize(JEVisObject equipmentObject) {
         try {
-            JEVisClass jeClass = parser.getJEVisClass();
-            JEVisType generalTag = jeClass.getType(JEVisTypes.Parser.XMLParser.XML_GENERAL_TAG);
-            JEVisType specificationTag = jeClass.getType(JEVisTypes.Parser.XMLParser.XML_SPECIFICATION_TAG);
-            JEVisType specificationIsAttribute = jeClass.getType(JEVisTypes.Parser.XMLParser.XML_SPECIFICATION_ATTRIBUTE);
+            JEVisClass parser = equipmentObject.getDataSource().getJEVisClass(JEVisTypes.Parser.XMLParser.NAME);
+            JEVisObject parserObject = equipmentObject.getChildren(parser, true).get(0);
+            _jevisParser = parserObject;
+            JEVisClass jeClass = parserObject.getJEVisClass();
 
-            _generalTag = parser.getAttribute(generalTag).getLatestSample().getValueAsString();
+            JEVisType dateFormatType = jeClass.getType(JEVisTypes.Parser.DATE_FORMAT);
+            JEVisType timeFormatType = jeClass.getType(JEVisTypes.Parser.TIME_FORMAT);
+            JEVisType decimalSeperatorType = jeClass.getType(JEVisTypes.Parser.DECIMAL_SEPERATOR);
+            JEVisType thousandSeperatorType = jeClass.getType(JEVisTypes.Parser.THOUSAND_SEPERATOR);
 
-            if (parser.getAttribute(specificationTag).getLatestSample() != null) {
-                _specificationTag = (String) parser.getAttribute(specificationTag).getLatestSample().getValue();
-            }
+            JEVisType mainElementType = jeClass.getType(JEVisTypes.Parser.XMLParser.MAIN_ELEMENT);
+            JEVisType mainAttributeType = jeClass.getType(JEVisTypes.Parser.XMLParser.MAIN_ATTRIBUTE);
+            JEVisType valueElementType = jeClass.getType(JEVisTypes.Parser.XMLParser.VALUE_ELEMENT);
+            JEVisType valueAttributeType = jeClass.getType(JEVisTypes.Parser.XMLParser.VALUE_ATTRIBUTE);
+            JEVisType valueInElement = jeClass.getType(JEVisTypes.Parser.XMLParser.VALUE_IN_ELEMENT);
+            JEVisType dateElementType = jeClass.getType(JEVisTypes.Parser.XMLParser.DATE_ELEMENT);
+            JEVisType dateAttributeType = jeClass.getType(JEVisTypes.Parser.XMLParser.DATE_ATTRIBUTE);
+            JEVisType dateInElement = jeClass.getType(JEVisTypes.Parser.XMLParser.DATE_IN_ELEMENT);
 
-            if (parser.getAttribute(specificationIsAttribute).getLatestSample() != null) {
-                _specificationInAttribute = parser.getAttribute(specificationIsAttribute).getLatestSample().getValueAsBoolean();
-            }
+
+            _dateFormat = DatabaseHelper.getObjectAsString(parserObject, dateFormatType);
+            org.apache.log4j.Logger.getLogger(this.getClass().getName()).log(org.apache.log4j.Level.ALL, "DateFormat: " + _dateFormat);
+            _timeFormat = DatabaseHelper.getObjectAsString(parserObject, timeFormatType);
+            org.apache.log4j.Logger.getLogger(this.getClass().getName()).log(org.apache.log4j.Level.ALL, "TimeFormat: " + _timeFormat);
+            _decimalSeperator = DatabaseHelper.getObjectAsString(parserObject, decimalSeperatorType);
+            org.apache.log4j.Logger.getLogger(this.getClass().getName()).log(org.apache.log4j.Level.ALL, "DecimalSeperator: " + _decimalSeperator);
+            _thousandSeperator = DatabaseHelper.getObjectAsString(parserObject, thousandSeperatorType);
+            org.apache.log4j.Logger.getLogger(this.getClass().getName()).log(org.apache.log4j.Level.ALL, "ThousandSeperator: " + _thousandSeperator);
+
+            _mainElement = DatabaseHelper.getObjectAsString(parserObject, mainElementType);
+            org.apache.log4j.Logger.getLogger(this.getClass().getName()).log(org.apache.log4j.Level.ALL, "MainElement: " + _mainElement);
+            _mainAttribute = DatabaseHelper.getObjectAsString(parserObject, mainAttributeType);
+            org.apache.log4j.Logger.getLogger(this.getClass().getName()).log(org.apache.log4j.Level.ALL, "MainAttribute: " + _mainAttribute);
+            _valueElement = DatabaseHelper.getObjectAsString(parserObject, valueElementType);
+            org.apache.log4j.Logger.getLogger(this.getClass().getName()).log(org.apache.log4j.Level.ALL, "ValueElement: " + _valueElement);
+            _valueAtribute = DatabaseHelper.getObjectAsString(parserObject, valueAttributeType);
+            org.apache.log4j.Logger.getLogger(this.getClass().getName()).log(org.apache.log4j.Level.ALL, "ValueAttribute: " + _valueAtribute);
+            _valueInElement = DatabaseHelper.getObjectAsBoolean(parserObject, valueInElement);
+            org.apache.log4j.Logger.getLogger(this.getClass().getName()).log(org.apache.log4j.Level.ALL, "ValueInElement: " + _valueInElement);
+            _dateElement = DatabaseHelper.getObjectAsString(parserObject, dateElementType);
+            org.apache.log4j.Logger.getLogger(this.getClass().getName()).log(org.apache.log4j.Level.ALL, "DateElement: " + _dateElement);
+            _dateAttribute = DatabaseHelper.getObjectAsString(parserObject, dateAttributeType);
+            org.apache.log4j.Logger.getLogger(this.getClass().getName()).log(org.apache.log4j.Level.ALL, "DateAttribute: " + _dateAttribute);
+            _dateInElement = DatabaseHelper.getObjectAsBoolean(parserObject, dateInElement);
+            org.apache.log4j.Logger.getLogger(this.getClass().getName()).log(org.apache.log4j.Level.ALL, "DateInElement: " + _dateInElement);
         } catch (JEVisException ex) {
             Logger.getLogger(XMLParsing.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -215,9 +325,8 @@ public class XMLParsing extends GenericParser {
 //        }
 //        return valueParser;
 //    }
-
     @Override
     public void addDataPointParser(Long datapointID, String target, String mappingIdentifier, String valueIdentifier) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        _datapointParsers.add(new XMLDatapointParser(datapointID, target, mappingIdentifier, valueIdentifier, _decimalSeperator, _thousandSeperator));
     }
 }

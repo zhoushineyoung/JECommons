@@ -14,6 +14,7 @@ import org.jevis.api.JEVisObject;
 import org.jevis.api.JEVisType;
 import org.jevis.commons.DatabaseHelper;
 import org.jevis.commons.JEVisTypes;
+import org.jevis.commons.JEVisTypes.DataPoint;
 import org.jevis.commons.parsing.GenericParser;
 import org.jevis.commons.parsing.Result;
 import org.jevis.commons.parsing.inputHandler.InputHandler;
@@ -109,16 +110,16 @@ public class CSVParsing extends GenericParser {
 
                 DateTime dateTime = getDateTime(line);
                 Double value;
-                Long datapoint;
+                Long target;
                 for (CSVDatapointParser dpParser : _datapointParsers) {
                     dpParser.parse(ic);
-                    datapoint = dpParser.getTarget();
+                    target = dpParser.getTarget();
                     value = dpParser.getValue();
                     if (!dpParser.isValueValid()) {
                         StringBuilder failureLine = new StringBuilder();
-                        for (int current = 0; current<line.length;current++){
+                        for (int current = 0; current < line.length; current++) {
                             failureLine.append(line[current]);
-                            if (current < line.length - 1){
+                            if (current < line.length - 1) {
                                 failureLine.append(_delim);
                             }
                         }
@@ -126,14 +127,14 @@ public class CSVParsing extends GenericParser {
                         Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Value Index: " + dpParser.getValueIndex());
                         continue;
                     }
-                    if (dateTime == null){
+                    if (dateTime == null) {
                         continue;
                     }
 
 //                    Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Parsed DP" + datapoint);
 //                    Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Parsed value" + value);
 //                    Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Parsed date" + dateTime);
-                    _results.add(new Result(datapoint, value, dateTime));
+                    _results.add(new Result(target, value, dateTime));
                 }
             } catch (Exception e) {
                 Logger.getLogger(this.getClass().getName()).log(Level.WARN, "Detect a Problem in the Parsing Process");
@@ -141,7 +142,7 @@ public class CSVParsing extends GenericParser {
         }
 //        Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Number of Results: " + _results.size());
         if (!_results.isEmpty()) {
-            Logger.getLogger(this.getClass().getName()).log(Level.INFO, "LastResult (Date,Target,Value): " + _results.get(_results.size()-1).getDate() + "," + _results.get(_results.size()-1).getOnlineID() + "," + _results.get(_results.size()-1).getValue());
+            Logger.getLogger(this.getClass().getName()).log(Level.INFO, "LastResult (Date,Target,Value): " + _results.get(_results.size() - 1).getDate() + "," + _results.get(_results.size() - 1).getOnlineID() + "," + _results.get(_results.size() - 1).getValue());
         } else {
             Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Cant parse or cant find any parsable data");
         }
@@ -353,14 +354,21 @@ public class CSVParsing extends GenericParser {
             Logger.getLogger(this.getClass().getName()).log(Level.WARN, "DateFormat: " + _timeFormat);
             Logger.getLogger(this.getClass().getName()).log(Level.WARN, "DateIndex: " + _timeIndex);
         }
-        
-        if (_dateFormat == null){
+
+        if (_dateFormat == null) {
             Logger.getLogger(this.getClass().getName()).log(Level.ALL, "No Datetime found");
             return null;
-        } else{
+        } else {
             Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Current Datetime");
             return new DateTime();
         }
-        
+
     }
+
+//    @Override
+//    public void addDataPoints(List<DataPoint> dataPoints) {
+//        for (DataPoint dp : dataPoints) {
+//            _datapointParsers.add(new CSVDatapointParser(dp.getDatapointId(), dp.getTarget(), dp.getMappingIdentifier(), dp.getValueIdentifier(), _decimalSeperator, _thousandSeperator));
+//        }
+//    }
 }

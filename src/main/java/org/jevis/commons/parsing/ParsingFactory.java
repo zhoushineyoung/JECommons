@@ -10,6 +10,7 @@ import org.jevis.api.JEVisException;
 import org.jevis.api.JEVisObject;
 import org.jevis.commons.JEVisTypes;
 import org.jevis.commons.parsing.csvParsing.CSVParsing;
+import org.jevis.commons.parsing.xmlParsing.XMLParsing;
 
 /**
  *
@@ -28,36 +29,32 @@ public class ParsingFactory {
     public static GenericParser getParsing(JEVisObject jevisObject) throws JEVisException {
 
         JEVisClass parserClass = jevisObject.getDataSource().getJEVisClass(JEVisTypes.Parser.CSVParser.NAME);
+        JEVisClass parserClassGeneral = jevisObject.getDataSource().getJEVisClass(JEVisTypes.Parser.NAME);
         JEVisObject parsingObject = null;
 
-        if (jevisObject.getJEVisClass().getName().equals(parserClass.getName())) {
-            parsingObject = jevisObject;
-        } else {
-            List<JEVisObject> parserObjects = jevisObject.getChildren(parserClass, true);
-            if (parserObjects.size() != 1) {
-                throw new JEVisException("Number of Parsing Objects != 1 under: " + jevisObject.getID(), 1);
-            } else {
+        boolean foundParsingObject = false;
+        for (JEVisClass jevisClass : parserClassGeneral.getHeirs()) {
+            List<JEVisObject> parserObjects = jevisObject.getChildren(jevisClass, true);
+            if (parserObjects.size() == 1) {
                 parsingObject = parserObjects.get(0);
+                foundParsingObject = true;
             }
+        }
+
+        if (!foundParsingObject) {
+            throw new JEVisException("Number of Parsing Objects != 1 under: " + jevisObject.getID(), 1);
         }
 
         GenericParser parsing = null;
         String identifier = parsingObject.getJEVisClass().getName();
-        org.apache.log4j.Logger.getLogger(ParsingFactory.class.getName()).log(org.apache.log4j.Level.ALL, "Parser: "+identifier);
-        if (identifier.equals(JEVisTypes.Parser.CSVParser.NAME)) {
-            parsing = new CSVParsing();
-        } else if (identifier.equals(CSV_MULTI_TIME_PARSER)) {
-// parsing = new MultipleDataCoherentTimeCSV();
-        } else if (identifier.equals(CSV_MULTI_DATA_PARSER)) {
-// parsing = new MultipleDataCoherentDataCSV();
-        } else if (identifier.equals(MULTI_DATA_PARSER)) {
-// parsing = new MultipleDataCompact();
-        } else if (identifier.equals(XML_SINGLE_PARSER)) {
-// parsing = new XMLParsingSingleData();
-        } else if (identifier.equals(XML_MULTI_PARSER)) {
-// parsing = new XMLParsingMultipleData();
-        } else if (identifier.equals(SQL_PARSER)) {
-// parsing = new SQLParsing();
+        org.apache.log4j.Logger.getLogger(ParsingFactory.class.getName()).log(org.apache.log4j.Level.ALL, "Parser: " + identifier);
+        switch (identifier) {
+            case JEVisTypes.Parser.CSVParser.NAME:
+                parsing = new CSVParsing();
+                break;
+            case JEVisTypes.Parser.XMLParser.NAME: 
+                parsing = new XMLParsing();
+                break;
         }
 
         return parsing;
