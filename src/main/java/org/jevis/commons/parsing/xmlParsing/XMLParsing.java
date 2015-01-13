@@ -4,10 +4,17 @@
  */
 package org.jevis.commons.parsing.xmlParsing;
 
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import org.jevis.api.JEVisClass;
 import org.jevis.api.JEVisException;
 import org.jevis.api.JEVisObject;
@@ -15,11 +22,7 @@ import org.jevis.api.JEVisType;
 import org.jevis.commons.DatabaseHelper;
 import org.jevis.commons.JEVisTypes;
 import org.jevis.commons.parsing.GenericParser;
-import org.jevis.commons.parsing.GeneralDateParser;
-import org.jevis.commons.parsing.GeneralMappingParser;
-import org.jevis.commons.parsing.GeneralValueParser;
 import org.jevis.commons.parsing.Result;
-import org.jevis.commons.parsing.csvParsing.CSVDatapointParser;
 import org.jevis.commons.parsing.inputHandler.InputHandler;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -69,6 +72,20 @@ public class XMLParsing extends GenericParser {
         for (Document d : documents) {
             NodeList elementsByTagName = d.getElementsByTagName(_mainElement);
 
+            DOMSource domSource = new DOMSource(d);
+            StringWriter writer = new StringWriter();
+            StreamResult result = new StreamResult(writer);
+            TransformerFactory tf = TransformerFactory.newInstance();
+            Transformer transformer;
+            try {
+                transformer = tf.newTransformer();
+            transformer.transform(domSource, result);
+            } catch (TransformerConfigurationException ex) {
+                Logger.getLogger(XMLParsing.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (TransformerException ex) {
+                Logger.getLogger(XMLParsing.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            System.out.println(writer.toString());
 
             //iterate over all nodes with the element name
             for (int i = 0; i < elementsByTagName.getLength(); i++) {
@@ -101,6 +118,7 @@ public class XMLParsing extends GenericParser {
                             Node item = currentNode.getChildNodes().item(j);
                             if (item.getNodeName().equals(_dateElement)) {
                                 dateNode = item;
+                                break;
                             }
                         }
                     } else {
@@ -111,7 +129,7 @@ public class XMLParsing extends GenericParser {
                         Node namedItem = dateNode.getAttributes().getNamedItem(_dateAttribute);
                         dateString = namedItem.getNodeValue();
                     } else {
-                        dateString = dateNode.getNodeName();
+                        dateString = dateNode.getTextContent();
                     }
                     String pattern = _dateFormat;
 
@@ -121,8 +139,8 @@ public class XMLParsing extends GenericParser {
 //                    dpParser.parse(ic);
 //                    value = dpParser.getValue();
                     datapoint = dpParser.getTarget();
-                    
-                    
+
+
                     //get value
                     Node valueNode = null;
                     if (_valueElement != null) {
@@ -130,17 +148,18 @@ public class XMLParsing extends GenericParser {
                             Node item = currentNode.getChildNodes().item(j);
                             if (item.getNodeName().equals(_valueElement)) {
                                 valueNode = item;
+                                break;
                             }
                         }
                     } else {
                         valueNode = currentNode.cloneNode(true);
                     }
                     String valueString = null;
-                    if (_dateAttribute != null) {
-                        Node namedItem = dateNode.getAttributes().getNamedItem(_valueAtribute);
+                    if (_valueAtribute != null) {
+                        Node namedItem = valueNode.getAttributes().getNamedItem(_valueAtribute);
                         valueString = namedItem.getNodeValue();
                     } else {
-                        valueString = dateNode.getNodeName();
+                        valueString = valueNode.getTextContent();
                     }
                     value = Double.parseDouble(valueString);
 
