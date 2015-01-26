@@ -57,7 +57,7 @@ public class XMLDatapointParser implements GeneralMappingParser {
     }
 
     @Override
-    public boolean isMappingSuccessfull() {
+    public boolean isMappingFailing() {
         return true; //no mapping needed
     }
 

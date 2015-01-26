@@ -105,8 +105,11 @@ public class CSVParsing extends GenericParser {
                     line = removeQuotes(line);
                 }
 
+
                 //line noch setzen im InputConverter als temp oder so
                 ic.setCSVInput(line);
+//                Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Line: " + line);
+
 
                 DateTime dateTime = getDateTime(line);
                 Double value;
@@ -115,7 +118,9 @@ public class CSVParsing extends GenericParser {
                     dpParser.parse(ic);
                     target = dpParser.getTarget();
                     value = dpParser.getValue();
+
                     if (!dpParser.isValueValid()) {
+//                        Logger.getLogger(this.getClass().getName()).log(Level.INFO, "ValueValid: " + dpParser.isValueValid());
                         StringBuilder failureLine = new StringBuilder();
                         for (int current = 0; current < line.length; current++) {
                             failureLine.append(line[current]);
@@ -123,14 +128,23 @@ public class CSVParsing extends GenericParser {
                                 failureLine.append(_delim);
                             }
                         }
-                        Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Value is not valid in line: " + failureLine.toString());
-                        Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Value Index: " + dpParser.getValueIndex());
-                        continue;
-                    }
-                    if (dateTime == null) {
+                        Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Value is not valid in line: " + failureLine.toString());
+                        Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Value Index: " + dpParser.getValueIndex());
                         continue;
                     }
 
+                    if (dpParser.isMappingFailing()) {
+//                        Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Mapping Failure: " + dpParser.isMappingFailing());
+                        continue;
+                    }
+                    if (dateTime == null) {
+//                        Logger.getLogger(this.getClass().getName()).log(Level.INFO, "DateTime Null: " + dateTime);
+                        continue;
+                    }
+
+//                    Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Value: " + dpParser.getValue());
+//                    Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Date: " + dateTime);
+//                    Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Target: " + dpParser.getTarget());
 //                    Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Parsed DP" + datapoint);
 //                    Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Parsed value" + value);
 //                    Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Parsed date" + dateTime);
@@ -181,6 +195,9 @@ public class CSVParsing extends GenericParser {
                 _headerLines = 0;
             }
             _dpIndex = DatabaseHelper.getObjectAsInteger(parserObject, dpIndexType);
+            if (_dpIndex != null) {
+                _dpIndex--;
+            }
             Logger.getLogger(this.getClass().getName()).log(Level.ALL, "DpIndex: " + _dpIndex);
 
             _dateIndex = DatabaseHelper.getObjectAsInteger(parserObject, dateIndexType);
@@ -364,7 +381,6 @@ public class CSVParsing extends GenericParser {
         }
 
     }
-
 //    @Override
 //    public void addDataPoints(List<DataPoint> dataPoints) {
 //        for (DataPoint dp : dataPoints) {

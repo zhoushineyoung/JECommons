@@ -17,23 +17,22 @@ import org.jevis.commons.parsing.inputHandler.InputHandler;
 public class CSVDatapointParser implements GeneralMappingParser {
 
     private boolean _inCSV;
-    private int _indexDatapoint;
+    private Integer _indexDatapoint;
     private Long _datapoint;
-    private boolean _mappingIsSuccessfull;
+    private boolean _mappingError;
     private String _mappingValue;
-    private boolean _isValid;
-    private int _valueIndex;
+    private Integer _valueIndex;
     private boolean _valueValid;
     private boolean _outofBounce;
     private String _decimalSep;
     private String _thousandSep;
-    private double _value;
+    private Double _value;
     private long _targetID;
 
     public CSVDatapointParser(boolean incsv, Long datapoint, String mappingValue, Integer indexDatapoint) {
         _inCSV = incsv;
         if (indexDatapoint != null) {
-            _indexDatapoint = indexDatapoint - 1;
+            _indexDatapoint = indexDatapoint;
         }
         _mappingValue = mappingValue;
         _datapoint = datapoint;
@@ -72,14 +71,17 @@ public class CSVDatapointParser implements GeneralMappingParser {
     @Override
     public void parse(InputHandler ic) {
         String[] line = ic.getCSVInput();
+        _mappingError = false;
         try {
-            _mappingIsSuccessfull = false;
-            String currentMappingValue = line[_indexDatapoint];
-            if (currentMappingValue.equals(_mappingValue)) {
-                _mappingIsSuccessfull = true;
+            String currentMappingValue = null;
+            if (_indexDatapoint != null) {
+                currentMappingValue = line[_indexDatapoint];
+            }
+            if (_mappingValue != null && !currentMappingValue.equals(_mappingValue)) {
+                _mappingError = true;
             }
         } catch (Exception ex) {
-            _isValid = false;
+            _valueValid = false;
             Logger.getLogger(this.getClass().getName()).log(Level.WARN, "This line in the file is not valid: " + line);
         }
 
@@ -99,7 +101,7 @@ public class CSVDatapointParser implements GeneralMappingParser {
             _valueValid = true;
         } catch (Exception nfe) {
             _valueValid = false;
-        } 
+        }
     }
 
     @Override
@@ -108,8 +110,8 @@ public class CSVDatapointParser implements GeneralMappingParser {
     }
 
     @Override
-    public boolean isMappingSuccessfull() {
-        return _mappingIsSuccessfull;
+    public boolean isMappingFailing() {
+        return _mappingError;
     }
 
     @Override
@@ -131,8 +133,8 @@ public class CSVDatapointParser implements GeneralMappingParser {
     public Long getTarget() {
         return _targetID;
     }
-    
-    public int getValueIndex(){
+
+    public int getValueIndex() {
         return _valueIndex;
     }
 }
