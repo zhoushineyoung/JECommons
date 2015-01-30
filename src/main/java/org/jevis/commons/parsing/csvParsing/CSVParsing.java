@@ -14,10 +14,8 @@ import org.jevis.api.JEVisObject;
 import org.jevis.api.JEVisType;
 import org.jevis.commons.DatabaseHelper;
 import org.jevis.commons.JEVisTypes;
+import org.jevis.commons.JEVisTypes.DataPoint;
 import org.jevis.commons.parsing.GenericParser;
-import org.jevis.commons.parsing.GeneralDateParser;
-import org.jevis.commons.parsing.GeneralMappingParser;
-import org.jevis.commons.parsing.GeneralValueParser;
 import org.jevis.commons.parsing.Result;
 import org.jevis.commons.parsing.inputHandler.InputHandler;
 import org.joda.time.DateTime;
@@ -93,47 +91,74 @@ public class CSVParsing extends GenericParser {
      */
     @Override
     public void parse(InputHandler ic) {
-        Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Start CSV parsing");
+        Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Start CSV parsing");
         String[] stringArrayInput = ic.getStringArrayInput();
-        Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Count of date/value/mapping variations" + _sampleParsers.size());
-        Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Count of lines" + stringArrayInput.length);
-        System.out.println("Quote," + _quote);
+        Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Count of lines" + stringArrayInput.length);
+        if (ic.getFilePath() != null) {
+            Logger.getLogger(this.getClass().getName()).log(Level.ALL, "File Path: " + ic.getFilePath());
+        }
         for (int i = _headerLines; i < stringArrayInput.length; i++) {
             try {
                 String line[] = stringArrayInput[i].split(String.valueOf(_delim), -1);
-                Logger.getLogger(this.getClass().getName()).log(Level.ALL, "line: " + stringArrayInput[i]);
+//                Logger.getLogger(this.getClass().getName()).log(Level.ALL, "line: " + stringArrayInput[i]);
                 if (_quote != null) {
                     line = removeQuotes(line);
                 }
 
+
                 //line noch setzen im InputConverter als temp oder so
                 ic.setCSVInput(line);
+//                Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Line: " + line);
+
 
                 DateTime dateTime = getDateTime(line);
                 Double value;
-                Long datapoint;
+                Long target;
                 for (CSVDatapointParser dpParser : _datapointParsers) {
                     dpParser.parse(ic);
-                    datapoint = dpParser.getTarget();
+                    target = dpParser.getTarget();
                     value = dpParser.getValue();
 
-                    if (dpParser.outOfBounce()) {
-                        Logger.getLogger(this.getClass().getName()).log(Level.WARN, "Date for value out of bounce: " + dateTime);
-                        Logger.getLogger(this.getClass().getName()).log(Level.WARN, "Value out of bounce: " + value);
+                    if (!dpParser.isValueValid()) {
+//                        Logger.getLogger(this.getClass().getName()).log(Level.INFO, "ValueValid: " + dpParser.isValueValid());
+                        StringBuilder failureLine = new StringBuilder();
+                        for (int current = 0; current < line.length; current++) {
+                            failureLine.append(line[current]);
+                            if (current < line.length - 1) {
+                                failureLine.append(_delim);
+                            }
+                        }
+                        Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Value is not valid in line: " + failureLine.toString());
+                        Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Value Index: " + dpParser.getValueIndex());
+                        continue;
                     }
 
-                    Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Parsed DP" + datapoint);
-                    Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Parsed value" + value);
-                    Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Parsed date" + dateTime);
-                    _results.add(new Result(datapoint, value, dateTime));
+                    if (dpParser.isMappingFailing()) {
+//                        Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Mapping Failure: " + dpParser.isMappingFailing());
+                        continue;
+                    }
+                    if (dateTime == null) {
+//                        Logger.getLogger(this.getClass().getName()).log(Level.INFO, "DateTime Null: " + dateTime);
+                        continue;
+                    }
+
+//                    Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Value: " + dpParser.getValue());
+//                    Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Date: " + dateTime);
+//                    Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Target: " + dpParser.getTarget());
+//                    Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Parsed DP" + datapoint);
+//                    Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Parsed value" + value);
+//                    Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Parsed date" + dateTime);
+                    _results.add(new Result(target, value, dateTime));
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                Logger.getLogger(this.getClass().getName()).log(Level.WARN, "Detect a Problem in the Parsing Process");
             }
         }
-        Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Number of Results: " + _results.size());
+//        Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Number of Results: " + _results.size());
         if (!_results.isEmpty()) {
-            Logger.getLogger(this.getClass().getName()).log(Level.INFO, "First Result: " + _results.get(0).getDate() + "," + _results.get(0).getOnlineID() + "," + _results.get(0).getValue());
+            Logger.getLogger(this.getClass().getName()).log(Level.INFO, "LastResult (Date,Target,Value): " + _results.get(_results.size() - 1).getDate() + "," + _results.get(_results.size() - 1).getOnlineID() + "," + _results.get(_results.size() - 1).getValue());
+        } else {
+            Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Cant parse or cant find any parsable data");
         }
     }
 
@@ -170,6 +195,9 @@ public class CSVParsing extends GenericParser {
                 _headerLines = 0;
             }
             _dpIndex = DatabaseHelper.getObjectAsInteger(parserObject, dpIndexType);
+            if (_dpIndex != null) {
+                _dpIndex--;
+            }
             Logger.getLogger(this.getClass().getName()).log(Level.ALL, "DpIndex: " + _dpIndex);
 
             _dateIndex = DatabaseHelper.getObjectAsInteger(parserObject, dateIndexType);
@@ -313,7 +341,6 @@ public class CSVParsing extends GenericParser {
 //        }
 //        return valueParser;
 //    }
-
     @Override
     public void addDataPointParser(Long datapointID, String target, String mappingIdentifier, String valueIdentifier) {
         _datapointParsers.add(new CSVDatapointParser(datapointID, _dpIndex, target, mappingIdentifier, valueIdentifier, _decimalSeperator, _thousandSeperator));
@@ -332,13 +359,32 @@ public class CSVParsing extends GenericParser {
                 pattern += " " + _timeFormat;
                 format += " " + time;
             }
-            Logger.getLogger(this.getClass().getName()).log(Level.ALL, "complete time " + format);
-            Logger.getLogger(this.getClass().getName()).log(Level.ALL, "complete pattern " + pattern);
+//            Logger.getLogger(this.getClass().getName()).log(Level.ALL, "complete time " + format);
+//            Logger.getLogger(this.getClass().getName()).log(Level.ALL, "complete pattern " + pattern);
 
             DateTimeFormatter fmt = DateTimeFormat.forPattern(pattern);
             return fmt.parseDateTime(format);
         } catch (Exception ex) {
+            Logger.getLogger(this.getClass().getName()).log(Level.WARN, "Date not parsable: " + line);
+            Logger.getLogger(this.getClass().getName()).log(Level.WARN, "DateFormat: " + _dateFormat);
+            Logger.getLogger(this.getClass().getName()).log(Level.WARN, "DateIndex: " + _dateIndex);
+            Logger.getLogger(this.getClass().getName()).log(Level.WARN, "DateFormat: " + _timeFormat);
+            Logger.getLogger(this.getClass().getName()).log(Level.WARN, "DateIndex: " + _timeIndex);
         }
-        return new DateTime();
+
+        if (_dateFormat == null) {
+            Logger.getLogger(this.getClass().getName()).log(Level.ALL, "No Datetime found");
+            return null;
+        } else {
+            Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Current Datetime");
+            return new DateTime();
+        }
+
     }
+//    @Override
+//    public void addDataPoints(List<DataPoint> dataPoints) {
+//        for (DataPoint dp : dataPoints) {
+//            _datapointParsers.add(new CSVDatapointParser(dp.getDatapointId(), dp.getTarget(), dp.getMappingIdentifier(), dp.getValueIdentifier(), _decimalSeperator, _thousandSeperator));
+//        }
+//    }
 }

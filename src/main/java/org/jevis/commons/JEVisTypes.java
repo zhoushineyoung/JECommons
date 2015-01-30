@@ -48,6 +48,7 @@ public interface JEVisTypes {
 
         interface XMLParser extends Parser {
 
+            public final static String NAME = "XML Parser";
             public final static String XML_GENERAL_TAG = "General Tag";
             public final static String XML_SPECIFICATION_TAG = "Specification Tag";
             public final static String XML_SPECIFICATION_ATTRIBUTE = "Specification In Attribute";
@@ -57,6 +58,14 @@ public interface JEVisTypes {
             public final static String XML_DATE_ATTRIBUTE = "Date In Attribute";
             public final static String XML_TIME_TAG = "Time Tag";
             public final static String XML_TIME_ATTRIBUTE = "Time In Attribute";
+            public final static String MAIN_ELEMENT = "Main Element";
+            public final static String MAIN_ATTRIBUTE = "Main Attribute";
+            public final static String DATE_ELEMENT = "Date Element";
+            public final static String DATE_ATTRIBUTE = "Date Attribute";
+            public final static String DATE_IN_ELEMENT = "Date in Element";
+            public final static String VALUE_ELEMENT = "Value Element";
+            public final static String VALUE_ATTRIBUTE = "Value Attribute";
+            public final static String VALUE_IN_ELEMENT = "Value in Element";
         }
     }
 
@@ -76,7 +85,7 @@ public interface JEVisTypes {
 
     interface Connection {
 
-        public final static String Name = "Connection";
+        public final static String NAME = "Connection";
         public final static String DateFormat = "Date Format";
         public final static String FilePath = "File Path";
         public final static String Server = "Server URL";
@@ -88,31 +97,32 @@ public interface JEVisTypes {
 
         interface HTTP extends Connection {
 
-            public final static String Name = "HTTP";
+            public final static String NAME = "HTTP Server";
             public final static String SSL = "SSL";
         }
 
         interface FTP extends Connection {
 
-            public final static String Name = "FTP";
+            public final static String NAME = "FTP Server";
             public final static String SSL = "SSL";
             public final static String FileNameScheme = "File Name Scheme";
         }
 
         interface sFTP extends Connection {
 
-            public final static String Name = "sFTP";
+            public final static String NAME = "sFTP Server";
             public final static String FileNameScheme = "File Name Scheme";
         }
 
         interface SOAP extends Connection {
 
-            public final static String Name = "SOAP";
+            public final static String SSL = "SSL";
+            public final static String NAME = "SOAP Server";
         }
 
         interface SQL extends Connection {
 
-            public final static String Name = "SQL";
+            public final static String NAME = "SQL";
         }
     }
 
@@ -150,6 +160,14 @@ public interface JEVisTypes {
             public final static String SSL = "SSL";
             public final static String USER = "User";
         }
+
+        interface SOAP extends DataServer {
+
+            public final static String NAME = "SOAP Server";
+            public final static String PASSWORD = "Password";
+            public final static String SSL = "SSL";
+            public final static String USER = "User";
+        }
     }
 
     interface DataPointDirectory {
@@ -172,7 +190,7 @@ public interface JEVisTypes {
         public final static String ONLINE_ID = "OnlineID";
         public final static String VALUE_SPEC = "Value Specification";
         public final static String MAPPING_NECESSARY = "Mapping Necessary";
-        public final static String FILE_PATH = "File Path";
+        public final static String SOURCE = "Source";
         public final static String MAPPING_IDENTIFIER = "Mapping Identifier";
         public final static String TARGET = "Target";
         public final static String VALUE_IDENTIFIER = "Value Identifier";

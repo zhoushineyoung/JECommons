@@ -29,7 +29,7 @@ public class JEVisOutputHandler extends OutputHandler {
     public void writeOutput(ParsingRequest request, List<Result> results) {
         JEVisDataSource client = request.getClient();
         try {
-            Logger.getLogger(JEVisOutputHandler.class.getName()).log(Level.INFO, "Start JEVis OutputHandler");
+            Logger.getLogger(JEVisOutputHandler.class.getName()).log(Level.INFO, "Number of imported Data overall: "+results.size());
 //            Map<JEVisObject, List<JEVisSample>> onlineToSampleMap = new HashMap<JEVisObject, List<JEVisSample>>();
 
             //extract all online nodes and save them in a map
@@ -68,14 +68,13 @@ public class JEVisOutputHandler extends OutputHandler {
                 }
                 List<JEVisSample> samples = onlineToSampleMap.get(onlineData);
                 DateTime convertedDate = TimeConverter.convertTime(request.getTimezone(), s.getDate());
-                JEVisSample sample = onlineData.getAttribute("Value").buildSample(convertedDate, s.getValue(), "Imported by JEVisDataCollector");
+                JEVisSample sample = onlineData.getAttribute("Value").buildSample(convertedDate, s.getValue(), "Imported by JEDataCollector");
                 samples.add(sample);
             }
 
             for (JEVisObject o : onlineToSampleMap.keySet()) {
                 List<JEVisSample> samples = onlineToSampleMap.get(o);
-                Logger.getLogger(JEVisOutputHandler.class.getName()).log(Level.INFO, "ID: " + o.getID());
-                Logger.getLogger(JEVisOutputHandler.class.getName()).log(Level.INFO, "Number of imported Samples: " + samples.size());
+                Logger.getLogger(JEVisOutputHandler.class.getName()).log(Level.ALL, samples.size()+"Samples imported into ID: " + o.getID());
                 o.getAttribute("Value").addSamples(samples);
             }
         } catch (JEVisException ex) {

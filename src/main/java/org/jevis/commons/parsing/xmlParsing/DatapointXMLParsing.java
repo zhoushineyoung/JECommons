@@ -35,7 +35,7 @@ public class DatapointXMLParsing implements GeneralMappingParser{
     }
 
     @Override
-    public boolean isMappingSuccessfull() {
+    public boolean isMappingFailing() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

@@ -16,7 +16,7 @@ public interface GeneralMappingParser extends GeneralParser {
 
     public String getMappingValue();
 
-    public boolean isMappingSuccessfull();
+    public boolean isMappingFailing();
 
     public boolean outOfBounce();
 

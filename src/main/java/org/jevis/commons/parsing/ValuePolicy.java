@@ -16,6 +16,6 @@ public class ValuePolicy {
     }
 
     public static boolean checkDatapoint(SampleParserContainer parser) {
-        return parser.getDpParser().isMappingSuccessfull();
+        return parser.getDpParser().isMappingFailing();
     }
 }
