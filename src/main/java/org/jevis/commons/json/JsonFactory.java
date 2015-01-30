@@ -28,6 +28,7 @@ import org.jevis.api.JEVisObject;
 import org.jevis.api.JEVisRelationship;
 import org.jevis.api.JEVisSample;
 import org.jevis.api.JEVisType;
+import org.jevis.api.JEVisUnit;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
@@ -146,4 +147,10 @@ public class JsonFactory {
         json.setValidity("" + type.getValidity());
         return json;
     }
+
+//    public static JsonUnit buildUnit(JEVisUnit unit) throws JEVisException {
+//        JsonUnit json = new JsonUnit();
+//        json.set
+//        return json;
+//    }
 }

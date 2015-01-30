@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import javax.measure.quantity.*;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
@@ -30,9 +31,12 @@ import javax.measure.unit.Unit;
 import org.jevis.api.JEVisAttribute;
 import org.jevis.api.JEVisException;
 import org.jevis.api.JEVisType;
+import org.jevis.api.JEVisUnit;
 import org.jscience.economics.money.Money;
 
 /**
+ * This Class helps with the handling of JScince Lib. This class in not final an
+ * may be chaned in the future.
  *
  * @author fs
  */
@@ -42,15 +46,20 @@ public class UnitManager {
     private List<Unit> prefixes;
     private List<String> prefixes2;
     private List<Unit> quantities;
+    private List<JEVisUnit> _quantitiesJunit;
     private List<Unit> nonSI;
+    private List<JEVisUnit> _nonSIJunit;
     private List<Unit> si;
+    private List<JEVisUnit> _siJunit;
     private List<Unit> additonalUnits;
     private HashMap<Unit, String> names;
+    private HashMap<JEVisUnit, String> _namesJUnit;
     private HashMap<Unit, String> dimNames;
+    private HashMap<JEVisUnit, String> _dimNamesJUnit;
 
-//    public static final Unit SELECT_LATER = Dimensionless.UNIT.ONE.alternate("SEL");
-    public interface Prefix {
+    public interface PrefixName {
 
+        //TODO: remove this
         public static String ZETTA = "Zetta";
         public static String EXA = "Exa";
         public static String PETA = "Peta";
@@ -70,6 +79,7 @@ public class UnitManager {
         public static String ATTO = "Atto";
         public static String ZEPTO = "Zepto";
         public static String YOCTO = "Yocto";
+        public static String NONE = "None";
 
     }
 
@@ -83,6 +93,19 @@ public class UnitManager {
         return unitManager;
     }
 
+    public List<JEVisUnit> getQuantitiesJunit() {
+        if (_quantitiesJunit != null) {
+            return _quantitiesJunit;
+        }
+        _quantitiesJunit = new ArrayList<>();
+
+        for (Unit unit : getQuantities()) {
+            _quantitiesJunit.add(new JEVisUnitImp(unit));
+        }
+
+        return _quantitiesJunit;
+    }
+
     public List<Unit> getQuantities() {
 
         if (quantities != null) {
@@ -91,12 +114,11 @@ public class UnitManager {
         quantities = new ArrayList<>();
 
         quantities.add(Money.BASE_UNIT);
-
         quantities.add(Acceleration.UNIT);
-        quantities.add(AngularVelocity.UNIT);
         quantities.add(AmountOfSubstance.UNIT);
         quantities.add(Angle.UNIT);
         quantities.add(AngularAcceleration.UNIT);
+        quantities.add(AngularVelocity.UNIT);
         quantities.add(Area.UNIT);
         quantities.add(CatalyticActivity.UNIT);
         quantities.add(DataAmount.UNIT);
@@ -105,8 +127,8 @@ public class UnitManager {
         quantities.add(Duration.UNIT);
         quantities.add(DynamicViscosity.UNIT);
         quantities.add(ElectricCapacitance.UNIT);
-        quantities.add(ElectricConductance.UNIT);
         quantities.add(ElectricCharge.UNIT);
+        quantities.add(ElectricConductance.UNIT);
         quantities.add(ElectricCurrent.UNIT);
         quantities.add(ElectricInductance.UNIT);
         quantities.add(ElectricPotential.UNIT);
@@ -119,9 +141,9 @@ public class UnitManager {
         quantities.add(Length.UNIT);
         quantities.add(LuminousFlux.UNIT);
         quantities.add(LuminousIntensity.UNIT);
-        quantities.add(Mass.UNIT);
         quantities.add(MagneticFlux.UNIT);
         quantities.add(MagneticFluxDensity.UNIT);
+        quantities.add(Mass.UNIT);
         quantities.add(MassFlowRate.UNIT);
         quantities.add(Power.UNIT);
         quantities.add(Pressure.UNIT);
@@ -140,6 +162,55 @@ public class UnitManager {
     }
 
     /**
+     * returns an new unit with the given Prefix
+     *
+     * @param pre
+     * @param unit
+     * @return
+     */
+    public Unit getWithPrefix(String pre, Unit unit) {
+        if (pre.equals(PrefixName.ATTO)) {
+            return SI.ATTO(unit);
+        } else if (pre.equals(PrefixName.CENTI)) {
+            return SI.CENTI(unit);
+        } else if (pre.equals(PrefixName.DECI)) {
+            return SI.DECI(unit);
+        } else if (pre.equals(PrefixName.DEKA)) {
+            return SI.DEKA(unit);
+        } else if (pre.equals(PrefixName.EXA)) {
+            return SI.EXA(unit);
+        } else if (pre.equals(PrefixName.FEMTO)) {
+            return SI.FEMTO(unit);
+        } else if (pre.equals(PrefixName.GIGA)) {
+            return SI.GIGA(unit);
+        } else if (pre.equals(PrefixName.HECTO)) {
+            return SI.HECTO(unit);
+        } else if (pre.equals(PrefixName.KILO)) {
+            return SI.KILO(unit);
+        } else if (pre.equals(PrefixName.MEGA)) {
+            return SI.MEGA(unit);
+        } else if (pre.equals(PrefixName.MICRO)) {
+            return SI.MICRO(unit);
+        } else if (pre.equals(PrefixName.MILLI)) {
+            return SI.MILLI(unit);
+        } else if (pre.equals(PrefixName.NANO)) {
+            return SI.NANO(unit);
+        } else if (pre.equals(PrefixName.PETA)) {
+            return SI.PETA(unit);
+        } else if (pre.equals(PrefixName.PICO)) {
+            return SI.PICO(unit);
+        } else if (pre.equals(PrefixName.YOCTO)) {
+            return SI.YOCTO(unit);
+        } else if (pre.equals(PrefixName.ZEPTO)) {
+            return SI.ZEPTO(unit);
+        } else if (pre.equals(PrefixName.ZETTA)) {
+            return SI.ZETTA(unit);
+        } else {
+            return unit;
+        }
+    }
+
+    /**
      * This funktion will change in the future
      *
      * @return
@@ -151,159 +222,305 @@ public class UnitManager {
         prefixes2 = new ArrayList<>();
 
         prefixes2.add("");
-        prefixes2.add(Prefix.ZETTA);
-        prefixes2.add(Prefix.EXA);
-        prefixes2.add(Prefix.PETA);
-        prefixes2.add(Prefix.TERA);
-        prefixes2.add(Prefix.GIGA);
-        prefixes2.add(Prefix.MEGA);
-        prefixes2.add(Prefix.KILO);
-        prefixes2.add(Prefix.HECTO);
-        prefixes2.add(Prefix.DEKA);
-        prefixes2.add(Prefix.DECI);
-        prefixes2.add(Prefix.CENTI);
-        prefixes2.add(Prefix.MILLI);
-        prefixes2.add(Prefix.MICRO);
-        prefixes2.add(Prefix.NANO);
-        prefixes2.add(Prefix.PICO);
-        prefixes2.add(Prefix.FEMTO);
-        prefixes2.add(Prefix.ATTO);
-        prefixes2.add(Prefix.ZEPTO);
-        prefixes2.add(Prefix.YOCTO);
-
-//        prefixes2.add("");
-//        prefixes2.add("Zetta");
-//        prefixes2.add("Exa");
-//        prefixes2.add("Peta");
-//        prefixes2.add("Tera");
-//        prefixes2.add("Giga");
-//        prefixes2.add("Mega");
-//        prefixes2.add("Kilo");
-//        prefixes2.add("Hecto");
-//        prefixes2.add("Deka");
-//        prefixes2.add("Deci");
-//        prefixes2.add("Centi");
-//        prefixes2.add("Milli");
-//        prefixes2.add("Micro");
-//        prefixes2.add("Nano");
-//        prefixes2.add("Pico");
-//        prefixes2.add("Femto");
-//        prefixes2.add("Atto");
-//        prefixes2.add("Zepto");
-//        prefixes2.add("Yocto");
+        prefixes2.add(PrefixName.ZETTA);
+        prefixes2.add(PrefixName.EXA);
+        prefixes2.add(PrefixName.PETA);
+        prefixes2.add(PrefixName.TERA);
+        prefixes2.add(PrefixName.GIGA);
+        prefixes2.add(PrefixName.MEGA);
+        prefixes2.add(PrefixName.KILO);
+        prefixes2.add(PrefixName.HECTO);
+        prefixes2.add(PrefixName.DEKA);
+        prefixes2.add(PrefixName.DECI);
+        prefixes2.add(PrefixName.CENTI);
+        prefixes2.add(PrefixName.MILLI);
+        prefixes2.add(PrefixName.MICRO);
+        prefixes2.add(PrefixName.NANO);
+        prefixes2.add(PrefixName.PICO);
+        prefixes2.add(PrefixName.FEMTO);
+        prefixes2.add(PrefixName.ATTO);
+        prefixes2.add(PrefixName.ZEPTO);
+        prefixes2.add(PrefixName.YOCTO);
         return prefixes2;
     }
 
-    public String getPrefixChar(String prefix) {
-        /*
-         public static String ZETTA = "Z";
-         public static String EXA = "E";
-         public static String PETA = "P";
-         public static String TERA = "T";
-         public static String GIGA = "G";
-         public static String MEGA = "M";
-         public static String KILO = "k";
-         public static String HECTO = "h";
-         public static String DEKA = "da";
-         public static String DECI = "d";
-         public static String CENTI = "c";
-         public static String MILLI = "m";
-         public static String MICRO = "µ";
-         public static String NANO = "n";
-         public static String PICO = "p";
-         public static String FEMTO = "f";
-         public static String ATTO = "a";
-         public static String ZEPTO = "z";
-         public static String YOCTO = "y";
-         */
+    /**
+     * Returns an String representaion of the Prefix
+     *
+     * @param prefix
+     * @return
+     */
+    public String getPrefixChar(JEVisUnit.Prefix prefix) {
 
         switch (prefix) {
-            case Prefix.ATTO:
+            case ATTO:
                 return "a";
-            case Prefix.CENTI:
+            case CENTI:
                 return "c";
-            case Prefix.DECI:
+            case DECI:
                 return "d";
-            case Prefix.DEKA:
+            case DEKA:
                 return "da";
-            case Prefix.EXA:
+            case EXA:
                 return "E";
-            case Prefix.FEMTO:
+            case FEMTO:
                 return "f";
-            case Prefix.GIGA:
+            case GIGA:
                 return "G";
-            case Prefix.HECTO:
+            case HECTO:
                 return "h";
-            case Prefix.KILO:
+            case KILO:
                 return "k";
-            case Prefix.MEGA:
+            case MEGA:
                 return "m";
-            case Prefix.MICRO:
+            case MICRO:
                 return "µ";
-            case Prefix.MILLI:
+            case MILLI:
                 return "m";
-            case Prefix.NANO:
+            case NANO:
                 return "n";
-            case Prefix.PETA:
+            case PETA:
                 return "P";
-            case Prefix.PICO:
+            case PICO:
                 return "P";
-            case Prefix.TERA:
+            case TERA:
                 return "T";
-            case Prefix.YOCTO:
+            case YOCTO:
                 return "y";
-            case Prefix.ZEPTO:
+            case ZEPTO:
                 return "Z";
-            case Prefix.ZETTA:
+            case ZETTA:
+                return "Z";
+            case NONE:
+                return "";
+            default:
+                throw new AssertionError();
+        }
+    }
+
+    //TODO is this still in use?
+    public String getPrefixChar(String prefix) {
+
+        switch (prefix) {
+            case PrefixName.ATTO:
+                return "a";
+            case PrefixName.CENTI:
+                return "c";
+            case PrefixName.DECI:
+                return "d";
+            case PrefixName.DEKA:
+                return "da";
+            case PrefixName.EXA:
+                return "E";
+            case PrefixName.FEMTO:
+                return "f";
+            case PrefixName.GIGA:
+                return "G";
+            case PrefixName.HECTO:
+                return "h";
+            case PrefixName.KILO:
+                return "k";
+            case PrefixName.MEGA:
+                return "m";
+            case PrefixName.MICRO:
+                return "µ";
+            case PrefixName.MILLI:
+                return "m";
+            case PrefixName.NANO:
+                return "n";
+            case PrefixName.PETA:
+                return "P";
+            case PrefixName.PICO:
+                return "P";
+            case PrefixName.TERA:
+                return "T";
+            case PrefixName.YOCTO:
+                return "y";
+            case PrefixName.ZEPTO:
+                return "Z";
+            case PrefixName.ZETTA:
                 return "Z";
             default:
                 throw new AssertionError();
         }
     }
 
-    public Unit getUnitWithPrefix(Unit unit, String prefix) {
+    public JEVisUnit.Prefix getPrefix(String name, Locale locale) {
+//        System.out.println("getPrefix: " + name);
+        if (name == null || name.isEmpty()) {
+            System.out.println("emty Prefix = none");
+            return JEVisUnit.Prefix.NONE;
+        }
+
+        switch (name) {
+            case PrefixName.ATTO:
+                return JEVisUnit.Prefix.ATTO;
+            case PrefixName.CENTI:
+                return JEVisUnit.Prefix.CENTI;
+            case PrefixName.DECI:
+                return JEVisUnit.Prefix.DECI;
+            case PrefixName.DEKA:
+                return JEVisUnit.Prefix.DEKA;
+            case PrefixName.EXA:
+                return JEVisUnit.Prefix.EXA;
+            case PrefixName.FEMTO:
+                return JEVisUnit.Prefix.FEMTO;
+            case PrefixName.GIGA:
+                return JEVisUnit.Prefix.GIGA;
+            case PrefixName.HECTO:
+                return JEVisUnit.Prefix.HECTO;
+            case PrefixName.KILO:
+                return JEVisUnit.Prefix.KILO;
+            case PrefixName.MEGA:
+                return JEVisUnit.Prefix.MEGA;
+            case PrefixName.MICRO:
+                return JEVisUnit.Prefix.MICRO;
+            case PrefixName.MILLI:
+                return JEVisUnit.Prefix.MILLI;
+            case PrefixName.NANO:
+                return JEVisUnit.Prefix.NANO;
+            case PrefixName.PETA:
+                return JEVisUnit.Prefix.PETA;
+            case PrefixName.PICO:
+                return JEVisUnit.Prefix.PICO;
+            case PrefixName.TERA:
+                return JEVisUnit.Prefix.TERA;
+            case PrefixName.YOCTO:
+                return JEVisUnit.Prefix.YOCTO;
+            case PrefixName.ZEPTO:
+                return JEVisUnit.Prefix.ZEPTO;
+            case PrefixName.ZETTA:
+                return JEVisUnit.Prefix.ZETTA;
+            case PrefixName.NONE:
+                return JEVisUnit.Prefix.NONE;
+            default:
+                System.out.println("unkown Prefix: " + name);
+                return JEVisUnit.Prefix.NONE;
+        }
+    }
+
+    /**
+     * Returns the long name of the prefix for the given locale
+     *
+     * @param prefix
+     * @param locale
+     * @return
+     */
+    public String getPrefixName(JEVisUnit.Prefix prefix, Locale locale) {
         switch (prefix) {
-            case Prefix.ATTO:
+            case ATTO:
+                return PrefixName.ATTO;
+            case CENTI:
+                return PrefixName.CENTI;
+            case DECI:
+                return PrefixName.DECI;
+            case DEKA:
+                return PrefixName.DEKA;
+            case EXA:
+                return PrefixName.EXA;
+            case FEMTO:
+                return PrefixName.FEMTO;
+            case GIGA:
+                return PrefixName.GIGA;
+            case HECTO:
+                return PrefixName.HECTO;
+            case KILO:
+                return PrefixName.KILO;
+            case MEGA:
+                return PrefixName.MEGA;
+            case MICRO:
+                return PrefixName.MICRO;
+            case MILLI:
+                return PrefixName.MILLI;
+            case NANO:
+                return PrefixName.NANO;
+            case PETA:
+                return PrefixName.PETA;
+            case PICO:
+                return PrefixName.PICO;
+            case TERA:
+                return PrefixName.TERA;
+            case YOCTO:
+                return PrefixName.YOCTO;
+            case ZEPTO:
+                return PrefixName.ZEPTO;
+            case ZETTA:
+                return PrefixName.ZETTA;
+            case NONE:
+                return PrefixName.NONE;
+
+            default:
+                System.out.println("Waring no prefix name found for: " + prefix);
+                return PrefixName.NONE;
+        }
+    }
+
+    /**
+     * Return an new Unit with the set Prefix
+     *
+     * @param unit
+     * @param prefix
+     * @return
+     */
+    public Unit getUnitWithPrefix(Unit unit, JEVisUnit.Prefix prefix) {
+//        System.out.println("getUnitWithPrefix: " + prefix);
+        switch (prefix) {
+            case ATTO:
                 return SI.ATTO(unit);
-            case Prefix.CENTI:
+            case CENTI:
                 return SI.CENTI(unit);
-            case Prefix.DECI:
+            case DECI:
                 return SI.DECI(unit);
-            case Prefix.DEKA:
+            case DEKA:
                 return SI.DEKA(unit);
-            case Prefix.EXA:
+            case EXA:
                 return SI.EXA(unit);
-            case Prefix.FEMTO:
+            case FEMTO:
                 return SI.FEMTO(unit);
-            case Prefix.GIGA:
+            case GIGA:
                 return SI.GIGA(unit);
-            case Prefix.HECTO:
+            case HECTO:
                 return SI.HECTO(unit);
-            case Prefix.KILO:
+            case KILO:
                 return SI.KILO(unit);
-            case Prefix.MEGA:
+            case MEGA:
                 return SI.MEGA(unit);
-            case Prefix.MICRO:
+            case MICRO:
                 return SI.MICRO(unit);
-            case Prefix.MILLI:
+            case MILLI:
                 return SI.MILLI(unit);
-            case Prefix.NANO:
+            case NANO:
                 return SI.NANO(unit);
-            case Prefix.PETA:
+            case PETA:
                 return SI.PETA(unit);
-            case Prefix.PICO:
+            case PICO:
                 return SI.PICO(unit);
-            case Prefix.TERA:
+            case TERA:
                 return SI.TERA(unit);
-            case Prefix.YOCTO:
+            case YOCTO:
                 return SI.YOCTO(unit);
-            case Prefix.ZEPTO:
+            case ZEPTO:
                 return SI.ZEPTO(unit);
-            case Prefix.ZETTA:
+            case ZETTA:
                 return SI.ZETTA(unit);
+            case NONE:
+                return unit;
             default:
                 throw new AssertionError();
         }
+    }
+
+    public List<JEVisUnit> getNonSIJEVisUnits() {
+        if (_nonSIJunit != null) {
+            return _nonSIJunit;
+        }
+        _nonSIJunit = new ArrayList<>();
+
+        for (Unit unit : getNonSIUnits()) {
+            _nonSIJunit.add(new JEVisUnitImp(unit));
+        }
+
+        return _nonSIJunit;
     }
 
     public List<Unit> getNonSIUnits() {
@@ -398,38 +615,24 @@ public class UnitManager {
         return nonSI;
     }
 
-    public Unit parseUnit(String unitString) {
-        //1. try basic parsing
-        try {
-            return Unit.valueOf(unitString);
-        } catch (Exception ex) {
-            //2. Maybe it aniregilar unit of ours?
-            //ToDo: remove hardcode do proper code
-            for (Unit au : getAdditonalUnits()) {
-                if (au.toString().equals(unitString)) {
-//                    System.out.println("Is Additonal Unit: " + unitString);
-                    return au;
-                }
-            }
+    public String formate(JEVisUnit junit) throws JEVisException {
+//        return formate(junit.ge, junit.getLabel());
+        String u1 = junit.toString().replace("·", "");
+//        u1 = u1.replace("(", "");
+//        u1 = u1.replace(")", "");
+//        u1 = u1.replace("/", "");
 
-            //3. is unknown, we cound return Unit.ONE with alternative synbol 
-            // but i want to know which have problem so a mark them in the beta
-            return Unit.ONE.alternate("E|" + unitString);
-
-        }
-
-    }
-
-    public boolean hasTimes(Unit unit) {
-        return (unit.getDimension()).toString().contains("T");
+        return u1;
     }
 
     public String formate(JEVisAttribute att) throws JEVisException {
-        return formate(att.getUnit(), att.getAlternativSymbol());
+        return "-/-";
+//        return formate(att.getUnit(), att.getAlternativSymbol());
     }
 
     public String formate(JEVisType type) throws JEVisException {
-        return formate(type.getUnit(), type.getAlternativSymbol());
+        return "-/-";
+//        return formate(type.getUnit(), type.getAlternativSymbol());
     }
 
     public String formate(Unit unit) {
@@ -437,7 +640,7 @@ public class UnitManager {
     }
 
     public String formate(Unit unit, String altSymbol) {
-        System.out.println("Formate unit: " + unit + "  AltUnit: " + altSymbol);
+//        System.out.println("Formate unit: " + unit + "  AltUnit: " + altSymbol);
 //        String u1 = unit.getStandardUnit().toString().replace("·", "");
         String u1 = unit.toString().replace("·", "");
         u1 = u1.replace("(", "");
@@ -446,70 +649,12 @@ public class UnitManager {
 
         return u1;
 
-//        String prefix = "";
-//
-//        //dirty part... basic and hour based. 
-//        if (false) {
-//
-//        } else if (unit.toString().contains("*1.0E24") || unit.toString().contains("*3.6E24")) {//YOTTA
-//            prefix = "Y";
-//        } else if (unit.toString().contains("*1.0E21") || unit.toString().contains("*3.6E21")) {//ZETTA
-//            prefix = "Z";
-//        } else if (unit.toString().contains("*1000000000000000000") || unit.toString().contains("*3.6E21")) {//EXA
-//            prefix = "E";
-//        } else if (unit.toString().contains("*1000000000000000") || unit.toString().contains("*3600000000000000000")) {//PETA
-//            prefix = "P";
-//        } else if (unit.toString().contains("*1000000000000") || unit.toString().contains("*3600000000000000")) {//TERA
-//            prefix = "T";
-//        } else if (unit.toString().contains("*1000000000") || unit.toString().contains("*3600000000000")) {//GIGA
-//            prefix = "G";
-//        } else if (unit.toString().contains("*1000000") || unit.toString().contains("*3600000000")) {//MEGA
-//            prefix = "M";
-//        } else if (unit.toString().contains("*1000") || unit.toString().contains("*3600000")) {//KILO
-//            prefix = "k";
-//        } else if (unit.toString().contains("*100") || unit.toString().contains("*360000")) {//HECTO
-//            prefix = "h";
-//        } else if (unit.toString().contains("*10") || unit.toString().contains("*36000")) {//DEKA
-//            prefix = "da"; ///-----------------------
-//        } else if (unit.toString().contains("/1.0E-24") || unit.toString().contains("/3.6E27")) {//Yokto
-//            prefix = "y";
-//        } else if (unit.toString().contains("/1.0E-21") || unit.toString().contains("/3.599999999999999E-18")) {//ZEPTO
-//            prefix = "z";
-//        } else if (unit.toString().contains("/1000000000000000000") || unit.toString().contains("*9/2500000000000000")) {//ATTO
-//            prefix = "a";
-//        } else if (unit.toString().contains("/1000000000000000") || unit.toString().contains("*9/2500000000000")) {//FEMTO
-//            prefix = "f";
-//        } else if (unit.toString().contains("/1000000000000") || unit.toString().contains("*9/2500000000")) {//PICO
-//            prefix = "p";
-//        } else if (unit.toString().contains("/1000000000") || unit.toString().contains("*9/2500000")) {//NANO
-//            prefix = "n";
-//        } else if (unit.toString().contains("/1000000") || unit.toString().contains("*9/2500")) {//MICRO
-//            prefix = "µ";
-//        } else if (unit.toString().contains("/1000") || unit.toString().contains("*18/5")) {//MILLI
-//            prefix = "m";
-//        } else if (unit.toString().contains("/100") || unit.toString().contains("*36")) {//CENTI
-//            prefix = "c";
-//        } else if (unit.toString().contains("/10") || unit.toString().contains("*360")) {//DECI
-//            prefix = "d";
-//        }
-//        if (altSymbol != null && !altSymbol.equals("")) {
-//            return prefix + altSymbol;
-//        }
-//        int end = u1.indexOf("/");
-//
-//        String u2 = "";
-//        if (end != -1) {
-//            u2 = u1.substring(0, end - 1);
-//        }
-//        end = u1.indexOf("*");
-//
-//        if (end != -1) {
-//            u2 = u1.substring(0, end - 1);
-//        }
-//
-//        return prefix + u2;
     }
 
+    /**
+     * @TODO: this list comes from the WebServices
+     * @return
+     */
     public List<Unit> getAdditonalUnits() {
         if (additonalUnits != null) {
             return additonalUnits;
@@ -528,42 +673,48 @@ public class UnitManager {
         additonalUnits.add(Money.BASE_UNIT.alternate("₦"));
         additonalUnits.add(Money.BASE_UNIT.alternate("₹"));
 
-        //pecial unit for gui. if this Unit is selected the user can choose the unit later.
-//        Unit ws = SI.WATT.times(SI.SECOND);
-//        Unit s = SI.SECOND;
-//        Unit wh = SI.WATT.times(NonSI.HOUR);
-//        Unit kwh = SI.KILO(SI.WATT.times(NonSI.HOUR));
-//
-//        System.out.println("=========Testing============");
-//        magic(ws, NonSI.HOUR);
-//        magic(wh, SI.SECOND);
-//        magic(SI.GRAM, SI.SECOND);
-//        magic(kwh, NonSI.YEAR);
-//        System.out.println("=======end===========");
-//
-//        Unit x = wh;
-//
-//        if (x.isStandardUnit()) {
-//            System.out.println("Standard Unit");
-//        } else {
-//            System.out.println("keine Standard Unit, Faktor = " + x.divide(x.getStandardUnit()));
-//        }
-//
-//        System.out.println(
-//                "ws: " + ws.divide(ws));
-//        System.out.println(
-//                "kwh: " + kwh.divide(ws));
-//
-//        System.out.println(
-//                "wh: " + wh.divide(s));
-//        System.out.println(
-//                "kwh: " + kwh.divide(s));
-//
-//        System.out.println(
-//                "is Ws time: " + hasTimes(ws));
-//        System.out.println(
-//                "is W time: " + hasTimes(SI.WATT));
+        additonalUnits.add(SI.WATT.alternate("var"));
+        additonalUnits.add(SI.WATT.divide(SI.SQUARE_METRE));
+        additonalUnits.add(SI.METER.divide(SI.SECOND));
+
+        additonalUnits.add(Dimensionless.UNIT.alternate("Hits").divide(SI.METER.pow(2)));
+        additonalUnits.add(Unit.ONE.alternate("Hits").divide(SI.CENTIMETER.pow(2)));
+        additonalUnits.add(SI.OHM.divide(SI.CENTIMETER.pow(2)));
+        additonalUnits.add(SI.CENTIMETER.pow(2));
+        additonalUnits.add(SI.KILOMETER.pow(2));
+//        additonalUnits.add(Dimensionless.UNIT.alternate("Status"));
+
         return additonalUnits;
+    }
+
+    public List<JEVisUnit> getCustomUnits() {
+        List<JEVisUnit> customUnits = new ArrayList<>();
+        for (JEVisUnit unit : getAdditonalJEVisUnits()) {
+            boolean hasQuantitiy = false;
+            for (JEVisUnit quantity : getQuantitiesJunit()) {
+                if (quantity.isCompatible(unit)) {
+                    hasQuantitiy = true;
+                }
+            }
+            if (!hasQuantitiy) {
+                customUnits.add(unit);
+            }
+        }
+
+        return customUnits;
+    }
+
+    public List<JEVisUnit> getAdditonalJEVisUnits() {
+//        if (additonalUnits != null) {
+//            return additonalUnits;
+//        }
+        List<JEVisUnit> units = new ArrayList<>();
+
+        for (Unit u : getAdditonalUnits()) {
+            units.add(new JEVisUnitImp(u));
+        }
+        return units;
+
     }
 
     public List<Unit> getSIUnits() {
@@ -617,6 +768,35 @@ public class UnitManager {
         si.add(javax.measure.unit.SI.METRE);
 
         return si;
+    }
+
+    public List<JEVisUnit> getSIJEVisUnits() {
+        if (_siJunit != null) {
+            return _siJunit;
+        }
+        _siJunit = new ArrayList<>();
+
+        for (Unit unit : getSIUnits()) {
+            _siJunit.add(new JEVisUnitImp(unit));
+        }
+
+        return _siJunit;
+    }
+
+    public HashMap<JEVisUnit, String> getNameMapQuantities(Locale local) {
+        if (_dimNamesJUnit != null) {
+            return _dimNamesJUnit;
+        }
+        _dimNamesJUnit = new HashMap<>();
+
+        for (Map.Entry<Unit, String> entry : getNameMapQuantities().entrySet()) {
+            Unit unit = entry.getKey();
+            String string = entry.getValue();
+
+            _dimNamesJUnit.put(new JEVisUnitImp(unit), string);
+        }
+
+        return _dimNamesJUnit;
     }
 
     public HashMap<Unit, String> getNameMapQuantities() {
@@ -674,163 +854,29 @@ public class UnitManager {
         return dimNames;
     }
 
+    public HashMap<JEVisUnit, String> getNameMap(Locale locale) {
+        if (_namesJUnit != null) {
+            return _namesJUnit;
+        }
+        _namesJUnit = new HashMap<>();
+
+        for (Map.Entry<Unit, String> entry : getNameMap().entrySet()) {
+            Unit unit = entry.getKey();
+            String string = entry.getValue();
+
+            _namesJUnit.put(new JEVisUnitImp(unit), string);
+
+        }
+
+        return _namesJUnit;
+    }
+
     public HashMap<Unit, String> getNameMap() {
         if (names != null) {
             return names;
         }
         names = new HashMap<>();
 
-//        //--- SI units
-//        names.put(SI.AMPERE, "AMPERE");
-//        names.put(SI.BECQUEREL, "BECQUEREL");
-//        names.put(SI.BIT, "BIT");
-//        names.put(SI.CANDELA, "CANDELA");
-//        names.put(SI.CELSIUS, "CELSIUS");
-//        names.put(SI.CENTIMETER, "CENTIMETER");
-//        names.put(SI.CENTIMETRE, "CENTIMETRE");
-//        names.put(SI.COULOMB, "COULOMB");
-//        names.put(SI.CUBIC_METRE, "CUBIC_METRE");
-//        names.put(SI.FARAD, "FARAD");
-//        names.put(SI.GRAM, "GRAM");
-//        names.put(SI.GRAY, "GRAY");
-//        names.put(SI.HENRY, "HENRY");
-//        names.put(SI.HERTZ, "HERTZ");
-//        names.put(SI.JOULE, "JOULE");
-//        names.put(SI.KATAL, "KATAL");
-//        names.put(SI.KELVIN, "KELVIN");
-//        names.put(SI.KILOGRAM, "KILOGRAM");
-//        names.put(SI.KILOMETER, "KILOMETER");
-//        names.put(SI.LUMEN, "LUMEN");
-//        names.put(SI.LUX, "LUX");
-//        names.put(SI.METER, "METER");
-//        names.put(SI.METERS_PER_SECOND, "METERS PER SECOND");
-//        names.put(SI.METERS_PER_SQUARE_SECOND, "METERS PER SQUARE SECOND");
-//        names.put(SI.METRE, "METRE");
-//        names.put(SI.METRES_PER_SECOND, "METRES PER SECOND");
-//        names.put(SI.METRES_PER_SQUARE_SECOND, "METRES_PER_SQUARE_SECOND");
-//        names.put(SI.MILLIMETER, "MILLIMETER");
-//        names.put(SI.LUX, "LUX");
-//        names.put(SI.MILLIMETRE, "MILLIMETRE");
-//        names.put(SI.MOLE, "MOLE");
-//        names.put(SI.NEWTON, "NEWTON");
-//        names.put(SI.OHM, "OHM");
-//        names.put(SI.PASCAL, "PASCAL");
-//        names.put(SI.RADIAN, "RADIAN");
-//        names.put(SI.SECOND, "SECOND");
-//        names.put(SI.SIEMENS, "SIEMENS");
-//        names.put(SI.SIEVERT, "SIEVERT");
-//        names.put(SI.SQUARE_METRE, "SQUARE_METRE");
-//        names.put(SI.STERADIAN, "STERADIAN");
-//        names.put(SI.TESLA, "TESLA");
-//        names.put(SI.VOLT, "VOLT");
-//        names.put(SI.WATT, "WATT");
-//        names.put(SI.WEBER, "WEBER");
-//        //---- NON SI
-//        names.put(NonSI.ANGSTROM, "ANGSTROM");
-//        names.put(NonSI.ARE, "ARE");
-//        names.put(NonSI.ASTRONOMICAL_UNIT, "ASTRONOMICAL_UNIT");
-//        names.put(NonSI.ATMOSPHERE, "ATMOSPHERE");
-//        names.put(NonSI.ATOM, "ATOM");
-//        names.put(NonSI.ATOMIC_MASS, "ATOMIC_MASS");
-//        names.put(NonSI.BAR, "BAR");
-//        names.put(NonSI.BYTE, "BYTE");
-//        names.put(NonSI.C, "C");
-//        names.put(NonSI.CENTIRADIAN, "CENTIRADIAN");
-//        names.put(NonSI.COMPUTER_POINT, "COMPUTER_POINT");
-//        names.put(NonSI.CUBIC_INCH, "CUBIC_INCH");
-//        names.put(NonSI.CURIE, "CURIE");
-//        names.put(NonSI.DAY, "DAY");
-//        names.put(NonSI.DAY_SIDEREAL, "DAY_SIDEREAL");
-//        names.put(NonSI.DECIBEL, "DECIBEL");
-//        names.put(NonSI.DEGREE_ANGLE, "DEGREE_ANGLE");
-//        names.put(NonSI.DYNE, "DYNE");
-//        names.put(NonSI.E, "E");
-//        names.put(NonSI.ELECTRON_MASS, "ELECTRON_MASS");
-//        names.put(NonSI.ELECTRON_VOLT, "ELECTRON_VOLT");
-//        names.put(NonSI.ERG, "ERG");
-//        names.put(NonSI.FAHRENHEIT, "FAHRENHEIT");
-//        names.put(NonSI.FARADAY, "FARADAY");
-//        names.put(NonSI.FOOT, "FOOT");
-//        names.put(NonSI.FOOT_SURVEY_US, "FOOT_SURVEY_US");
-//        names.put(NonSI.FRANKLIN, "FRANKLIN");
-//        names.put(NonSI.G, "G");
-//        names.put(NonSI.GALLON_DRY_US, "GALLON_DRY_US");
-//        names.put(NonSI.GALLON_LIQUID_US, "GALLON_LIQUID_US");
-//        names.put(NonSI.GALLON_UK, "GALLON_UK");
-//        names.put(NonSI.GAUSS, "GAUSS");
-//        names.put(NonSI.GILBERT, "GILBERT");
-//        names.put(NonSI.GRADE, "GRADE");
-//        names.put(NonSI.HECTARE, "HECTARE");
-//        names.put(NonSI.HORSEPOWER, "HORSEPOWER");
-//        names.put(NonSI.HOUR, "HOUR");
-//        names.put(NonSI.INCH, "INCH");
-//        names.put(NonSI.INCH_OF_MERCURY, "INCH_OF_MERCURY");
-//        names.put(NonSI.KILOGRAM_FORCE, "KILOGRAM_FORCE");
-//        names.put(NonSI.KILOMETERS_PER_HOUR, "KILOMETERS_PER_HOUR");
-//        names.put(NonSI.KNOT, "KNOT");
-//        names.put(NonSI.LAMBERT, "LAMBERT");
-//        names.put(NonSI.LIGHT_YEAR, "LIGHT_YEAR");
-//        names.put(NonSI.LITER, "LITER");
-//        names.put(NonSI.LITRE, "LITRE");
-//        names.put(NonSI.MACH, "MACH");
-//        names.put(NonSI.MAXWELL, "MAXWELL");
-//        names.put(NonSI.METRIC_TON, "METRIC_TON");
-//        names.put(NonSI.MILE, "MILE");
-//        names.put(NonSI.MILES_PER_HOUR, "MILES_PER_HOUR");
-//        names.put(NonSI.MILLIMETER_OF_MERCURY, "MILLIMETER_OF_MERCURY");
-//        names.put(NonSI.MINUTE, "MINUTE");
-//        names.put(NonSI.MINUTE_ANGLE, "MINUTE_ANGLE");
-//        names.put(NonSI.MONTH, "MONTH");
-//        names.put(NonSI.NAUTICAL_MILE, "NAUTICAL_MILE");
-//        names.put(NonSI.OCTET, "OCTET");
-//        names.put(NonSI.OUNCE, "OUNCE");
-//        names.put(NonSI.OUNCE_LIQUID_UK, "OUNCE_LIQUID_UK");
-//        names.put(NonSI.OUNCE_LIQUID_US, "OUNCE_LIQUID_US");
-//        names.put(NonSI.PARSEC, "PARSEC");
-//        names.put(NonSI.PERCENT, "PERCENT");
-//        names.put(NonSI.PIXEL, "PIXEL");
-//        names.put(NonSI.POINT, "POINT");
-//        names.put(NonSI.POISE, "POISE");
-//        names.put(NonSI.POUND, "POUND");
-//        names.put(NonSI.POUND_FORCE, "POUND_FORCE");
-//        names.put(NonSI.RAD, "RAD");
-//        names.put(NonSI.RANKINE, "RANKINE");
-//        names.put(NonSI.REM, "REM");
-//        names.put(NonSI.REVOLUTION, "REVOLUTION");
-//        names.put(NonSI.ROENTGEN, "ROENTGEN");
-//        names.put(NonSI.RUTHERFORD, "RUTHERFORD");
-//        names.put(NonSI.SECOND_ANGLE, "SECOND_ANGLE");
-//        names.put(NonSI.SPHERE, "SPHERE");
-//        names.put(NonSI.STOKE, "STOKE");
-//        names.put(NonSI.TON_UK, "TON_UK");
-//        names.put(NonSI.TON_US, "TON_US");
-//        names.put(NonSI.WEEK, "WEEK");
-//        names.put(NonSI.YARD, "YARD");
-//        names.put(NonSI.YEAR, "YEAR");
-//        names.put(NonSI.YEAR_CALENDAR, "YEAR_CALENDAR");
-//        names.put(NonSI.YEAR_SIDEREAL, "YEAR_SIDEREAL");
-//        //Prefix
-//
-//        names.put(SI.ZETTA(Unit.ONE), "ZETTA");
-//        names.put(SI.EXA(Unit.ONE), "EXA");
-//        names.put(SI.PETA(Unit.ONE), "PETA");
-//        names.put(SI.TERA(Unit.ONE), "TERA");
-//        names.put(SI.GIGA(Unit.ONE), "GIGA");
-//        names.put(SI.MEGA(Unit.ONE), "MEGA");
-//        names.put(SI.KILO(Unit.ONE), "KILO");
-//        names.put(SI.HECTO(Unit.ONE), "HECTO");
-//        names.put(SI.DEKA(Unit.ONE), "DEKA");
-//        names.put(SI.DECI(Unit.ONE), "DECI");
-//        names.put(SI.CENTI(Unit.ONE), "CENTI");
-//        names.put(SI.MILLI(Unit.ONE), "MILLI");
-//        names.put(SI.MICRO(Unit.ONE), "MICRO");
-//        names.put(SI.NANO(Unit.ONE), "NANO");
-//        names.put(SI.PICO(Unit.ONE), "PICO");
-//        names.put(SI.FEMTO(Unit.ONE), "FEMTO");
-//        names.put(SI.ATTO(Unit.ONE), "ATTO");
-//        names.put(SI.ZEPTO(Unit.ONE), "ZEPTO");
-//        names.put(SI.ATTO(Unit.ONE), "ATTO");
-//        names.put(SI.YOCTO(Unit.ONE), "YOCTO");
         names.put(SI.AMPERE, "Ampere");
         names.put(SI.BECQUEREL, "Becquerel");
         names.put(SI.BIT, "Bit");
@@ -987,6 +1033,7 @@ public class UnitManager {
         names.put(Money.BASE_UNIT.alternate("元"), "Renminbi");
         names.put(Money.BASE_UNIT.alternate("₹"), "Rupee");
         ///--additonal
+
 //        name.put
         return names;
     }
@@ -1011,6 +1058,28 @@ public class UnitManager {
 
     }
 
+    public String getUnitName(JEVisUnit unit, Locale locale) {
+        String name = getNameMap(locale).get(unit);
+        if (name != null && !name.isEmpty()) {
+            return name;
+        } else {
+            return unit.toString();
+        }
+
+    }
+
+    public String getQuantitiesName(JEVisUnit unit, Locale locale) {
+
+        String name = getNameMapQuantities(locale).get(unit);
+        if (name != null && !name.isEmpty()) {
+//            System.out.println(String.format(" get name for: %s [%s] = %s", unit.toString(), unit.getStandardUnit().toString(), name));
+            return name;
+        } else {
+            return "Dimensionless";
+        }
+
+    }
+
     public String getQuantitiesName(Unit unit, Locale locale) {
 
         String name = getNameMapQuantities().get(unit.getStandardUnit());
@@ -1021,6 +1090,18 @@ public class UnitManager {
             return "Dimensionless";
         }
 
+    }
+
+    public List<JEVisUnit> getCompatibleNonSIUnit(JEVisUnit unit) {
+        List<JEVisUnit> units = new ArrayList<>();
+
+        for (JEVisUnit other : getNonSIJEVisUnits()) {
+            if (unit.isCompatible(other)) {
+                units.add(other);
+            }
+        }
+
+        return units;
     }
 
     public List<Unit> getCompatibleNonSIUnit(Unit unit) {
@@ -1042,6 +1123,33 @@ public class UnitManager {
             if (unit.isCompatible(other)) {
                 units.add(other);
             }
+        }
+
+        return units;
+    }
+
+    public List<JEVisUnit> getCompatibleSIUnit(JEVisUnit unit) {
+        List<JEVisUnit> units = new ArrayList<>();
+
+        for (JEVisUnit other : getSIJEVisUnits()) {
+            if (unit.isCompatible(other) && !other.equals(unit)) {
+                units.add(other);
+            }
+        }
+
+        return units;
+    }
+
+    public List<JEVisUnit> getCompatibleAdditionalUnit(JEVisUnit unit) {
+        List<JEVisUnit> units = new ArrayList<>();
+
+        for (JEVisUnit other : getAdditonalJEVisUnits()) {
+//            System.out.print(other + " ? ...");
+            if (unit.isCompatible(other) && !other.equals(unit)) {
+//                System.out.println("is");
+                units.add(other);
+            }
+//            System.out.println("NOT");
         }
 
         return units;
