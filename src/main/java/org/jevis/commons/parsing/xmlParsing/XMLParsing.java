@@ -79,7 +79,7 @@ public class XMLParsing extends GenericParser {
             Transformer transformer;
             try {
                 transformer = tf.newTransformer();
-            transformer.transform(domSource, result);
+                transformer.transform(domSource, result);
             } catch (TransformerConfigurationException ex) {
                 Logger.getLogger(XMLParsing.class.getName()).log(Level.SEVERE, null, ex);
             } catch (TransformerException ex) {
@@ -110,67 +110,77 @@ public class XMLParsing extends GenericParser {
                         continue;
                     }
 
-
-                    //get Date
-                    Node dateNode = null;
-                    if (_dateElement != null) {
-                        for (int j = 0; j < currentNode.getChildNodes().getLength(); j++) {
-                            Node item = currentNode.getChildNodes().item(j);
-                            if (item.getNodeName().equals(_dateElement)) {
-                                dateNode = item;
-                                break;
+                    boolean correct = false;
+                    try {
+                        //get Date
+                        Node dateNode = null;
+                        if (_dateElement != null) {
+                            for (int j = 0; j < currentNode.getChildNodes().getLength(); j++) {
+                                Node item = currentNode.getChildNodes().item(j);
+                                if (item.getNodeName().equals(_dateElement)) {
+                                    dateNode = item;
+                                    break;
+                                }
                             }
+                        } else {
+                            dateNode = currentNode.cloneNode(true);
                         }
-                    } else {
-                        dateNode = currentNode.cloneNode(true);
-                    }
-                    String dateString = null;
-                    if (_dateAttribute != null) {
-                        Node namedItem = dateNode.getAttributes().getNamedItem(_dateAttribute);
-                        dateString = namedItem.getNodeValue();
-                    } else {
-                        dateString = dateNode.getTextContent();
-                    }
-                    String pattern = _dateFormat;
+                        String dateString = null;
+                        if (_dateAttribute != null) {
+                            Node namedItem = dateNode.getAttributes().getNamedItem(_dateAttribute);
+                            dateString = namedItem.getNodeValue();
+                        } else {
+                            dateString = dateNode.getTextContent();
+                        }
+                        String pattern = _dateFormat;
 
-                    DateTimeFormatter fmt = DateTimeFormat.forPattern(pattern);
-                    dateTime = fmt.parseDateTime(dateString);
+                        DateTimeFormatter fmt = DateTimeFormat.forPattern(pattern);
+                        dateTime = fmt.parseDateTime(dateString);
 
 //                    dpParser.parse(ic);
 //                    value = dpParser.getValue();
-                    datapoint = dpParser.getTarget();
+                        datapoint = dpParser.getTarget();
 
 
-                    //get value
-                    Node valueNode = null;
-                    if (_valueElement != null) {
-                        for (int j = 0; j < currentNode.getChildNodes().getLength(); j++) {
-                            Node item = currentNode.getChildNodes().item(j);
-                            if (item.getNodeName().equals(_valueElement)) {
-                                valueNode = item;
-                                break;
+                        //get value
+                        Node valueNode = null;
+                        if (_valueElement != null) {
+                            for (int j = 0; j < currentNode.getChildNodes().getLength(); j++) {
+                                Node item = currentNode.getChildNodes().item(j);
+                                if (item.getNodeName().equals(_valueElement)) {
+                                    valueNode = item;
+                                    break;
+                                }
                             }
+                        } else {
+                            valueNode = currentNode.cloneNode(true);
                         }
-                    } else {
-                        valueNode = currentNode.cloneNode(true);
+                        String valueString = null;
+                        if (_valueAtribute != null) {
+                            Node namedItem = valueNode.getAttributes().getNamedItem(_valueAtribute);
+                            valueString = namedItem.getNodeValue();
+                        } else {
+                            valueString = valueNode.getTextContent();
+                        }
+                        value = Double.parseDouble(valueString);
+                        correct = true;
+                    } catch (Exception ex) {
                     }
-                    String valueString = null;
-                    if (_valueAtribute != null) {
-                        Node namedItem = valueNode.getAttributes().getNamedItem(_valueAtribute);
-                        valueString = namedItem.getNodeValue();
-                    } else {
-                        valueString = valueNode.getTextContent();
-                    }
-                    value = Double.parseDouble(valueString);
 
 //                    if (dpParser.outOfBounce()) {
 //                        org.apache.log4j.Logger.getLogger(this.getClass().getName()).log(org.apache.log4j.Level.WARN, "Date for value out of bounce: " + dateTime);
 //                        org.apache.log4j.Logger.getLogger(this.getClass().getName()).log(org.apache.log4j.Level.WARN, "Value out of bounce: " + value);
 //                    }
 
+                    if (!correct) {
+                        continue;
+                    }
                     org.apache.log4j.Logger.getLogger(this.getClass().getName()).log(org.apache.log4j.Level.ALL, "Parsed DP" + datapoint);
                     org.apache.log4j.Logger.getLogger(this.getClass().getName()).log(org.apache.log4j.Level.ALL, "Parsed value" + value);
                     org.apache.log4j.Logger.getLogger(this.getClass().getName()).log(org.apache.log4j.Level.ALL, "Parsed date" + dateTime);
+                    System.out.println("Parsed DP" + datapoint);
+                    System.out.println("Parsed value" + value);
+                    System.out.println("Parsed date" + dateTime);
                     _results.add(new Result(datapoint, value, dateTime));
                 }
 
