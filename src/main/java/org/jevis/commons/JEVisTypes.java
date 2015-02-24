@@ -198,4 +198,12 @@ public interface JEVisTypes {
         public final static String LAST_READOUT = "Last Readout";
         public final static String PERIODICALLY_SAMPLING = "Periodically Sampling";
     }
+
+    interface JEDataCollector {
+
+        public final static String NAME = "JEDataCollector";
+        public final static String MAX_NUMBER_THREADS = "Max Number Threads";
+        public final static String DATA_SOURCE_TIMEOUT = "Data Source Timeout";
+        public final static String ENABLE = "Enable";
+    }
 }
