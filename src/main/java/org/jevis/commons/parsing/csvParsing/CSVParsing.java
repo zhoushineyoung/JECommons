@@ -14,8 +14,7 @@ import org.jevis.api.JEVisObject;
 import org.jevis.api.JEVisType;
 import org.jevis.commons.DatabaseHelper;
 import org.jevis.commons.JEVisTypes;
-import org.jevis.commons.JEVisTypes.DataPoint;
-import org.jevis.commons.parsing.GenericParser;
+import org.jevis.commons.parsing.DataCollectorParser;
 import org.jevis.commons.parsing.Result;
 import org.jevis.commons.parsing.inputHandler.InputHandler;
 import org.joda.time.DateTime;
@@ -26,7 +25,7 @@ import org.joda.time.format.DateTimeFormatter;
  *
  * @author broder
  */
-public class CSVParsing extends GenericParser {
+public class CSVParsing implements DataCollectorParser {
 
     private String _quote;
     private String _delim;
@@ -39,6 +38,7 @@ public class CSVParsing extends GenericParser {
     private String _decimalSeperator;
     private String _thousandSeperator;
     private List<CSVDatapointParser> _datapointParsers = new ArrayList<CSVDatapointParser>();
+    private List<Result> _results = new ArrayList<Result>();
 
     public CSVParsing(String quote, String delim, int headerlines) {
         _quote = quote;
@@ -93,7 +93,7 @@ public class CSVParsing extends GenericParser {
     public void parse(InputHandler ic) {
         Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Start CSV parsing");
         String[] stringArrayInput = ic.getStringArrayInput();
-        Logger.getLogger(this.getClass().getName()).log(Level.ALL, "Count of lines" + stringArrayInput.length);
+        Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Count of lines" + stringArrayInput.length);
         if (ic.getFilePath() != null) {
             Logger.getLogger(this.getClass().getName()).log(Level.ALL, "File Path: " + ic.getFilePath());
         }
@@ -175,7 +175,6 @@ public class CSVParsing extends GenericParser {
         try {
             JEVisClass parser = equipmentObject.getDataSource().getJEVisClass(JEVisTypes.Parser.CSVParser.NAME);
             JEVisObject parserObject = equipmentObject.getChildren(parser, true).get(0);
-            _jevisParser = parserObject;
             JEVisClass jeClass = parserObject.getJEVisClass();
             JEVisType seperatorColumn = jeClass.getType(JEVisTypes.Parser.CSVParser.DELIMITER);
             JEVisType enclosedBy = jeClass.getType(JEVisTypes.Parser.CSVParser.QUOTE);
@@ -387,4 +386,9 @@ public class CSVParsing extends GenericParser {
 //            _datapointParsers.add(new CSVDatapointParser(dp.getDatapointId(), dp.getTarget(), dp.getMappingIdentifier(), dp.getValueIdentifier(), _decimalSeperator, _thousandSeperator));
 //        }
 //    }
+
+    @Override
+    public List<Result> getResults() {
+        return _results;
+    }
 }

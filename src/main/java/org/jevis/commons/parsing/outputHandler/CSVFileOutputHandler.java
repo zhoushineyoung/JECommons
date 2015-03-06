@@ -19,7 +19,7 @@ import org.jevis.commons.parsing.Result;
 public class CSVFileOutputHandler extends OutputHandler {
 
     @Override
-    public void writeOutput(ParsingRequest request, List<Result> results) {
+    public boolean writeOutput(ParsingRequest request, List<Result> results) {
         try {
             String outputPath = request.getFileOutputPath();
             if (outputPath == null) {
@@ -28,14 +28,15 @@ public class CSVFileOutputHandler extends OutputHandler {
             File output = new File(outputPath);
 
             BufferedWriter write = new BufferedWriter(new FileWriter(output));
-             write.write("value,date\n");
+            write.write("value,date\n");
             for (Result r : results) {
                 write.write(r.getValue() + "," + r.getDate() + "\n");
             }
             write.close();
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
-
+        return true;
     }
 }

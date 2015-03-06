@@ -7,22 +7,16 @@ package org.jevis.commons.parsing.example;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import org.jevis.commons.parsing.GenericParser;
+import org.jevis.commons.parsing.DataCollectorParser;
 import org.jevis.commons.parsing.GeneralDateParser;
-import org.jevis.commons.parsing.GeneralMappingParser;
 import org.jevis.commons.parsing.GeneralValueParser;
-import org.jevis.commons.parsing.ParsingRequestGenerator;
 import org.jevis.commons.parsing.Result;
-import org.jevis.commons.parsing.SampleParserContainer;
 import org.jevis.commons.parsing.csvParsing.CSVParsing;
 import org.jevis.commons.parsing.csvParsing.DateCSVParser;
 import org.jevis.commons.parsing.csvParsing.ValueCSVParser;
 import org.jevis.commons.parsing.inputHandler.FileInputHandler;
 import org.jevis.commons.parsing.inputHandler.InputHandler;
-import org.jevis.commons.parsing.outputHandler.JEVisOutputHandler;
-import org.jevis.commons.parsing.outputHandler.OutputHandler;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -39,7 +33,7 @@ public class Test_ARA01 {
         InputHandler inputHandler = new FileInputHandler(file);
         inputHandler.convertInput();
 
-        GenericParser fileParser = new CSVParsing(null, ";", 2);
+        DataCollectorParser fileParser = new CSVParsing(null, ";", 2);
 
         GeneralDateParser dateParser = new DateCSVParser("HH:mm:ss", 2, "dd.MM.yyyy", 3);
         GeneralValueParser valueParser = new ValueCSVParser(1, ".", ",");
