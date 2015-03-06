@@ -272,7 +272,7 @@ public class UnitManager {
             case KILO:
                 return "k";
             case MEGA:
-                return "m";
+                return "M";
             case MICRO:
                 return "µ";
             case MILLI:
