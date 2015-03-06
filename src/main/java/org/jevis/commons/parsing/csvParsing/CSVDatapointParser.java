@@ -39,7 +39,7 @@ public class CSVDatapointParser implements GeneralMappingParser {
 
     }
 
-    CSVDatapointParser(Long datapointID, Integer indexDatapoint, String target, String mappingIdentifier, String valueIdentifier, String decimalSep, String thousandSep) {
+    public CSVDatapointParser(Long datapointID, Integer indexDatapoint, String target, String mappingIdentifier, String valueIdentifier, String decimalSep, String thousandSep) {
         if (indexDatapoint != null) {
             _indexDatapoint = indexDatapoint;
         }

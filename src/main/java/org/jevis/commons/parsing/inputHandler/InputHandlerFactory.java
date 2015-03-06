@@ -8,6 +8,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 import javax.xml.soap.SOAPMessage;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 
 /**
  *
@@ -43,7 +45,7 @@ public class InputHandlerFactory {
             return new FileInputHandler((File) input);
         }
         if (input instanceof InputStream) {
-            System.out.println("This is a inputstream!!!!!");
+            Logger.getLogger(InputHandlerFactory.class.getName()).log(Level.INFO, "Inputstrema this is");
             return new InputStreamHandler((InputStream) input);
         }
         return null;

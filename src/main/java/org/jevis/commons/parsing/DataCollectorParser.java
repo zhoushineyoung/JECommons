@@ -17,19 +17,9 @@ public interface DataCollectorParser {
 
     public List<Result> getResults();
 
-    public abstract void parse(InputHandler ic);
+    public void parse(InputHandler ic);
 
-    abstract public void initialize(JEVisObject equipment);
-    
-//    public void createSampleContainers(JEVisObject parser, List<JEVisObject> datapoints);
-    
-//    public List<SampleParserContainer> getSampleParserContianers();
-    
-    public JEVisObject getJEVisParser();
-    
+    public void initialize(JEVisObject equipment);
+
     public void addDataPointParser(Long datapointID, String target, String mappingIdentifier, String valueIdentifier);
-
-//    public void addDataPoints(List<DataPoint> dataPoints);
-
-
 }

@@ -26,7 +26,7 @@ public class ParsingFactory {
     private static final String XML_MULTI_PARSER = ("XML Multi");
     private static final String SQL_PARSER = ("SQL");
 
-    public static GenericParser getParsing(JEVisObject jevisObject) throws JEVisException {
+    public static DataCollectorParser getParsing(JEVisObject jevisObject) throws JEVisException {
 
         JEVisClass parserClass = jevisObject.getDataSource().getJEVisClass(JEVisTypes.Parser.CSVParser.NAME);
         JEVisClass parserClassGeneral = jevisObject.getDataSource().getJEVisClass(JEVisTypes.Parser.NAME);
@@ -45,7 +45,7 @@ public class ParsingFactory {
             throw new JEVisException("Number of Parsing Objects != 1 under: " + jevisObject.getID(), 1);
         }
 
-        GenericParser parsing = null;
+        DataCollectorParser parsing = null;
         String identifier = parsingObject.getJEVisClass().getName();
         org.apache.log4j.Logger.getLogger(ParsingFactory.class.getName()).log(org.apache.log4j.Level.ALL, "Parser: " + identifier);
         switch (identifier) {

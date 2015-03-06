@@ -26,33 +26,22 @@ import org.joda.time.DateTime;
 public class JEVisOutputHandler extends OutputHandler {
 
     @Override
-    public void writeOutput(ParsingRequest request, List<Result> results) {
+    public boolean writeOutput(ParsingRequest request, List<Result> results) {
+        return JEVisOutputHandler.saveSamples(request, results);
+    }
+
+    synchronized public static boolean saveSamples(ParsingRequest request, List<Result> results) {
         JEVisDataSource client = request.getClient();
         try {
-            Logger.getLogger(JEVisOutputHandler.class.getName()).log(Level.INFO, "Number of imported Data overall: "+results.size());
-//            Map<JEVisObject, List<JEVisSample>> onlineToSampleMap = new HashMap<JEVisObject, List<JEVisSample>>();
-
-            //extract all online nodes and save them in a map
-//            for (NewDataPoint dp : request.getDataPoints()) {
-//                Long onlineID = dp.getOnlineID();
-//                JEVisObject onlineData = Launcher.getClient().getObject(onlineID);
-//                onlineToSampleMap.put(onlineData, new ArrayList<JEVisSample>());
-//            }
-
-//            JEVisClass onlineNode = online.getDataSource().getJEVisClass(OnlineData.ONLINE_DATAROW);
-//            JEVisType rawAttributeType = onlineNode.getType(OnlineData.SAMPLE_ATTRIBUTE);
-//            JEVisAttribute attribute = online.getAttribute(rawAttributeType);
-//            List<JEVisSample> sampleList = new ArrayList<JEVisSample>();
-
+            Logger.getLogger(JEVisOutputHandler.class.getName()).log(Level.INFO, "Number of imported Data overall: " + results.size());
+            if (results.isEmpty()) {
+                return false;
+            }
 
             //look into all results and map the sample to the online node
             Map<JEVisObject, List<JEVisSample>> onlineToSampleMap = new HashMap<JEVisObject, List<JEVisSample>>();
             for (Result s : results) {
-                //                DateTime time = s.getCal();
-                //                System.out.println("value " + s.getVal());
-                //                System.out.println("cal " + s.getCal());
-                //                sampleList.add(attribute.buildSample(time, s.getVal()));
-                long onlineID = s.getOnlineID();
+            long onlineID = s.getOnlineID();
                 JEVisObject onlineData = null;
                 //look for the correct jevis object
                 for (JEVisObject j : onlineToSampleMap.keySet()) {
@@ -74,11 +63,13 @@ public class JEVisOutputHandler extends OutputHandler {
 
             for (JEVisObject o : onlineToSampleMap.keySet()) {
                 List<JEVisSample> samples = onlineToSampleMap.get(o);
-                Logger.getLogger(JEVisOutputHandler.class.getName()).log(Level.ALL, samples.size()+"Samples imported into ID: " + o.getID());
+                Logger.getLogger(JEVisOutputHandler.class.getName()).log(Level.INFO, samples.size() + " Samples imported into ID");
                 o.getAttribute("Value").addSamples(samples);
             }
         } catch (JEVisException ex) {
             Logger.getLogger(JEVisOutputHandler.class.getName()).log(Level.ERROR, null, ex);
+            return false;
         }
+        return true;
     }
 }

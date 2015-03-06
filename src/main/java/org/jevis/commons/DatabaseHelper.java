@@ -19,16 +19,15 @@ public class DatabaseHelper {
 
     public static boolean checkValidStringObject(JEVisObject jevisObject, JEVisType jevisType) throws JEVisException {
         boolean isValid = false;
-        if (jevisObject.getAttribute(jevisType).hasSample() && jevisObject.getAttribute(jevisType).getLatestSample() != null && !jevisObject.getAttribute(jevisType).getLatestSample().getValueAsString().equals("")) {
+        if (jevisObject.getAttribute(jevisType).hasSample() && jevisObject.getAttribute(jevisType).getLatestSample() != null && jevisObject.getAttribute(jevisType).getLatestSample().getValueAsString() instanceof String && !jevisObject.getAttribute(jevisType).getLatestSample().getValueAsString().equals("")) {
             isValid = true;
         }
         return isValid;
     }
 
     public static boolean checkValidNumberObject(JEVisObject jevisObject, JEVisType jevisType) throws JEVisException {
-
         boolean isValid = false;
-        if (jevisObject.getAttribute(jevisType).hasSample() && jevisObject.getAttribute(jevisType).getLatestSample() != null) {
+        if (jevisObject.getAttribute(jevisType).hasSample() && jevisObject.getAttribute(jevisType).getLatestSample() != null && !jevisObject.getAttribute(jevisType).getLatestSample().getValueAsString().equals("") && jevisObject.getAttribute(jevisType).getLatestSample().getValueAsLong() instanceof Long) {
             isValid = true;
         }
         return isValid;
