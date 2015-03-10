@@ -10,6 +10,21 @@ package org.jevis.commons;
  */
 public interface JEVisTypes {
 
+    interface Driver {
+
+        public final static String NAME = "Driver Source";
+        public final static String DATA_SOURCE_NAME = "Data Source Name";
+        public final static String CONNECTION_SOURCE = "Connection Source";
+        public final static String PARSER_SOURCE = "Parser Source";
+        public final static String CONNECTION_CLASS = "Connection Class";
+        public final static String PARSER_CLASS = "Parser Class";
+    }
+
+    interface DriverDirectory {
+
+        public final static String NAME = "Driver Directory";
+    }
+
     interface Equipment {
 
         public final static String NAME = "Data Server";
@@ -124,6 +139,11 @@ public interface JEVisTypes {
 
             public final static String NAME = "SQL";
         }
+    }
+
+    interface DataSource {
+
+        public final static String NAME = "Data Source";
     }
 
     interface DataServer {
