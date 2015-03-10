@@ -38,7 +38,7 @@ import org.joda.time.DateTime;
  */
 public class InputProcessor implements DataProcessor {
 
-    public final static String NAME = "Innput";
+    public final static String NAME = "Input";
 
     public final static String OBJECT_ID = "object-id";
     public final static String ATTRIBUTE_ID = "attribute-id";
@@ -62,6 +62,7 @@ public class InputProcessor implements DataProcessor {
                     DateTime start = null;
                     DateTime end = null;
                     DateTime[] startEnd = Options.getStartAndEnd(task);
+                    System.out.println("start: " + start + " end: " + end);
 
                     _result = att.getSamples(startEnd[0], startEnd[1]);
                     System.out.println("Input result: " + _result.size());

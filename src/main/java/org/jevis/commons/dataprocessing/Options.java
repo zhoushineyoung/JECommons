@@ -188,26 +188,31 @@ public class Options {
      */
     public static List<Interval> getIntervals(Task task, DateTime from, DateTime until) {
         Period period = Period.days(1);
-        DateTime offset = DateTime.now();
+        DateTime offset = new DateTime(2001, 01, 01, 00, 00, 00);
 
         if (!task.getOptions().containsKey(PERIOD)) {
             System.out.println("Error missing period option");
         }
         if (!task.getOptions().containsKey(OFFSET)) {
             System.out.println("Error missing offset option");
+            task.getOptions().put(OFFSET, "2001-01-01 00:00:00");
         }
 
         for (Map.Entry<String, String> entry : task.getOptions().entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
-            switch (key.toUpperCase()) {
+            System.out.println("key: " + key);
+            switch (key) {
                 case PERIOD:
+                    System.out.println("period string: " + value);
                     period = Period.parse(value);
+                    System.out.println("pared period: " + period);
                     break;
                 case OFFSET:
                     //TODO check value formate
                     DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
                     offset = dtf.parseDateTime(value);
+                    break;
             }
         }
 

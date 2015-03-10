@@ -37,7 +37,7 @@ import org.jevis.commons.dataprocessing.VirtuelSample;
 public class ConverterProcessor implements DataProcessor {
 
     public final static String NAME = "Converter";
-    public static final String MULTIPLAYER = "multiplyer";
+    public static final String MULTIPLAYER = "multiplier";
     public static final String OFFSET = "offset";
     private List<JEVisSample> _result;
 
@@ -52,14 +52,14 @@ public class ConverterProcessor implements DataProcessor {
             double b = 0;
 
             if (!mainTask.getOptions().containsKey(MULTIPLAYER)) {
-                System.out.println("Mx+b Processor missing option M");
+                System.out.println("Converter Processor missing option " + MULTIPLAYER);
                 //todo throw
             } else {
                 m = Double.parseDouble(mainTask.getOption(MULTIPLAYER));
             }
 
             if (!mainTask.getOptions().containsKey(OFFSET)) {
-                System.out.println("Mx+b Processor missing option B");
+                System.out.println("Converter Processor missing option " + OFFSET);
             } else {
                 b = Double.parseDouble(mainTask.getOption(OFFSET));
             }

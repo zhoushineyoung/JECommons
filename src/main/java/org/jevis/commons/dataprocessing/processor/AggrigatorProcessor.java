@@ -55,14 +55,18 @@ public class AggrigatorProcessor implements DataProcessor {
         List<List<JEVisSample>> allSamples = new ArrayList<>();
         for (Task task : mainTask.getSubTasks()) {
             allSamples.add(task.getResult());
+            System.out.println("Add input result: " + allSamples.size());
         }
 
         List<DateTime> allTimestamps = getAllTimestamps(allSamples);
         List<Interval> intervals = Options.getIntervals(mainTask, allTimestamps.get(0), allTimestamps.get(allTimestamps.size() - 1));
 
+        System.out.println("intervals: " + intervals.size());
+
         int lastPos = 0;
         for (Interval interval : intervals) {
             List<JEVisSample> samplesInPeriod = new ArrayList<>();
+            System.out.println("interval: " + interval);
 
             for (List<JEVisSample> samples : allSamples) {
                 for (int i = lastPos; i < samples.size(); i++) {
