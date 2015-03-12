@@ -4,11 +4,8 @@
  */
 package org.jevis.commons;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.jevis.api.JEVisException;
 import org.jevis.api.JEVisObject;
-import org.jevis.api.JEVisSample;
 import org.jevis.api.JEVisType;
 
 /**
