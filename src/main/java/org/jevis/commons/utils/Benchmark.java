@@ -28,13 +28,16 @@ import org.joda.time.DateTime;
 public class Benchmark {
 
     private DateTime _start;
+    private DateTime _lastPrint;
 
     public Benchmark() {
         _start = DateTime.now();
+        _lastPrint = DateTime.now();
     }
 
     public void reset() {
         _start = DateTime.now();
+        _lastPrint = DateTime.now();
     }
 
     public long timeSinceStart() {
@@ -54,6 +57,32 @@ public class Benchmark {
 //        System.out.printf("[  |%4d|%n  %s  ] for - %s", milis, unit, text);
         System.out.printf("[%4d %s] %s\n", milis, unit, text);
 //        System.out.println("[" + (milis) + unit + "] for - " + text);
+    }
+
+    public void printBenchmarkDetail(String text) {
+
+        String unit = "s";
+        String unitPrint = "s";
+        long milisSStart = DateTime.now().getMillis() - _start.getMillis();
+        long milisSPrint = DateTime.now().getMillis() - _lastPrint.getMillis();
+
+        long secound = (milisSStart / 1000);
+        if (secound == 0 && milisSStart > 0) {
+            unit = "ms";
+        } else {
+            milisSStart = secound;
+        }
+
+        long secoundPrint = (milisSPrint / 1000);
+        if (secoundPrint == 0 && milisSPrint > 0) {
+            unitPrint = "ms";
+        } else {
+            milisSPrint = secoundPrint;
+        }
+
+        System.out.printf("[%4d %s | %4d %s] %s\n", milisSPrint, unitPrint, milisSStart, unit, text);
+        _lastPrint = DateTime.now();
+
     }
 
 }
