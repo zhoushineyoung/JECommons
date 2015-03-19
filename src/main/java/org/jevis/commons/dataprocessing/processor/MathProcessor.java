@@ -43,6 +43,10 @@ public class MathProcessor implements DataProcessor {
     public static final String NAME = "Math Processor";
 
     @Override
+    public void resetResult() {
+    }
+
+    @Override
     public List<JEVisSample> getResult(Task mainTask) {
         List<JEVisSample> result = new ArrayList<>();
 

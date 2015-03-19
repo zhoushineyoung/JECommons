@@ -34,6 +34,10 @@ public class LimitCheckerProcessor implements DataProcessor {
     public static final String NAME = "Limit Checker";
 
     @Override
+    public void resetResult() {
+    }
+
+    @Override
     public List<JEVisSample> getResult(Task task) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }

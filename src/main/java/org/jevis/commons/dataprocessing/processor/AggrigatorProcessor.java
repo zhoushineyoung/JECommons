@@ -111,4 +111,9 @@ public class AggrigatorProcessor implements DataProcessor {
         return NAME;
     }
 
+    @Override
+    public void resetResult() {
+
+    }
+
 }

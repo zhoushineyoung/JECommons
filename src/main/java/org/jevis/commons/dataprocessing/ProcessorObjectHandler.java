@@ -41,7 +41,7 @@ public class ProcessorObjectHandler {
 
         Gson gson = new Gson();
         JsonTask jTask = gson.fromJson(jsonString, JsonTask.class);
-        Task newTask = new TaskImp(object.getDataSource(), jTask);
+        Task newTask = new TaskImp(object.getDataSource(), jTask, object);
         return newTask;
     }
 

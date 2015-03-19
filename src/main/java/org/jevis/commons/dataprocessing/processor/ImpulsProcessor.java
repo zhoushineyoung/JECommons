@@ -54,6 +54,11 @@ public class ImpulsProcessor implements DataProcessor {
     }
 
     @Override
+    public void resetResult() {
+//        _result = null;
+    }
+
+    @Override
     public List<JEVisSample> getResult(Task mainTask) {
         List<JEVisSample> result = new ArrayList<>();
 

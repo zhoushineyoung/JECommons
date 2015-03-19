@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.jevis.api.JEVisDataSource;
+import org.jevis.api.JEVisObject;
 import org.jevis.api.JEVisSample;
 
 /**
@@ -107,5 +108,11 @@ public interface Task {
     void setSubTasks(List<Task> tasks);
 
     List<Task> getSubTasks();
+
+    public void setObject(JEVisObject object);
+
+    public JEVisObject getObject();
+
+    public void restResult();
 
 }

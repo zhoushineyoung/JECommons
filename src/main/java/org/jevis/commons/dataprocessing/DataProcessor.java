@@ -44,4 +44,9 @@ public interface DataProcessor {
      */
     String getName();
 
+    /**
+     * Request an reset od the result
+     */
+    public void resetResult();
+
 }

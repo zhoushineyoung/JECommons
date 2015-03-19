@@ -29,6 +29,7 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.jevis.api.JEVisDataSource;
+import org.jevis.api.JEVisObject;
 import org.jevis.api.JEVisSample;
 import org.jevis.commons.utils.Benchmark;
 
@@ -47,35 +48,34 @@ public class TaskImp implements Task {
     private boolean isDone = false;
     private String _id = "*MISSING*";
     private JEVisDataSource _ds;
+    private JEVisObject _originalObject = null;
 
     public TaskImp() {
     }
 
     public TaskImp(JEVisDataSource ds, JsonTask task) {
+        initTask(ds, task, null);
+
+    }
+
+    public TaskImp(JEVisDataSource ds, JsonTask task, JEVisObject object) {
+        initTask(ds, task, object);
+
+    }
+
+    public void initTask(JEVisDataSource ds, JsonTask task, JEVisObject parent) {
         setOptions(task.getOptions());
         setProcessor(Tasks.getProcessor(task.getProcessor()));
         setID(task.getId());
         setJEVisDataSource(ds);
+        setObject(parent);
 //        List<Task> subTask = new ArrayList<>();
         for (JsonTask jt : task.getTasks()) {
             System.out.println("make new subtak: " + jt);
-            tasks.add(new TaskImp(ds, jt));
+            tasks.add(new TaskImp(ds, jt, parent));
         }
-
     }
 
-//
-//    public TaskImp(DataProcessor processor, Options options, List<List<JEVisSample>> samples) {
-//        _processor = processor;
-//        _options = options;
-//        _imputSamples = samples;
-//    }
-//
-//    public TaskImp(DataProcessor processor, Options options, List<Task> preTask) {
-//        _processor = processor;
-//        _options = options;
-//        _prevTask = preTask;
-//    }
     @Override
     public void setID(String id) {
         _id = id;
@@ -115,6 +115,16 @@ public class TaskImp implements Task {
     public List<Task> getSubTasks() {
         return tasks;
 
+    }
+
+    @Override
+    public void setObject(JEVisObject object) {
+        _originalObject = object;
+    }
+
+    @Override
+    public JEVisObject getObject() {
+        return _originalObject;
     }
 
     @Override
@@ -204,6 +214,15 @@ public class TaskImp implements Task {
         for (Task task : getSubTasks()) {
             ((TaskImp) task).print();
 //            System.out.println("--- " + task.toString());
+        }
+    }
+
+    @Override
+    public void restResult() {
+        _result = null;
+        _processor.resetResult();
+        for (Task subt : getSubTasks()) {
+            subt.restResult();
         }
     }
 
