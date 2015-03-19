@@ -45,24 +45,42 @@ public class InputProcessor implements DataProcessor {
     private List<JEVisSample> _result = null;
 
     @Override
+    public void resetResult() {
+        _result = null;
+    }
 
+    @Override
     public List<JEVisSample> getResult(Task task) {
         if (_result != null) {
             return _result;
         } else {
             _result = new ArrayList<>();
 
-            if (task.getOptions().containsKey(OBJECT_ID) && task.getOptions().containsKey(ATTRIBUTE_ID)) {
+            JEVisObject object = null;
+            if (task.getOptions().containsKey(OBJECT_ID) && !task.getOptions().get(OBJECT_ID).isEmpty()) {
+                long oid = Long.valueOf(task.getOptions().get(OBJECT_ID));
+                try {
+                    object = task.getJEVisDataSource().getObject(oid);
+                } catch (JEVisException ex) {
+                    Logger.getLogger(InputProcessor.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            } else if (task.getObject() != null) {
+                try {
+                    object = task.getObject().getParents().get(0);//TODO make save
+                } catch (JEVisException ex) {
+                }
+            }
+
+            if (object != null && task.getOptions().containsKey(ATTRIBUTE_ID)) {
 
                 try {
-                    long oid = Long.valueOf(task.getOptions().get(OBJECT_ID));
-                    JEVisObject object = task.getJEVisDataSource().getObject(oid);
+                    System.out.println("Parent object: " + object);
+//                    long oid = Long.valueOf(task.getOptions().get(OBJECT_ID));
+//                    JEVisObject object = task.getJEVisDataSource().getObject(oid);
                     JEVisAttribute att = object.getAttribute(task.getOptions().get(ATTRIBUTE_ID));
 
-                    DateTime start = null;
-                    DateTime end = null;
                     DateTime[] startEnd = Options.getStartAndEnd(task);
-                    System.out.println("start: " + start + " end: " + end);
+                    System.out.println("start: " + startEnd[0] + " end: " + startEnd[1]);
 
                     _result = att.getSamples(startEnd[0], startEnd[1]);
                     System.out.println("Input result: " + _result.size());

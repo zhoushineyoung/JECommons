@@ -47,6 +47,11 @@ public class CounterProcessor implements DataProcessor {
     }
 
     @Override
+    public void resetResult() {
+        _result = null;
+    }
+
+    @Override
     public List<JEVisSample> getResult(Task task) {
         if (_result != null) {
             return _result;

@@ -42,6 +42,11 @@ public class ConverterProcessor implements DataProcessor {
     private List<JEVisSample> _result;
 
     @Override
+    public void resetResult() {
+        _result = null;
+    }
+
+    @Override
     public List<JEVisSample> getResult(Task mainTask) {
         if (_result != null) {
             return _result;

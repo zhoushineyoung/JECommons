@@ -49,6 +49,22 @@ public class Options {
     public static final String TS_END = "date-end";
     public static final String TS_PATTERN = "yyyy-MM-dd hh:mm:ssZ";
 
+    public static void setStartEnd(Task task, DateTime from, DateTime until, boolean overwrite, boolean childrenToo) {
+
+        if (!task.getOptions().containsKey(TS_START) || overwrite) {
+            task.getOptions().put(TS_START, DateTimeFormat.forPattern(TS_PATTERN).print(from));
+            task.getOptions().put(TS_END, DateTimeFormat.forPattern(TS_PATTERN).print(until));
+        }
+
+        if (childrenToo) {
+            for (Task t : task.getSubTasks()) {
+                setStartEnd(t, from, until, overwrite, childrenToo);
+            }
+
+        }
+
+    }
+
     /**
      * Returns the first and last timestamp of an task options
      *

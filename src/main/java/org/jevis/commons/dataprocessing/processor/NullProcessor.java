@@ -34,6 +34,10 @@ public class NullProcessor implements DataProcessor {
     public static final String NAME = "null";
 
     @Override
+    public void resetResult() {
+    }
+
+    @Override
     public List<JEVisSample> getResult(Task task) {
         System.out.println("Waring no Processor is set");
         return new ArrayList<>();
