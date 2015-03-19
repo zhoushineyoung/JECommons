@@ -35,9 +35,9 @@ public class ParsingFactory {
     public static DataCollectorParser loadParsingDrivers(Driver driver) {
         LoadingDriver loadDriver = new LoadingDriver();
 //        return (DataCollectorParser) loadDriver.loadClass("/home/bf/NetBeansProjects/JEDataCollector/Driver/VIDA350_Parser.jar", "org.jevis.jedatacollector.vida350parser.VIDA350_Parser");
-        return (DataCollectorParser) loadDriver.loadClass("/home/jedc/bin/Driver/VIDA350_Parser.jar", "org.jevis.jedatacollector.vida350parser.VIDA350_Parser");
+//        return (DataCollectorParser) loadDriver.loadClass("/home/jedc/bin/Driver/VIDA350_Parser.jar", "org.jevis.jedatacollector.vida350parser.VIDA350_Parser");
 
-//        return (DataCollectorParser) loadDriver.loadClass(driver.getParserSourceName(), driver.getParserClassName());
+        return (DataCollectorParser) loadDriver.loadClass(driver.getParserSourceName(), driver.getParserClassName());
 //        return (DataCollectorParser) loadDriver.loadClass("/home/bf/NetBeansProjects/JEDataCollector/Driver/VIDA350_Parser.jar", driver.getParserName());
     }
 

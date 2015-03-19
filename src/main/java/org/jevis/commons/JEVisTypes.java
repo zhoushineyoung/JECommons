@@ -40,9 +40,9 @@ public interface JEVisTypes {
         public final static String PARSER_DATE = "Date";
         public final static String PARSER_VALUE = "Value";
         public final static String DATE_FORMAT = "Date Format";
-        public final static String DECIMAL_SEPERATOR = "Decimal Seperator";
+        public final static String DECIMAL_SEPERATOR = "Decimal Separator";
         public final static String TIME_FORMAT = "Time Format";
-        public final static String THOUSAND_SEPERATOR = "Thousand Seperator";
+        public final static String THOUSAND_SEPERATOR = "Thousand Separator";
 
         interface CSVParser extends Parser {
 
@@ -214,9 +214,9 @@ public interface JEVisTypes {
         public final static String MAPPING_IDENTIFIER = "Mapping Identifier";
         public final static String TARGET = "Target";
         public final static String VALUE_IDENTIFIER = "Value Identifier";
-        public final static String DATE_FORMAT = "Date Format";
+//        public final static String DATE_FORMAT = "Date Format";
         public final static String LAST_READOUT = "Last Readout";
-        public final static String PERIODICALLY_SAMPLING = "Periodically Sampling";
+        public final static String PERIODICALLY_SAMPLING = "Periodical Sampling";
     }
 
     interface JEDataCollector {

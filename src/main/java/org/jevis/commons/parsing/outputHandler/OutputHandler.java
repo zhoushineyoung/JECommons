@@ -17,5 +17,5 @@ public abstract class OutputHandler {
     public static String FILE_OUTPUT = "csv_file";
     public static String JEVIS_OUTPUT = "jevis";
 
-    abstract public boolean writeOutput(ParsingRequest request, List<Result> results);
+    abstract public boolean writeOutput(ParsingRequest prequest, List<Result> results);
 }

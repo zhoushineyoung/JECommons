@@ -34,12 +34,12 @@ public class Driver {
             JEVisType parserClassType = driverType.getType(JEVisTypes.Driver.PARSER_CLASS);
             JEVisType dataSourceNameType = driverType.getType(JEVisTypes.Driver.DATA_SOURCE_NAME);
 
-//            setConnectionClassName(DatabaseHelper.getObjectAsString(driverObject, connectionClassType));
-//            setParserClassName(DatabaseHelper.getObjectAsString(driverObject, parserClassType));
-//            setConnectionSourceName(DatabaseHelper.getObjectAsString(driverObject, connectionType));
-//            setParserSourceName(DatabaseHelper.getObjectAsString(driverObject, parserType));
-//            setDataSourceName(DatabaseHelper.getObjectAsString(driverObject, dataSourceNameType));
-            setDataSourceName("VIDA350");
+            setConnectionClassName(DatabaseHelper.getObjectAsString(driverObject, connectionClassType));
+            setParserClassName(DatabaseHelper.getObjectAsString(driverObject, parserClassType));
+            setConnectionSourceName(DatabaseHelper.getObjectAsString(driverObject, connectionType));
+            setParserSourceName(DatabaseHelper.getObjectAsString(driverObject, parserType));
+            setDataSourceName(DatabaseHelper.getObjectAsString(driverObject, dataSourceNameType));
+//            setDataSourceName("VIDA350");
         } catch (JEVisException ex) {
             Logger.getLogger(Driver.class.getName()).log(Level.ERROR, ex.getMessage());
         }

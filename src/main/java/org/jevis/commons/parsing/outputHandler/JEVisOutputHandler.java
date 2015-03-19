@@ -26,12 +26,12 @@ import org.joda.time.DateTime;
 public class JEVisOutputHandler extends OutputHandler {
 
     @Override
-    public boolean writeOutput(ParsingRequest request, List<Result> results) {
-        return JEVisOutputHandler.saveSamples(request, results);
+    public boolean writeOutput(ParsingRequest prequest, List<Result> results) {
+        return JEVisOutputHandler.saveSamples(prequest, results);
     }
 
-    synchronized public static boolean saveSamples(ParsingRequest request, List<Result> results) {
-        JEVisDataSource client = request.getClient();
+    public static boolean saveSamples(ParsingRequest prequest, List<Result> results) {
+        JEVisDataSource client = prequest.getClient();
         try {
             Logger.getLogger(JEVisOutputHandler.class.getName()).log(Level.INFO, "Number of imported Data overall: " + results.size());
             if (results.isEmpty()) {
@@ -41,7 +41,7 @@ public class JEVisOutputHandler extends OutputHandler {
             //look into all results and map the sample to the online node
             Map<JEVisObject, List<JEVisSample>> onlineToSampleMap = new HashMap<JEVisObject, List<JEVisSample>>();
             for (Result s : results) {
-            long onlineID = s.getOnlineID();
+                long onlineID = s.getOnlineID();
                 JEVisObject onlineData = null;
                 //look for the correct jevis object
                 for (JEVisObject j : onlineToSampleMap.keySet()) {
@@ -56,16 +56,18 @@ public class JEVisOutputHandler extends OutputHandler {
                     onlineToSampleMap.put(onlineData, new ArrayList<JEVisSample>());
                 }
                 List<JEVisSample> samples = onlineToSampleMap.get(onlineData);
-                DateTime convertedDate = TimeConverter.convertTime(request.getTimezone(), s.getDate());
+                DateTime convertedDate = TimeConverter.convertTime(prequest.getTimezone(), s.getDate());
                 JEVisSample sample = onlineData.getAttribute("Value").buildSample(convertedDate, s.getValue(), "Imported by JEDataCollector");
                 samples.add(sample);
             }
 
             for (JEVisObject o : onlineToSampleMap.keySet()) {
                 List<JEVisSample> samples = onlineToSampleMap.get(o);
-                Logger.getLogger(JEVisOutputHandler.class.getName()).log(Level.INFO, samples.size() + " Samples imported into ID");
+                Logger.getLogger(JEVisOutputHandler.class.getName()).log(Level.INFO, samples.size() + " Samples import into ID");
                 o.getAttribute("Value").addSamples(samples);
+                Logger.getLogger(JEVisOutputHandler.class.getName()).log(Level.INFO, samples.size() + " Samples imported into ID");
             }
+            Logger.getLogger(JEVisOutputHandler.class.getName()).log(Level.INFO, " Finish imported into ID");
         } catch (JEVisException ex) {
             Logger.getLogger(JEVisOutputHandler.class.getName()).log(Level.ERROR, null, ex);
             return false;

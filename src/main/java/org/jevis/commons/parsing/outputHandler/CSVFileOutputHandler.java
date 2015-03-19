@@ -19,9 +19,9 @@ import org.jevis.commons.parsing.Result;
 public class CSVFileOutputHandler extends OutputHandler {
 
     @Override
-    public boolean writeOutput(ParsingRequest request, List<Result> results) {
+    public boolean writeOutput(ParsingRequest prequest,List<Result> results) {
         try {
-            String outputPath = request.getFileOutputPath();
+            String outputPath = prequest.getFileOutputPath();
             if (outputPath == null) {
                 outputPath = "output.csv";
             }
