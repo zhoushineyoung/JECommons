@@ -54,6 +54,7 @@ public class ParsingFactory {
                 multipleParsingObjects = true;
             } else if (parserObjects.size() == 1) {
                 parsingObject = parserObjects.get(0);
+                break;
             }
         }
 
