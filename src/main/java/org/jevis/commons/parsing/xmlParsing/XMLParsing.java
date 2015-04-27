@@ -252,4 +252,70 @@ public class XMLParsing implements DataCollectorParser {
     public List<Result> getResults() {
         return _results;
     }
+
+    public void setSpecificationTag(String _specificationTag) {
+        this._specificationTag = _specificationTag;
+    }
+
+    public void setSpecificationInAttribute(Boolean _specificationInAttribute) {
+        this._specificationInAttribute = _specificationInAttribute;
+    }
+
+    public void setDatapointParsers(List<XMLDatapointParser> _datapointParsers) {
+        this._datapointParsers = _datapointParsers;
+    }
+
+    public void setDateFormat(String _dateFormat) {
+        this._dateFormat = _dateFormat;
+    }
+
+    public void setTimeFormat(String _timeFormat) {
+        this._timeFormat = _timeFormat;
+    }
+
+    public void setDecimalSeperator(String _decimalSeperator) {
+        this._decimalSeperator = _decimalSeperator;
+    }
+
+    public void setThousandSeperator(String _thousandSeperator) {
+        this._thousandSeperator = _thousandSeperator;
+    }
+
+    public void setMainElement(String _mainElement) {
+        this._mainElement = _mainElement;
+    }
+
+    public void setMainAttribute(String _mainAttribute) {
+        this._mainAttribute = _mainAttribute;
+    }
+
+    public void setValueElement(String _valueElement) {
+        this._valueElement = _valueElement;
+    }
+
+    public void setValueAtribute(String _valueAtribute) {
+        this._valueAtribute = _valueAtribute;
+    }
+
+    public void setValueInElement(Boolean _valueInElement) {
+        this._valueInElement = _valueInElement;
+    }
+
+    public void setDateElement(String _dateElement) {
+        this._dateElement = _dateElement;
+    }
+
+    public void setDateAttribute(String _dateAttribute) {
+        this._dateAttribute = _dateAttribute;
+    }
+
+    public void setDateInElement(Boolean _dateInElement) {
+        this._dateInElement = _dateInElement;
+    }
+
+    public void setResults(List<Result> _results) {
+        this._results = _results;
+    }
+    
+    
 }

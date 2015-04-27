@@ -64,9 +64,12 @@ public class ParsingFactory {
 
         DataCollectorParser parsing = null;
         String identifier = null;
+        boolean searchDriver = false;
         if (parsingObject != null) {
             identifier = parsingObject.getJEVisClass().getName();
+
         } else {
+            searchDriver = true;
             identifier = jevisObject.getJEVisClass().getName();
         }
 
@@ -89,7 +92,17 @@ public class ParsingFactory {
         }
 
         if (parsing == null) {
-            throw new JEVisException("No correct Parsing Object under: " + jevisObject.getID(), 1);
+            String failure = "\nDataSource: " + jevisObject.getID();
+            for (JEVisClass jevisClass : parserClassGeneral.getHeirs()) {
+                List<JEVisObject> parserObjects = jevisObject.getChildren(jevisClass, true);
+                failure += "\nSearched JevisClass: " + jevisClass.getName() + "with Nr of found JEVis Parser: " + parserObjects.size();
+            }
+            if (searchDriver) {
+                failure += "\nSearched Driver: " + identifier;
+            } else {
+                failure += "\nSearched regular Parser: " + identifier;
+            }
+            throw new JEVisException("No correct Parsing Object under: " + jevisObject.getID() + "; ParsingClass: " + identifier + "; DataSourceClass: " + jevisObject.getJEVisClass().getName() + ";NoFDataSourceChilden: " + jevisObject.getChildren().size() + failure, 1);
         }
 
         return parsing;
