@@ -367,8 +367,9 @@ public class CSVParsing implements DataCollectorParser {
             Logger.getLogger(this.getClass().getName()).log(Level.WARN, "Date not parsable: " + line);
             Logger.getLogger(this.getClass().getName()).log(Level.WARN, "DateFormat: " + _dateFormat);
             Logger.getLogger(this.getClass().getName()).log(Level.WARN, "DateIndex: " + _dateIndex);
-            Logger.getLogger(this.getClass().getName()).log(Level.WARN, "DateFormat: " + _timeFormat);
-            Logger.getLogger(this.getClass().getName()).log(Level.WARN, "DateIndex: " + _timeIndex);
+            Logger.getLogger(this.getClass().getName()).log(Level.WARN, "TimeFormat: " + _timeFormat);
+            Logger.getLogger(this.getClass().getName()).log(Level.WARN, "TimeIndex: " + _timeIndex);
+            Logger.getLogger(this.getClass().getName()).log(Level.WARN, "Exception: " + ex);
         }
 
         if (_dateFormat == null) {
