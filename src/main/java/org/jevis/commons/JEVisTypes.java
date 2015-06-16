@@ -28,7 +28,7 @@ public interface JEVisTypes {
     interface Equipment {
 
         public final static String NAME = "Data Server";
-        public static String SINGLE_CONNECTION = "Single Reader";
+        public static String SINGLE_CONNECTION = "Single Connection";
         public static String STARTDATE = "Start Data Collecting";
         public static String STARTDATEFORMAT = "Start Date Format";
         public static String TIMEZONE = "Timezone";
@@ -149,6 +149,7 @@ public interface JEVisTypes {
     interface DataServer {
 
         public final static String NAME = "Data Server";
+        public final static String MULTI_CONNECTION = "Multiple Connections";
         public final static String CONNECTION_TIMEOUT = "Connection Timeout";
         public final static String HOST = "Host";
         public final static String START_DATA_COLLECTING = "Start Data Collecting";
@@ -225,5 +226,39 @@ public interface JEVisTypes {
         public final static String MAX_NUMBER_THREADS = "Max Number Threads";
         public final static String DATA_SOURCE_TIMEOUT = "Data Source Timeout";
         public final static String ENABLE = "Enable";
+    }
+
+    interface JEReport {
+
+        public final static String NAME = "Report";
+        public final static String EMAIL = "E-Mails";
+        public final static String SUBJECT = "Subject";
+        public final static String TEMPLATE = "Template";
+        public final static String LAST_REPORT = "Last Report";
+        public final static String START_RECORD = "Start Record";
+        public final static String SCHEDULE = "Schedule";
+    }
+
+    interface JEReportLink {
+
+        public final static String NAME = "Reportlink";
+        public final static String ID = "ID";
+        public final static String IDENTIFIER = "Identifier";
+        public final static String IGNORE_TIMESTAMP = "Ignore Timestamp";
+    }
+
+    interface JEReportService {
+
+        public final static String NAME = "JEReport";
+        public final static String HOST = "Host";
+        public final static String PASSWORD = "Password";
+        public final static String PORT = "Port";
+        public final static String USER = "User";
+    }
+
+    interface Data {
+
+        public final static String NAME = "Data";
+        public final static String VALUE = "Value";
     }
 }
