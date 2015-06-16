@@ -101,7 +101,9 @@ public class JEVisUnitImp implements JEVisUnit {
     }
 
     public Unit toUnit() {
-        return _unit;
+
+        return UnitManager.getInstance().getUnitWithPrefix(_unit, getPrefix());
+//        return _unit;
     }
 
     /**
