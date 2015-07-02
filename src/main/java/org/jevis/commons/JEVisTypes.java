@@ -237,6 +237,7 @@ public interface JEVisTypes {
         public final static String LAST_REPORT = "Last Report";
         public final static String START_RECORD = "Start Record";
         public final static String SCHEDULE = "Schedule";
+        public final static String ENABLED = "Enabled";
     }
 
     interface JEReportLink {
@@ -245,6 +246,7 @@ public interface JEVisTypes {
         public final static String ID = "ID";
         public final static String IDENTIFIER = "Identifier";
         public final static String IGNORE_TIMESTAMP = "Ignore Timestamp";
+        public static String AGGREGATION = "Aggregation";
     }
 
     interface JEReportService {
