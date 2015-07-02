@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.measure.quantity.*;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
@@ -83,7 +85,7 @@ public class UnitManager {
 
     }
 
-    /* A private Constructor prevents any other 
+    /* A private Constructor prevents any other
      * class from instantiating.
      */
     private UnitManager() {
@@ -682,8 +684,11 @@ public class UnitManager {
         additonalUnits.add(SI.OHM.divide(SI.CENTIMETER.pow(2)));
         additonalUnits.add(SI.CENTIMETER.pow(2));
         additonalUnits.add(SI.KILOMETER.pow(2));
-//        additonalUnits.add(Dimensionless.UNIT.alternate("Status"));
 
+        //kWh/m²kWh/m²
+        additonalUnits.add(((SI.KILO(SI.WATT).times(NonSI.HOUR)).divide(SI.SQUARE_METRE)));
+
+//        additonalUnits.add(Dimensionless.UNIT.alternate("Status"));
         return additonalUnits;
     }
 
@@ -697,7 +702,18 @@ public class UnitManager {
                 }
             }
             if (!hasQuantitiy) {
+//                try {
+//                    System.out.println("Cutom unit has NO Qulity: " + formate(unit));
+//                } catch (JEVisException ex) {
+//                    Logger.getLogger(UnitManager.class.getName()).log(Level.SEVERE, null, ex);
+//                }
                 customUnits.add(unit);
+            } else {
+//                try {
+//                    System.out.println("Cutom unit has Qulity: " + formate(unit));
+//                } catch (JEVisException ex) {
+//                    Logger.getLogger(UnitManager.class.getName()).log(Level.SEVERE, null, ex);
+//                }
             }
         }
 
