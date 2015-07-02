@@ -346,29 +346,29 @@ public class CSVParsing implements DataCollectorParser {
     }
 
     private DateTime getDateTime(String[] line) {
+        String input = "";
         try {
             String date = line[_dateIndex];
-//        String dateFormat = _dateFormat;
-
             String pattern = _dateFormat;
-            String format = date;
+            input = date;
 
             if (_timeFormat != null && _timeIndex > -1) {
                 String time = line[_timeIndex];
                 pattern += " " + _timeFormat;
-                format += " " + time;
+                input += " " + time;
             }
 //            Logger.getLogger(this.getClass().getName()).log(Level.ALL, "complete time " + format);
 //            Logger.getLogger(this.getClass().getName()).log(Level.ALL, "complete pattern " + pattern);
 
             DateTimeFormatter fmt = DateTimeFormat.forPattern(pattern);
-            return fmt.parseDateTime(format);
+            return fmt.parseDateTime(input);
         } catch (Exception ex) {
-            Logger.getLogger(this.getClass().getName()).log(Level.WARN, "Date not parsable: " + line);
+            Logger.getLogger(this.getClass().getName()).log(Level.WARN, "Date not parsable: " + input);
             Logger.getLogger(this.getClass().getName()).log(Level.WARN, "DateFormat: " + _dateFormat);
             Logger.getLogger(this.getClass().getName()).log(Level.WARN, "DateIndex: " + _dateIndex);
-            Logger.getLogger(this.getClass().getName()).log(Level.WARN, "DateFormat: " + _timeFormat);
-            Logger.getLogger(this.getClass().getName()).log(Level.WARN, "DateIndex: " + _timeIndex);
+            Logger.getLogger(this.getClass().getName()).log(Level.WARN, "TimeFormat: " + _timeFormat);
+            Logger.getLogger(this.getClass().getName()).log(Level.WARN, "TimeIndex: " + _timeIndex);
+            Logger.getLogger(this.getClass().getName()).log(Level.WARN, "Exception: " + ex);
         }
 
         if (_dateFormat == null) {
