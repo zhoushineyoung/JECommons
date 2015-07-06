@@ -59,6 +59,9 @@ public class AggrigatorProcessor implements DataProcessor {
         }
 
         List<DateTime> allTimestamps = getAllTimestamps(allSamples);
+        if (allTimestamps.isEmpty()) {
+            return result;
+        }
         List<Interval> intervals = Options.getIntervals(mainTask, allTimestamps.get(0), allTimestamps.get(allTimestamps.size() - 1));
 
         System.out.println("intervals: " + intervals.size());
@@ -113,7 +116,5 @@ public class AggrigatorProcessor implements DataProcessor {
 
     @Override
     public void resetResult() {
-
     }
-
 }

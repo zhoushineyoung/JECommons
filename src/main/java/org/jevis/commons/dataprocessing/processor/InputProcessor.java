@@ -39,10 +39,16 @@ import org.joda.time.DateTime;
 public class InputProcessor implements DataProcessor {
 
     public final static String NAME = "Input";
-
     public final static String OBJECT_ID = "object-id";
     public final static String ATTRIBUTE_ID = "attribute-id";
     private List<JEVisSample> _result = null;
+
+    public InputProcessor() {
+    }
+
+    public InputProcessor(List<JEVisSample> resultSamples) {
+        _result = resultSamples;
+    }
 
     @Override
     public void resetResult() {
@@ -98,5 +104,4 @@ public class InputProcessor implements DataProcessor {
     public String getName() {
         return NAME;
     }
-
 }
