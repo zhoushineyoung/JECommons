@@ -41,11 +41,11 @@ import org.joda.time.DateTime;
  */
 public class UserFactory {
 
-    public static boolean buildMobileDemoStructure(JEVisDataSource ds, JEVisObject parentOrgaDir, String username, String password, String email, String firstName, String lastName) {
+    public static boolean buildMobileDemoStructure(JEVisDataSource ds, JEVisObject parentOrgaDir, String username, String password, String email, String firstName, String lastName, String orgaNmae) {
 
         try {
             //Create Organisation
-            JEVisObject myNewOrganisation = parentOrgaDir.buildObject("JEVis Mobile", ds.getJEVisClass("Organization"));
+            JEVisObject myNewOrganisation = parentOrgaDir.buildObject(orgaNmae, ds.getJEVisClass("Organization"));
 
             //Create Adimistarion Dir
             JEVisObject adminDir = myNewOrganisation.buildObject("Administration Directory", ds.getJEVisClass("Administration Directory"));
