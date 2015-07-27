@@ -24,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import org.apache.commons.io.FilenameUtils;
 import org.jevis.api.JEVisFile;
 
 /**
@@ -34,21 +35,17 @@ public class JEVisFileImp implements JEVisFile {
 
     byte[] bytes;
     String fileName = "";
-//    String fileExtension = "";
 
     /**
      * Create an new JEVisFile from an java java.io.File
      *
      * @param fileName
-     * @param fileExtension
      * @param file
      * @throws FileNotFoundException
      * @throws IOException
      */
     public JEVisFileImp(String fileName, File file) throws FileNotFoundException, IOException {
-
         this.fileName = fileName;
-//        this.fileExtension = fileExtension;
         loadFromFile(file);
     }
 
@@ -70,6 +67,8 @@ public class JEVisFileImp implements JEVisFile {
         byte[] bytes = new byte[(int) f.length()];
         f.read(bytes);
         this.bytes = bytes;
+
+        f.close();
 
     }
 
@@ -95,12 +94,7 @@ public class JEVisFileImp implements JEVisFile {
 
     @Override
     public String getFileExtension() {
-        String[] tokens = fileName.split("\\.(?=[^\\.]+$)");
-        if (tokens.length == 2) {
-            return tokens[2];
-        } else {
-            return "";
-        }
+        return FilenameUtils.getExtension(fileName);
     }
 
 }

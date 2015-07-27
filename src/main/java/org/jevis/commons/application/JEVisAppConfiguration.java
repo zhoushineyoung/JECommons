@@ -1,10 +1,10 @@
 /**
- * Copyright (C) 2014 Envidatec GmbH <info@envidatec.com>
+ * Copyright (C) 2015 Envidatec GmbH <info@envidatec.com>
  *
- * This file is part of JECommons.
+ * This file is part of JEApplication.
  *
- * JECommons is free software: you can redistribute it and/or modify it under the
- * terms of the GNU General Public License as published by the Free Software
+ * JECommons is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
  * Foundation in version 3.
  *
  * JECommons is distributed in the hope that it will be useful, but WITHOUT ANY
@@ -17,13 +17,12 @@
  * JECommons is part of the OpenJEVis project, further project information are
  * published at <http://www.OpenJEVis.org/>.
  */
-
-package org.jevis.commons;
+package org.jevis.commons.application;
 
 /**
  *
  * @author Florian Simon <florian.simon@envidatec.com>
  */
-public class BootstrapClass {
+public interface JEVisAppConfiguration {
 
 }

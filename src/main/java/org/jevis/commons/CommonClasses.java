@@ -20,6 +20,7 @@
 package org.jevis.commons;
 
 /**
+ * Static references for common JEVisClasses
  *
  * @author Florian Simon <florian.simon@envidatec.com>
  */
@@ -30,7 +31,7 @@ public interface CommonClasses {
         public static String NAME = "Link";
 
     }
-//    
+//
 //    public interface LINK {
 //
 //        public static String NAME = "Link";
