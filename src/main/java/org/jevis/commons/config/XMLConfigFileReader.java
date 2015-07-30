@@ -27,7 +27,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 
 /**
- * The XMLConfigFilereader can ready common JEVis xml configuration files.
+ * The XMLConfigFilereader can read common JEVis XML-configuration files.
  *
  * @author Florian Simon
  */
@@ -36,7 +36,7 @@ public class XMLConfigFileReader {
     private XMLConfiguration xmlConfig;
 
     /**
-     * Create an new XMLConfigFileReader with the given xml file.
+     * Create an new XMLConfigFileReader with the given XML-file.
      *
      * @param file
      * @throws ConfigurationException
@@ -47,7 +47,7 @@ public class XMLConfigFileReader {
     }
 
     /**
-     * Get All ValuesKey fro an prefix as Map
+     * Get All Value-Key-pairs from a prefix as a Map
      *
      * @param prefix
      * @return

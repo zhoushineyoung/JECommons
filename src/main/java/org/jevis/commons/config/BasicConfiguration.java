@@ -25,7 +25,7 @@ import org.jevis.api.JEVisConfiguration;
 import org.jevis.api.JEVisOption;
 
 /**
- * Basic imlemnetation of the JEVisConfiguration.
+ * Basic implementation of the JEVisConfiguration.
  *
  * @author Florian Simon
  */

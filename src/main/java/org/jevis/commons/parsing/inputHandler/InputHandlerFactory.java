@@ -37,14 +37,11 @@ public class InputHandlerFactory {
                 return new SOAPMessageInputHandler((List<SOAPMessage>) input);
             }
             return null;
-        }
-        if (input instanceof Object[]) {
+        } else if (input instanceof Object[]) {
             return new ArrayInputHandler((Object[]) input);
-        }
-        if (input instanceof File) {
+        } else if (input instanceof File) {
             return new FileInputHandler((File) input);
-        }
-        if (input instanceof InputStream) {
+        } else if (input instanceof InputStream) {
             Logger.getLogger(InputHandlerFactory.class.getName()).log(Level.INFO, "Inputstrema this is");
             return new InputStreamHandler((InputStream) input);
         }

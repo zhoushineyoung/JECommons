@@ -34,7 +34,7 @@ public interface CommonCLIOptions {
 //    public static Option HELP = new Option("h", "help", false, "Print help");
     public static Option HELP = OptionBuilder.withDescription("Print help")
             .isRequired(false)
-            .withLongOpt("jelp")
+            .withLongOpt("help")
             .create("h");
 
     public static Option CONFIG_FILE = OptionBuilder.withDescription("Configuration File")

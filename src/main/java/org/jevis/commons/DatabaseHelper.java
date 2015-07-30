@@ -80,8 +80,7 @@ public class DatabaseHelper {
         Integer value = null;
         try {
             if (DatabaseHelper.checkValidNumberObject(jevisObject, jevisType)) {
-                value = new Integer(jevisObject.getAttribute(jevisType).getLatestSample().getValueAsLong().intValue());
-
+                value = jevisObject.getAttribute(jevisType).getLatestSample().getValueAsLong().intValue();
             }
         } catch (NumberFormatException | JEVisException nfe) {
         }
