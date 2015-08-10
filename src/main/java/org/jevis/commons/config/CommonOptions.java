@@ -29,7 +29,7 @@ import org.jevis.api.JEVisOption;
 public interface CommonOptions {
 
     /**
-     * JEVisOptions relatet to the JEVisDataSource
+     * JEVisOptions related to the JEVisDataSource
      */
     public interface DataSoure {
 
@@ -49,7 +49,7 @@ public interface CommonOptions {
     }
 
     /**
-     * JEVisOptions relatet to the JavaFX bases login GUI.
+     * JEVisOptions related to the JavaFX bases login GUI.
      */
     public interface FXLogin {
 

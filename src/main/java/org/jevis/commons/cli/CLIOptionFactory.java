@@ -29,9 +29,9 @@ import org.apache.commons.cli.Options;
 public class CLIOptionFactory {
 
     /**
-     * Build an minimalistic options set for an JEVis client
+     * Build a minimal options set for a JEVis client
      *
-     * @return all necessary option for an JEVis client.
+     * @return all necessary options for a JEVis client.
      */
     public static Options BuildJEVisClient() {
         Options options = new Options();
@@ -48,9 +48,9 @@ public class CLIOptionFactory {
     }
 
     /**
-     * Build an options set for an typical JEVis serice application
+     * Build an options set for an typical JEVis service application
      *
-     * @return all necessary option for an JEVis serice.
+     * @return all necessary options for a JEVis service.
      */
     public static Options BuildJEVisService() {
         Options options = BuildJEVisClient();

@@ -30,6 +30,6 @@ public class StringInputHandler extends InputHandler {
                 _inputStream.add(new ByteArrayInputStream(o.getBytes()));
 //            }
         }
-        System.out.println("Inputstreamsize " + _inputStream.size());
+        System.out.println("Inputstream size " + _inputStream.size());
     }
 }

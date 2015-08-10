@@ -23,7 +23,7 @@ import java.util.Objects;
 import org.jevis.api.JEVisOption;
 
 /**
- * Basic implemntation of the JEVisOption interface.
+ * Basic implementation of the JEVisOption interface.
  *
  * @author Florian Simon <florian.simon@envidatec.com>
  */
