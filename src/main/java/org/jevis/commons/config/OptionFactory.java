@@ -32,20 +32,23 @@ public class OptionFactory {
     /**
      * Build an new JEVisOptions with the given parameters.
      *
-     * @param group Option group
+     * @param parent Option group, null if the option has no parent
      * @param key Option key
      * @param value value
      * @param description short discriptions for user interactions
      * @param required true if the parameter has to be set
      * @return
      */
-    public static JEVisOption BuildOption(String group, String key, String value, String description, boolean required) {
+    public static JEVisOption BuildOption(JEVisOption parent, String key, String value, String description, boolean required) {
         JEVisOption opt = new BasicOption();
         opt.setDescription(description);
-        opt.setGroup(group);
         opt.setValue(value);
         opt.setKey(key);
         opt.setRequired(required);
+        if (parent != null) {
+            parent.addChildren(opt, true);
+        }
+
         return opt;
     }
 

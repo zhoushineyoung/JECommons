@@ -19,6 +19,8 @@
  */
 package org.jevis.commons.config;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import org.jevis.api.JEVisOption;
 
@@ -34,6 +36,58 @@ public class BasicOption implements JEVisOption {
     private String key;
     private boolean required;
     private String description;
+    private List<JEVisOption> options = new ArrayList<>();
+    private JEVisOption parent = null;
+
+    public BasicOption() {
+//        System.out.println("--Create new Option");
+    }
+
+    @Override
+    public JEVisOption getParent() {
+        return parent;
+    }
+
+    @Override
+    public List<JEVisOption> getChildren() {
+        return options;
+    }
+
+    @Override
+    public void addChildren(JEVisOption option, boolean overwrite) {
+//        System.out.println("-- Add to " + key + "[" + this + "]   child: " + option.getKey() + "[" + option.getValue() + "]");
+        if (!hasChildren(option.getKey())) {
+            options.add(option);
+        } else if (overwrite) {
+            options.add(option);
+        }
+    }
+
+    @Override
+    public JEVisOption getChildren(String optionName) {
+        for (JEVisOption opt : options) {
+            if (opt.getKey().equalsIgnoreCase(optionName)) {
+                return opt;
+            }
+        }
+
+//        return null;
+//        default return an emty option
+        BasicOption newOpt = new BasicOption();
+        newOpt.setKey(optionName);
+        getChildren().add(newOpt);
+        return newOpt;
+    }
+
+    @Override
+    public boolean hasChildren(String optionName) {
+        for (JEVisOption opt : options) {
+            if (opt.getKey().equalsIgnoreCase(optionName)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Override
     public String getValue() {
@@ -42,6 +96,7 @@ public class BasicOption implements JEVisOption {
 
     @Override
     public void setValue(String value) {
+//        System.out.println("--setValue: " + value);
         this.value = value;
     }
 
@@ -52,6 +107,7 @@ public class BasicOption implements JEVisOption {
 
     @Override
     public void setKey(String key) {
+//        System.out.println("--setKey: " + key);
         this.key = key;
     }
 
@@ -75,26 +131,15 @@ public class BasicOption implements JEVisOption {
         this.description = description;
     }
 
-    @Override
-    public String getGroup() {
-        return this.group;
-    }
-
-    @Override
-    public void setGroup(String group) {
-        this.group = group;
-    }
-
-    @Override
-    public String toString() {
-        return "JEVisOption{ Group: '" + group + "' Key: '" + key + "' value:'" + value + "' }";
-    }
-
+//    @Override
+//    public String toString() {
+//        return "JEVisOption{ Group: '" + group + "' Key: '" + key + "' value:'" + value + "' }";
+//    }
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 97 * hash + Objects.hashCode(this.group);
-        hash = 97 * hash + Objects.hashCode(this.key);
+        hash = 79 * hash + Objects.hashCode(this.key);
+        hash = 79 * hash + Objects.hashCode(this.parent);
         return hash;
     }
 
@@ -107,10 +152,10 @@ public class BasicOption implements JEVisOption {
             return false;
         }
         final BasicOption other = (BasicOption) obj;
-        if (!Objects.equals(this.group, other.group)) {
+        if (!Objects.equals(this.key, other.key)) {
             return false;
         }
-        if (!Objects.equals(this.key, other.key)) {
+        if (!Objects.equals(this.parent, other.parent)) {
             return false;
         }
         return true;

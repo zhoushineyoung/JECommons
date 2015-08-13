@@ -19,8 +19,8 @@
  */
 package org.jevis.commons.datasource;
 
-import org.jevis.api.JEVisConfiguration;
 import org.jevis.api.JEVisDataSource;
+import org.jevis.api.JEVisOption;
 import org.jevis.commons.config.CommonOptions;
 
 /**
@@ -43,17 +43,24 @@ public class DataSourceLoader {
      * @throws InstantiationException
      * @throws IllegalAccessException
      */
-    public JEVisDataSource getDataSource(JEVisConfiguration config) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-        if (config.hasOption(CommonOptions.DataSoure.CLASS.getGroup(), CommonOptions.DataSoure.CLASS.getKey())) {
-            String className = config.getOption(CommonOptions.DataSoure.GROUP, CommonOptions.DataSoure.CLASS.getKey()).getValue();
-            JEVisDataSource ds = JEVisDataSource.class.cast(Class.forName(className).newInstance());
-            config.completeWith(ds.getConfiguration());
+    public JEVisDataSource getDataSource(JEVisOption config) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+        if (config.getKey().equalsIgnoreCase(CommonOptions.DataSoure.DataSoure.getKey())) {
 
-            return ds;
+            if (config.hasChildren(CommonOptions.DataSoure.CLASS.getKey())) {
+                JEVisOption classOption = config.getChildren(CommonOptions.DataSoure.CLASS.getKey());
+                String className = classOption.getValue();
+                JEVisDataSource ds = JEVisDataSource.class.cast(Class.forName(className).newInstance());
+//                config.completeWith(ds.getConfiguration());
+
+                return ds;
+            } else {
+                throw new ClassNotFoundException("Class name option not found");
+            }
 
         } else {
-            throw new ClassNotFoundException("Class name option not found");
+            throw new ClassNotFoundException("DataSource option group not found");
         }
+
     }
 
     /**

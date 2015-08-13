@@ -20,8 +20,6 @@
 package org.jevis.commons.cli;
 
 import java.io.File;
-import java.util.Iterator;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.cli.CommandLine;
@@ -30,18 +28,9 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
-import org.jevis.api.JEVisClass;
-import org.jevis.api.JEVisConfiguration;
-import org.jevis.api.JEVisDataSource;
-import org.jevis.api.JEVisException;
-import org.jevis.api.JEVisInfo;
-import org.jevis.api.JEVisObject;
-import org.jevis.api.JEVisRelationship;
-import org.jevis.api.JEVisUnit;
-import org.jevis.commons.config.BasicConfiguration;
-import org.jevis.commons.config.OptionFactory;
+import org.jevis.api.JEVisOption;
+import org.jevis.commons.config.BasicOption;
 import org.jevis.commons.config.XMLConfigFileReader;
 
 /**
@@ -95,8 +84,8 @@ public class ConfigurationHelper {
      *
      * @return JEVisDataSource
      */
-    public JEVisConfiguration getDataSourceConfig() {
-        JEVisConfiguration config = new BasicConfiguration();
+    public JEVisOption getDataSourceConfig() {
+        JEVisOption config = new BasicOption();
 
         return config;
     }
