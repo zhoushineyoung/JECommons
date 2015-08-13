@@ -28,7 +28,6 @@ import org.jevis.api.JEVisConstants;
 import org.jevis.api.JEVisDataSource;
 import org.jevis.api.JEVisException;
 import org.jevis.api.JEVisObject;
-import org.jevis.api.JEVisRelationship;
 import org.jevis.api.JEVisSample;
 import org.jevis.api.JEVisUnit;
 import org.jevis.commons.relationship.RelationshipFactory;
@@ -44,13 +43,13 @@ public class UserFactory {
     public static boolean buildMobileDemoStructure(JEVisDataSource ds, JEVisObject parentOrgaDir, String username, String password, String email, String firstName, String lastName, String orgaNmae) {
 
         try {
-            //Create Organisation
+            //Create Organization
             JEVisObject myNewOrganisation = parentOrgaDir.buildObject(orgaNmae, ds.getJEVisClass("Organization"));
 
-            //Create Adimistarion Dir
+            //Create Administration Dir
             JEVisObject adminDir = myNewOrganisation.buildObject("Administration Directory", ds.getJEVisClass("Administration Directory"));
 
-            //create User Dir
+            //Create User Dir
             JEVisObject userDir = adminDir.buildObject("User Directory", ds.getJEVisClass("User Directory"));
             JEVisObject user = userDir.buildObject(username, ds.getJEVisClass("User"));
             JEVisAttribute passAtt = user.getAttribute("Password");
@@ -137,7 +136,7 @@ public class UserFactory {
         } catch (JEVisException ex) {
             Logger.getLogger(UserFactory.class.getName()).log(Level.SEVERE, null, ex);
 
-            //TODO delet if error
+            //TODO delete if error
         }
 
         return false;

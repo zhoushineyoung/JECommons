@@ -39,7 +39,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import org.jevis.api.JEVisClass;
 import org.jevis.api.JEVisDataSource;
 import org.jevis.api.JEVisException;
@@ -69,8 +68,8 @@ public class JEVisClassPackageManager {
         Map<String, Image> icons = new HashMap<>();
 
         try {
-            FileInputStream fos = new FileInputStream(file);
-            try (ZipInputStream zis = new ZipInputStream(fos)) {
+            FileInputStream fis = new FileInputStream(file);
+            try (ZipInputStream zis = new ZipInputStream(fis)) {
                 ZipEntry entry;
                 while ((entry = zis.getNextEntry()) != null) {
 

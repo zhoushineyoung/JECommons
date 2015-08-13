@@ -36,7 +36,7 @@ import org.jevis.commons.config.XMLConfigFileReader;
 /**
  * This class helps with common command line interface tasks
  *
- * NOTE: Prototpye, this class is not functional yet
+ * NOTE: Prototype, this class is not functional yet
  *
  * @author Florian Simon <florian.simon@envidatec.com>
  */
@@ -45,7 +45,7 @@ public class ConfigurationHelper {
     public static String DATASOURCE_PREFIX = "jevis.datasource";
 
     /**
-     * Will create an new ConfigurationHelper for the given argument[] arrays
+     * Will create a new ConfigurationHelper for the given argument[] arrays
      * and the Options
      *
      * TODO: implement

@@ -30,12 +30,12 @@ import org.jevis.api.JEVisOption;
 public class OptionFactory {
 
     /**
-     * Build an new JEVisOptions with the given parameters.
+     * Build a new JEVisOption with the given parameters.
      *
      * @param parent Option group, null if the option has no parent
      * @param key Option key
      * @param value value
-     * @param description short discriptions for user interactions
+     * @param description short description for user interactions
      * @param required true if the parameter has to be set
      * @return
      */

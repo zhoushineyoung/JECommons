@@ -24,7 +24,7 @@ import org.jevis.api.JEVisOption;
 import org.jevis.commons.config.CommonOptions;
 
 /**
- * The DataSourceLoader helps with the dynamic loading of an JEVisDataSource
+ * The DataSourceLoader helps with the dynamic loading of a JEVisDataSource
  *
  * @author Florian Simon
  */
@@ -34,8 +34,8 @@ public class DataSourceLoader {
     }
 
     /**
-     * Load an JEVisDataSource based on an JEVisConfiguration object. The
-     * DataSource is not initial yet.
+     * Load a JEVisDataSource based on a JEVisConfiguration object. The
+     * DataSource is not initialized yet.
      *
      * @param config
      * @return
@@ -64,7 +64,7 @@ public class DataSourceLoader {
     }
 
     /**
-     * Get an DataSource by class name
+     * Get a DataSource by class name
      *
      * @param className
      * @return
