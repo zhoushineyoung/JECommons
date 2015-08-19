@@ -27,6 +27,7 @@ import org.jevis.api.JEVisOption;
 /**
  * Basic implementation of the JEVisOption interface.
  *
+ *
  * @author Florian Simon <florian.simon@envidatec.com>
  */
 public class BasicOption implements JEVisOption {
@@ -40,7 +41,6 @@ public class BasicOption implements JEVisOption {
     private JEVisOption parent = null;
 
     public BasicOption() {
-//        System.out.println("--Create new Option");
     }
 
     @Override

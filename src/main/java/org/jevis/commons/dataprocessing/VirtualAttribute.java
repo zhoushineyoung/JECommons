@@ -25,6 +25,7 @@ import org.jevis.api.JEVisAttribute;
 import org.jevis.api.JEVisDataSource;
 import org.jevis.api.JEVisException;
 import org.jevis.api.JEVisObject;
+import org.jevis.api.JEVisOption;
 import org.jevis.api.JEVisSample;
 import org.jevis.api.JEVisType;
 import org.jevis.api.JEVisUnit;
@@ -205,6 +206,21 @@ public class VirtualAttribute implements JEVisAttribute {
 
     @Override
     public int compareTo(JEVisAttribute o) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public List<JEVisOption> getOptions() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void addOption(JEVisOption option) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void removeOption(JEVisOption option) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 

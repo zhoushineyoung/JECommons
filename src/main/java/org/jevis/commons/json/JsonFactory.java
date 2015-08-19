@@ -39,7 +39,7 @@ import org.joda.time.format.ISODateTimeFormat;
 public class JsonFactory {
 
 //    public static JEVisObject buildObject(JEVisDataSource ds, JsonObject ob){
-//        
+//
 //    }
     /**
      *
