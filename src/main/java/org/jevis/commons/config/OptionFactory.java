@@ -46,7 +46,7 @@ public class OptionFactory {
         opt.setKey(key);
         opt.setRequired(required);
         if (parent != null) {
-            parent.addChildren(opt, true);
+            parent.addOption(opt, true);
         }
 
         return opt;

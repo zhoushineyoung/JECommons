@@ -46,8 +46,8 @@ public class DataSourceLoader {
     public JEVisDataSource getDataSource(JEVisOption config) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         if (config.getKey().equalsIgnoreCase(CommonOptions.DataSoure.DataSoure.getKey())) {
 
-            if (config.hasChildren(CommonOptions.DataSoure.CLASS.getKey())) {
-                JEVisOption classOption = config.getChildren(CommonOptions.DataSoure.CLASS.getKey());
+            if (config.hasOption(CommonOptions.DataSoure.CLASS.getKey())) {
+                JEVisOption classOption = config.getOption(CommonOptions.DataSoure.CLASS.getKey());
                 String className = classOption.getValue();
                 JEVisDataSource ds = JEVisDataSource.class.cast(Class.forName(className).newInstance());
 //                config.completeWith(ds.getConfiguration());
