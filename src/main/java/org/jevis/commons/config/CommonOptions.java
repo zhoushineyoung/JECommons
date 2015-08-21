@@ -40,12 +40,12 @@ public interface CommonOptions {
 //        public final String GROUP = "datasource";
         public final JEVisOption DataSoure = OptionFactory.BuildOption(null, "datasource", "", "JEVis datasource option group", true);
 
-        static final JEVisOption HOST = OptionFactory.BuildOption(DataSoure, "host", "openjevis.org", "Hostname URL of the data source", true);
+        static final JEVisOption HOST = OptionFactory.BuildOption(DataSoure, "host", "localhost", "Hostname URL of the data source", true);
         static final JEVisOption PORT = OptionFactory.BuildOption(DataSoure, "port", "3306", "Port of the data source", true);
         static final JEVisOption CLASS = OptionFactory.BuildOption(DataSoure, "class", "org.jevis.api.sql.JEVisDataSourceSQL", "Classname of the data source. e.g. 'org.jevis.api.sql.JEVisDataSourceSQL'", true);
         static final JEVisOption SCHEMA = OptionFactory.BuildOption(DataSoure, "schema", "jevis", "MySQL Schema of the data source", true);
-        static final JEVisOption USERNAME = OptionFactory.BuildOption(DataSoure, "username", "jevis", "Username to the data source.", true);
-        static final JEVisOption PASSWORD = OptionFactory.BuildOption(DataSoure, "password", "jevistest", "Password to the data source", true);
+        static final JEVisOption USERNAME = OptionFactory.BuildOption(DataSoure, "username", "root", "Username to the data source.", true);
+        static final JEVisOption PASSWORD = OptionFactory.BuildOption(DataSoure, "password", "", "Password to the data source", true);
 
     }
 

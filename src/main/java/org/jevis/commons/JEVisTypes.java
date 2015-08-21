@@ -164,6 +164,8 @@ public interface JEVisTypes {
             public final static String PASSWORD = "Password";
             public final static String SSL = "SSL";
             public final static String USER = "User";
+            public final static String FILEPATH = "File Path";
+            public final static String LAST_READOUT = "Last Readout";
         }
 
         interface FTP extends DataServer {
@@ -242,7 +244,7 @@ public interface JEVisTypes {
 
     interface JEReportLink {
 
-        public final static String NAME = "Reportlink";
+        public final static String NAME = "ReportLink";
         public final static String ID = "ID";
         public final static String IDENTIFIER = "Identifier";
         public final static String IGNORE_TIMESTAMP = "Ignore Timestamp";
@@ -262,5 +264,33 @@ public interface JEVisTypes {
 
         public final static String NAME = "Data";
         public final static String VALUE = "Value";
+    }
+
+    interface Driver3 {
+
+        public final static String NAME = "Driver";
+        public final static String SOURCE_FILE = "Source File";
+        public final static String MAIN_CLASS = "Main Class";
+        public final static String JEVIS_CLASS = "JEVis Class";
+
+        interface DataSourceDriver extends Driver3 {
+
+            public final static String NAME = "Data Source Driver";
+        }
+
+        interface ParserDriver extends Driver3 {
+
+            public final static String NAME = "Parser Driver";
+        }
+
+        interface ConverterDriver extends Driver3 {
+
+            public final static String NAME = "Converter Driver";
+        }
+
+        interface ImporterDriver extends Driver3 {
+
+            public final static String NAME = "Importer Driver";
+        }
     }
 }

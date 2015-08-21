@@ -44,22 +44,12 @@ public class DataSourceLoader {
      * @throws IllegalAccessException
      */
     public JEVisDataSource getDataSource(JEVisOption config) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-        if (config.getKey().equalsIgnoreCase(CommonOptions.DataSoure.DataSoure.getKey())) {
 
-            if (config.hasChildren(CommonOptions.DataSoure.CLASS.getKey())) {
-                JEVisOption classOption = config.getChildren(CommonOptions.DataSoure.CLASS.getKey());
-                String className = classOption.getValue();
-                JEVisDataSource ds = JEVisDataSource.class.cast(Class.forName(className).newInstance());
+        String className = "org.jevis.api.sql.JEVisDataSourceSQL";
+        JEVisDataSource ds = JEVisDataSource.class.cast(Class.forName(className).newInstance());
 //                config.completeWith(ds.getConfiguration());
 
-                return ds;
-            } else {
-                throw new ClassNotFoundException("Class name option not found");
-            }
-
-        } else {
-            throw new ClassNotFoundException("DataSource option group not found");
-        }
+        return ds;
 
     }
 
