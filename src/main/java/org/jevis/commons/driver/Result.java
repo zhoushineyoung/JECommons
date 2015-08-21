@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.jevis.commons.parsing;
+package org.jevis.commons.driver;
 
 import org.joda.time.DateTime;
 
@@ -10,11 +10,11 @@ import org.joda.time.DateTime;
  *
  * @author broder
  */
-public class Result implements Comparable<Result> {
+public class Result {
 
-    private Object _value;
-    private DateTime _date;
-    private Long _datapoint;
+    private final Object _value;
+    private final DateTime _date;
+    private final Long _datapoint;
 
     public Result(Long datapoint, Object val, DateTime date) {
         _datapoint = datapoint;
@@ -32,16 +32,5 @@ public class Result implements Comparable<Result> {
 
     public Long getOnlineID() {
         return _datapoint;
-    }
-
-    @Override
-    public int compareTo(Result o) {
-        if (_date.isBefore(o.getDate())) {
-            return -1;
-        }
-        if (_date.isAfter(o.getDate())) {
-            return 1;
-        }
-        return 0; //they are equal
     }
 }

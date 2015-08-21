@@ -112,6 +112,8 @@ public interface JEVisDriverTypes {
     interface DataSource {
 
         public final static String NAME = "Data Source";
+        public final static String TIMEZONE = "Timezone";
+        public final static String ENABLE = "Enabled";
 
         interface DataServer extends DataSource {
 
@@ -119,9 +121,7 @@ public interface JEVisDriverTypes {
             public final static String CONNECTION_TIMEOUT = "Connection Timeout";
             public final static String READ_TIMEOUT = "Read Timeout";
             public final static String HOST = "Host";
-            public final static String TIMEZONE = "Timezone";
             public final static String PORT = "Port";
-            public final static String ENABLE = "Enabled";
 
             interface HTTP extends DataServer {
 

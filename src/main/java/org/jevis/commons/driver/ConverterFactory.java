@@ -7,7 +7,7 @@ package org.jevis.commons.driver;
 
 import org.jevis.api.JEVisDataSource;
 import org.jevis.api.JEVisObject;
-import org.jevis.commons.parsing.inputHandler.GenericConverter;
+import org.jevis.commons.driver.inputHandler.GenericConverter;
 
 /**
  *

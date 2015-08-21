@@ -17,9 +17,6 @@ import org.jevis.api.JEVisObject;
 import org.jevis.api.JEVisSample;
 import org.jevis.api.JEVisType;
 import org.jevis.commons.DatabaseHelper;
-import org.jevis.commons.JEVisTypes;
-import org.jevis.commons.parsing.Result;
-import org.jevis.commons.parsing.TimeConverter;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
@@ -82,8 +79,8 @@ public class JEVisImporter implements Importer {
     public void initialize(JEVisObject dataSource) {
         try {
             _client = dataSource.getDataSource();
-            JEVisClass dataSourceClass = _client.getJEVisClass(JEVisTypes.DataServer.NAME);
-            JEVisType timezoneType = dataSourceClass.getType(JEVisTypes.DataServer.TIMEZONE);
+            JEVisClass dataSourceClass = _client.getJEVisClass(JEVisDriverTypes.DataSource.NAME);
+            JEVisType timezoneType = dataSourceClass.getType(JEVisDriverTypes.DataSource.TIMEZONE);
             String timezone = DatabaseHelper.getObjectAsString(dataSource, timezoneType);
             _timezone = DateTimeZone.forID(timezone);
         } catch (JEVisException ex) {
