@@ -35,7 +35,6 @@ public class BasicOption implements JEVisOption {
 
     private String value;
     private String key;
-    private boolean required;
     private String description;
     private List<JEVisOption> options = new ArrayList<>();
 
@@ -55,7 +54,7 @@ public class BasicOption implements JEVisOption {
     }
 
     @Override
-    public List<JEVisOption> getChildren() {
+    public List<JEVisOption> getOptions() {
 //        System.out.println("-- BasicOption.getChildren: " + options.size());
         return options;
     }
@@ -82,7 +81,7 @@ public class BasicOption implements JEVisOption {
 //        default return an emty option
         BasicOption newOpt = new BasicOption();
         newOpt.setKey(optionName);
-        getChildren().add(newOpt);
+        getOptions().add(newOpt);
         return newOpt;
     }
 
@@ -103,7 +102,6 @@ public class BasicOption implements JEVisOption {
 
     @Override
     public void setValue(String value) {
-        System.out.println("--setValue: " + value);
         this.value = value;
     }
 
@@ -116,16 +114,6 @@ public class BasicOption implements JEVisOption {
     public void setKey(String key) {
 //        System.out.println("--setKey: " + key);
         this.key = key;
-    }
-
-    @Override
-    public boolean isRequired() {
-        return this.required;
-    }
-
-    @Override
-    public void setRequired(boolean required) {
-        this.required = required;
     }
 
     @Override

@@ -22,7 +22,6 @@ public class JsonOption {
     String key;
     String value;
     String description;
-    boolean required;
     JsonOption _parent = null;
     List<JsonOption> options = null;
 
@@ -33,12 +32,11 @@ public class JsonOption {
         key = opt.getKey();
         value = opt.getValue();
         description = opt.getDescription();
-        required = opt.isRequired();
 //        _parent = opt.getParent();
-        if (!opt.getChildren().isEmpty()) {
+        if (!opt.getOptions().isEmpty()) {
             options = new ArrayList<>();
         }
-        for (JEVisOption child : opt.getChildren()) {
+        for (JEVisOption child : opt.getOptions()) {
             options.add(new JsonOption(child));
         }
 
@@ -69,15 +67,6 @@ public class JsonOption {
 
     public void setKey(String key) {
         this.key = key;
-    }
-
-    @XmlElement(name = "required")
-    public boolean isRequired() {
-        return required;
-    }
-
-    public void setRequired(boolean required) {
-        this.required = required;
     }
 
     @XmlElement(name = "description")
