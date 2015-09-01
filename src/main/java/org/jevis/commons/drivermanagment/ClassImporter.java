@@ -151,7 +151,7 @@ public class ClassImporter {
 
         for (JsonType type : types) {
             try {
-                System.out.println("creat type: " + type.getName());
+                System.out.println("create type: " + type.getName());
                 JEVisType newType = null;
                 if (jclass.getType(type.getName()) == null) {
                     newType = jclass.buildType(type.getName());
@@ -169,7 +169,7 @@ public class ClassImporter {
                     dbTypes.add(newType);
 
                 } else {
-                    System.out.println("ERROR: type was not createt");
+                    System.out.println("ERROR: type was not created");
                 }
 
             } catch (JEVisException ex) {
