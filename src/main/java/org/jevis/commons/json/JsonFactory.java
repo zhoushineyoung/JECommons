@@ -21,14 +21,15 @@
 package org.jevis.commons.json;
 
 import java.util.ArrayList;
+import java.util.List;
 import org.jevis.api.JEVisAttribute;
 import org.jevis.api.JEVisClass;
+import org.jevis.api.JEVisClassRelationship;
 import org.jevis.api.JEVisException;
 import org.jevis.api.JEVisObject;
 import org.jevis.api.JEVisRelationship;
 import org.jevis.api.JEVisSample;
 import org.jevis.api.JEVisType;
-import org.jevis.api.JEVisUnit;
 import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.ISODateTimeFormat;
 
@@ -98,6 +99,41 @@ public class JsonFactory {
 
         json.setUnique(jclass.isUnique());
         json.setDescription(jclass.getDescription());
+        return json;
+    }
+
+    public static JsonJEVisClass buildJEVisClassComplete(JEVisClass jclass) throws JEVisException {
+        JsonJEVisClass json = new JsonJEVisClass();
+        json.setName(jclass.getName());
+        if (jclass.getInheritance() != null) {
+            json.setInheritance(jclass.getInheritance().getName());
+        } else {
+            json.setInheritance("null");
+        }
+
+        json.setUnique(jclass.isUnique());
+        json.setDescription(jclass.getDescription());
+        List<JsonType> types = new ArrayList<>();
+        for (JEVisType type : jclass.getTypes()) {
+            if (jclass.getInheritance() != null) {
+                if (jclass.getInheritance().getTypes().contains(type)) {
+                    System.out.println("Dont export inherit class");
+                    continue;
+                }
+            }
+
+            types.add(buildType(type));
+
+        }
+
+        json.setTypes(types);
+
+        List<JsonRelationship> rels = new ArrayList<>();
+        for (JEVisClassRelationship rel : jclass.getRelationships()) {
+            rels.add(new JsonRelationship(rel));
+        }
+
+        json.setRelationships(rels);
         return json;
     }
 
