@@ -7,7 +7,6 @@ package org.jevis.commons.driver.inputHandler;
 
 import java.io.ByteArrayInputStream;
 import java.util.List;
-import org.jevis.commons.parsing.inputHandler.InputHandler;
 
 /**
  *

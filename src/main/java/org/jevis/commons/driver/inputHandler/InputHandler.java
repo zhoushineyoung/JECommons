@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.jevis.commons.parsing.inputHandler;
+package org.jevis.commons.driver.inputHandler;
 
 import java.io.BufferedReader;
 import java.io.IOException;

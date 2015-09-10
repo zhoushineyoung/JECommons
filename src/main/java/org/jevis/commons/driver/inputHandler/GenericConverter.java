@@ -8,16 +8,10 @@ package org.jevis.commons.driver.inputHandler;
 import java.io.File;
 import java.io.InputStream;
 import java.util.List;
-import javax.xml.soap.Node;
 import javax.xml.soap.SOAPMessage;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.jevis.commons.driver.Converter;
-import org.jevis.commons.parsing.inputHandler.FileInputHandler;
-import org.jevis.commons.parsing.inputHandler.InputHandler;
-import org.jevis.commons.parsing.inputHandler.InputStreamHandler;
-import org.jevis.commons.parsing.inputHandler.SOAPMessageInputHandler;
-import org.jevis.commons.parsing.inputHandler.StringInputHandler;
 import org.w3c.dom.Document;
 
 /**
