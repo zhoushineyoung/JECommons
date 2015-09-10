@@ -84,7 +84,7 @@ public class JsonJEVisClass {
 
     @XmlElementWrapper(name = "JsonRelationship")
     public void setRelationships(List<JsonRelationship> relationships) {
-        System.out.println("setrelationship: " + relationships);
+//        System.out.println("setrelationship: " + relationships);
         this.relationships = relationships;
     }
 

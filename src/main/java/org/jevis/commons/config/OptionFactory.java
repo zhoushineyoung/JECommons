@@ -39,14 +39,13 @@ public class OptionFactory {
      * @param required true if the parameter has to be set
      * @return
      */
-    public static JEVisOption BuildOption(JEVisOption parent, String key, String value, String description, boolean required) {
+    public static JEVisOption BuildOption(JEVisOption parent, String key, String value, String description) {
         JEVisOption opt = new BasicOption();
         opt.setDescription(description);
         opt.setValue(value);
         opt.setKey(key);
-        opt.setRequired(required);
         if (parent != null) {
-            parent.addChildren(opt, true);
+            parent.addOption(opt, true);
         }
 
         return opt;

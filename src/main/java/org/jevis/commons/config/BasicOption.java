@@ -23,40 +23,46 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.jevis.api.JEVisOption;
+import org.jevis.commons.json.JsonOption;
 
 /**
  * Basic implementation of the JEVisOption interface.
+ *
  *
  * @author Florian Simon <florian.simon@envidatec.com>
  */
 public class BasicOption implements JEVisOption {
 
-    private String group;
     private String value;
     private String key;
-    private boolean required;
     private String description;
     private List<JEVisOption> options = new ArrayList<>();
-    private JEVisOption parent = null;
 
     public BasicOption() {
-//        System.out.println("--Create new Option");
+    }
+
+    public BasicOption(JsonOption jopt) {
+        key = jopt.getKey();
+        value = jopt.getValue();
+        description = jopt.getDescription();
+        if (jopt.getChildren() != null) {
+            for (JsonOption child : jopt.getChildren()) {
+                options.add(new BasicOption(child));
+            }
+        }
+
     }
 
     @Override
-    public JEVisOption getParent() {
-        return parent;
-    }
-
-    @Override
-    public List<JEVisOption> getChildren() {
+    public List<JEVisOption> getOptions() {
+//        System.out.println("-- BasicOption.getChildren: " + options.size());
         return options;
     }
 
     @Override
-    public void addChildren(JEVisOption option, boolean overwrite) {
+    public void addOption(JEVisOption option, boolean overwrite) {
 //        System.out.println("-- Add to " + key + "[" + this + "]   child: " + option.getKey() + "[" + option.getValue() + "]");
-        if (!hasChildren(option.getKey())) {
+        if (!hasOption(option.getKey())) {
             options.add(option);
         } else if (overwrite) {
             options.add(option);
@@ -64,7 +70,7 @@ public class BasicOption implements JEVisOption {
     }
 
     @Override
-    public JEVisOption getChildren(String optionName) {
+    public JEVisOption getOption(String optionName) {
         for (JEVisOption opt : options) {
             if (opt.getKey().equalsIgnoreCase(optionName)) {
                 return opt;
@@ -75,12 +81,12 @@ public class BasicOption implements JEVisOption {
 //        default return an emty option
         BasicOption newOpt = new BasicOption();
         newOpt.setKey(optionName);
-        getChildren().add(newOpt);
+        getOptions().add(newOpt);
         return newOpt;
     }
 
     @Override
-    public boolean hasChildren(String optionName) {
+    public boolean hasOption(String optionName) {
         for (JEVisOption opt : options) {
             if (opt.getKey().equalsIgnoreCase(optionName)) {
                 return true;
@@ -96,7 +102,6 @@ public class BasicOption implements JEVisOption {
 
     @Override
     public void setValue(String value) {
-//        System.out.println("--setValue: " + value);
         this.value = value;
     }
 
@@ -112,16 +117,6 @@ public class BasicOption implements JEVisOption {
     }
 
     @Override
-    public boolean isRequired() {
-        return this.required;
-    }
-
-    @Override
-    public void setRequired(boolean required) {
-        this.required = required;
-    }
-
-    @Override
     public String getDescription() {
         return this.description;
     }
@@ -129,6 +124,12 @@ public class BasicOption implements JEVisOption {
     @Override
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public void removeOption(JEVisOption option) {
+
+        this.options.remove(option);
     }
 
 //    @Override
@@ -139,7 +140,6 @@ public class BasicOption implements JEVisOption {
     public int hashCode() {
         int hash = 7;
         hash = 79 * hash + Objects.hashCode(this.key);
-        hash = 79 * hash + Objects.hashCode(this.parent);
         return hash;
     }
 
@@ -153,9 +153,6 @@ public class BasicOption implements JEVisOption {
         }
         final BasicOption other = (BasicOption) obj;
         if (!Objects.equals(this.key, other.key)) {
-            return false;
-        }
-        if (!Objects.equals(this.parent, other.parent)) {
             return false;
         }
         return true;

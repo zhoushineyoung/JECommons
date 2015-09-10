@@ -21,7 +21,6 @@ package org.jevis.commons.dataprocessing.processor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jevis.api.JEVisException;
@@ -34,7 +33,6 @@ import static org.jevis.commons.dataprocessing.Options.getAllTimestamps;
 import org.jevis.commons.dataprocessing.VirtualAttribute;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
-import org.joda.time.Period;
 
 /**
  *
@@ -48,10 +46,6 @@ public class AggrigatorProcessor implements DataProcessor {
     public List<JEVisSample> getResult(Task mainTask) {
         List<JEVisSample> result = new ArrayList<>();
 
-//
-//       
-//        List<Interval> durations = ProcessController.buildIntervals(Period.days(1), ProcessController.getOffset(), samples.get(0).getTimestamp(), samples.get(samples.size() - 1).getTimestamp());
-        List<Map<DateTime, JEVisSample>> sampleMaps = new ArrayList<>();
         List<List<JEVisSample>> allSamples = new ArrayList<>();
         for (Task task : mainTask.getSubTasks()) {
             allSamples.add(task.getResult());

@@ -38,14 +38,14 @@ public interface CommonOptions {
          * parameters
          */
 //        public final String GROUP = "datasource";
-        public final JEVisOption DataSoure = OptionFactory.BuildOption(null, "datasource", "", "JEVis datasource option group", true);
+        public final JEVisOption DataSoure = OptionFactory.BuildOption(null, "datasource", "", "JEVis datasource option group");
 
-        static final JEVisOption HOST = OptionFactory.BuildOption(DataSoure, "host", "localhost", "Hostname URL of the data source", true);
-        static final JEVisOption PORT = OptionFactory.BuildOption(DataSoure, "port", "3306", "Port of the data source", true);
-        static final JEVisOption CLASS = OptionFactory.BuildOption(DataSoure, "class", "org.jevis.api.sql.JEVisDataSourceSQL", "Classname of the data source. e.g. 'org.jevis.api.sql.JEVisDataSourceSQL'", true);
-        static final JEVisOption SCHEMA = OptionFactory.BuildOption(DataSoure, "schema", "jevis", "MySQL Schema of the data source", true);
-        static final JEVisOption USERNAME = OptionFactory.BuildOption(DataSoure, "username", "root", "Username to the data source.", true);
-        static final JEVisOption PASSWORD = OptionFactory.BuildOption(DataSoure, "password", "", "Password to the data source", true);
+        static final JEVisOption HOST = OptionFactory.BuildOption(DataSoure, "host", "openjevis.org", "Hostname URL of the data source");
+        static final JEVisOption PORT = OptionFactory.BuildOption(DataSoure, "port", "3306", "Port of the data source");
+        static final JEVisOption CLASS = OptionFactory.BuildOption(DataSoure, "class", "org.jevis.api.sql.JEVisDataSourceSQL", "Classname of the data source. e.g. 'org.jevis.api.sql.JEVisDataSourceSQL'");
+        static final JEVisOption SCHEMA = OptionFactory.BuildOption(DataSoure, "schema", "jevis", "MySQL Schema of the data source");
+        static final JEVisOption USERNAME = OptionFactory.BuildOption(DataSoure, "username", "jevis", "Username to the data source.");
+        static final JEVisOption PASSWORD = OptionFactory.BuildOption(DataSoure, "password", "jevistest", "Password to the data source");
 
     }
 
@@ -58,14 +58,14 @@ public interface CommonOptions {
          * Group of all avaFX bases login GUI options. Will also be used as
          * prefix for parameters
          */
-        public final JEVisOption FXLogin = OptionFactory.BuildOption(null, "fxlogin", "", "FXLogin option group", false);
+        public final JEVisOption FXLogin = OptionFactory.BuildOption(null, "fxlogin", "", "FXLogin option group");
 
         /**
          * Logo displayed into login form.
          */
-        static final JEVisOption URL_LOGO = OptionFactory.BuildOption(FXLogin, "logo", "", "URL for the Logo fof the FXLogin", false);
-        static final JEVisOption URL_CSS = OptionFactory.BuildOption(FXLogin, "css", "", "URL for the CSS customisaion of the FXLogin", false);
-        static final JEVisOption URL_REGISTER = OptionFactory.BuildOption(FXLogin, "register", "", "URL ofthe Reegister link, set 'off' if it should be hinde ", false);
+        static final JEVisOption URL_LOGO = OptionFactory.BuildOption(FXLogin, "logo", "", "URL for the Logo fof the FXLogin");
+        static final JEVisOption URL_CSS = OptionFactory.BuildOption(FXLogin, "css", "", "URL for the CSS customisaion of the FXLogin");
+        static final JEVisOption URL_REGISTER = OptionFactory.BuildOption(FXLogin, "register", "", "URL ofthe Reegister link, set 'off' if it should be hinde ");
 
     }
 
