@@ -30,9 +30,9 @@ public class ParserFactory {
 
     public static void initializeParser(JEVisDataSource client) {
         try {
-            JEVisClass serviceClass = client.getJEVisClass(JEVisDriverTypes.JEDataCollector.NAME);
-            JEVisClass driverDirClass = client.getJEVisClass(JEVisDriverTypes.ParserDriverDirectory.NAME);
-            JEVisClass parserClass = client.getJEVisClass(JEVisDriverTypes.Driver.ParserDriver.NAME);
+            JEVisClass serviceClass = client.getJEVisClass(DataCollectorTypes.JEDataCollector.NAME);
+            JEVisClass driverDirClass = client.getJEVisClass(DataCollectorTypes.ParserDriverDirectory.NAME);
+            JEVisClass parserClass = client.getJEVisClass(DataCollectorTypes.Driver.ParserDriver.NAME);
             List<JEVisObject> dataCollectorServices = client.getObjects(serviceClass, false);
             if (dataCollectorServices.size() == 1) {
                 JEVisObject dataCollectorService = dataCollectorServices.get(0);
@@ -40,13 +40,13 @@ public class ParserFactory {
                 if (driverDirs.size() == 1) {
                     JEVisObject driverDir = driverDirs.get(0);
                     for (JEVisObject parserDriver : driverDir.getChildren(parserClass, true)) {
-                        JEVisType fileType = parserDriver.getJEVisClass().getType(JEVisDriverTypes.Driver.SOURCE_FILE);
+                        JEVisType fileType = parserDriver.getJEVisClass().getType(DataCollectorTypes.Driver.SOURCE_FILE);
                         JEVisFile file = DatabaseHelper.getObjectAsFile(parserDriver, fileType);
 
-                        JEVisType classType = parserDriver.getJEVisClass().getType(JEVisDriverTypes.Driver.MAIN_CLASS);
+                        JEVisType classType = parserDriver.getJEVisClass().getType(DataCollectorTypes.Driver.MAIN_CLASS);
                         String className = DatabaseHelper.getObjectAsString(parserDriver, classType);
 
-                        JEVisType jevisType = parserDriver.getJEVisClass().getType(JEVisDriverTypes.Driver.JEVIS_CLASS);
+                        JEVisType jevisType = parserDriver.getJEVisClass().getType(DataCollectorTypes.Driver.JEVIS_CLASS);
                         String jevisName = DatabaseHelper.getObjectAsString(parserDriver, jevisType);
                         Class tmpClass = ByteClassLoader.loadDriver(file, className);
                         _parserClasses.put(jevisName, tmpClass);

@@ -22,7 +22,11 @@ import org.joda.time.format.DateTimeFormatter;
  *
  * @author Broder
  */
-public class ConnectionHelper {
+public class DataSourceHelper {
+    
+    public static void test(){
+        
+    }
 
     static public void doTrustToCertificates() throws Exception {
         Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
@@ -102,5 +106,13 @@ public class ConnectionHelper {
         String date = stringWithDate.substring(startindex + 5, endindex);
         DateTimeFormatter dtf = DateTimeFormat.forPattern(date);
         return dtf;
+    }
+
+    public static Boolean containsTokens(String path) {
+        if (path.contains("${")) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

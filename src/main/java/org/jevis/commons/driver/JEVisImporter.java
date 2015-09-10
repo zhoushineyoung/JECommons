@@ -29,6 +29,7 @@ public class JEVisImporter implements Importer {
     private JEVisDataSource _client = null;
     private JEVisObject httpObject;
     private DateTimeZone _timezone;
+    private DateTime _latestDateTime;
 
     @Override
     public boolean importResult(List<Result> results) {
@@ -65,6 +66,9 @@ public class JEVisImporter implements Importer {
                 List<JEVisSample> samples = onlineToSampleMap.get(o);
                 Logger.getLogger(JEVisImporter.class.getName()).log(Level.INFO, samples.size() + " Samples import into ID");
                 o.getAttribute("Value").addSamples(samples);
+                if (_latestDateTime == null || o.getAttribute("Value").getLatestSample().getTimestamp().isBefore(_latestDateTime)) {
+                    _latestDateTime = o.getAttribute("Value").getLatestSample().getTimestamp();
+                }
                 Logger.getLogger(JEVisImporter.class.getName()).log(Level.INFO, samples.size() + " Samples imported into ID");
             }
             Logger.getLogger(JEVisImporter.class.getName()).log(Level.INFO, " Finish imported into ID");
@@ -79,13 +83,18 @@ public class JEVisImporter implements Importer {
     public void initialize(JEVisObject dataSource) {
         try {
             _client = dataSource.getDataSource();
-            JEVisClass dataSourceClass = _client.getJEVisClass(JEVisDriverTypes.DataSource.NAME);
-            JEVisType timezoneType = dataSourceClass.getType(JEVisDriverTypes.DataSource.TIMEZONE);
+            JEVisClass dataSourceClass = _client.getJEVisClass(DataCollectorTypes.DataSource.NAME);
+            JEVisType timezoneType = dataSourceClass.getType(DataCollectorTypes.DataSource.TIMEZONE);
             String timezone = DatabaseHelper.getObjectAsString(dataSource, timezoneType);
             _timezone = DateTimeZone.forID(timezone);
         } catch (JEVisException ex) {
             java.util.logging.Logger.getLogger(JEVisImporter.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+    }
+
+    @Override
+    public DateTime getLatestDatapoint() {
+        return _latestDateTime;
     }
 
 }

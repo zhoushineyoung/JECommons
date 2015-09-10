@@ -7,6 +7,7 @@ package org.jevis.commons.driver;
 
 import java.util.List;
 import org.jevis.api.JEVisObject;
+import org.joda.time.DateTime;
 
 /**
  *
@@ -17,5 +18,7 @@ public interface Importer {
     public boolean importResult(List<Result> result);
 
     public void initialize(JEVisObject dataSource);
+    
+    public DateTime getLatestDatapoint();
 
 }

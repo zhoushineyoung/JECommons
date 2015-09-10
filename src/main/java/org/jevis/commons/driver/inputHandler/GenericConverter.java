@@ -5,7 +5,6 @@ package org.jevis.commons.driver.inputHandler;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 import java.io.File;
 import java.io.InputStream;
 import java.util.List;
@@ -19,6 +18,7 @@ import org.jevis.commons.parsing.inputHandler.InputHandler;
 import org.jevis.commons.parsing.inputHandler.InputStreamHandler;
 import org.jevis.commons.parsing.inputHandler.SOAPMessageInputHandler;
 import org.jevis.commons.parsing.inputHandler.StringInputHandler;
+import org.w3c.dom.Document;
 
 /**
  *
@@ -71,8 +71,8 @@ public class GenericConverter implements Converter {
             return _adapterHandler.getStringInput();
         } else if (convertedClass == String[].class) {
             return _adapterHandler.getStringArrayInput();
-        } else if (convertedClass == Node.class) {
-            return _adapterHandler.getXMLInput();
+        } else if (convertedClass == Document.class) {
+            return _adapterHandler.getDocuments();
         }
         return null;
     }

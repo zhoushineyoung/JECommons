@@ -57,6 +57,7 @@ public class ByteClassLoader extends ClassLoader {
         return baos.toByteArray();
     }
 
+    @Override
     public Class loadClass(String name) throws ClassNotFoundException {
         try {
             return this.getParent().loadClass(name);
@@ -65,12 +66,14 @@ public class ByteClassLoader extends ClassLoader {
         }
     }
 
+    @Override
     public Class findClass(String name) throws ClassNotFoundException {
         byte[] classBytes = classes.get(name);
         return defineClass(name, classBytes, 0, classBytes.length);
     }
 
     public static Class loadDriver(JEVisFile parserFile, String className) throws JEVisException, MalformedURLException, ClassNotFoundException, IOException {
+        System.out.println("load Driver,"+className);
         byte[] bytes = parserFile.getBytes();
         ByteClassLoader loadDriver = new ByteClassLoader(bytes);
         return loadDriver.loadClass(className);

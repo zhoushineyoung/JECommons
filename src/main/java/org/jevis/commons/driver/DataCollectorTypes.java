@@ -7,9 +7,9 @@ package org.jevis.commons.driver;
 
 /**
  *
- * @author broder
+ * @author bf
  */
-public interface JEVisDriverTypes {
+public interface DataCollectorTypes {
 
     interface DataSourceDriverDirectory {
 
@@ -89,15 +89,15 @@ public interface JEVisDriverTypes {
         interface XMLParser extends Parser {
 
             public final static String NAME = "XML Parser";
-            public final static String XML_GENERAL_TAG = "General Tag";
-            public final static String XML_SPECIFICATION_TAG = "Specification Tag";
-            public final static String XML_SPECIFICATION_ATTRIBUTE = "Specification In Attribute";
-            public final static String XMl_VALUE_TAG = "Value Tag";
-            public final static String XML_VALUE_ATTRIBUTE = "Value In Attribute";
-            public final static String XML_DATE_TAG = "Date Tag";
-            public final static String XML_DATE_ATTRIBUTE = "Date In Attribute";
-            public final static String XML_TIME_TAG = "Time Tag";
-            public final static String XML_TIME_ATTRIBUTE = "Time In Attribute";
+            public final static String GENERAL_TAG = "General Tag";
+            public final static String SPECIFICATION_TAG = "Specification Tag";
+            public final static String SPECIFICATION_ATTRIBUTE = "Specification In Attribute";
+            public final static String VALUE_TAG = "Value Tag";
+            public final static String VALUE_IN_ATTRIBUTE = "Value In Attribute";
+            public final static String DATE_TAG = "Date Tag";
+            public final static String DATE_IN_ATTRIBUTE = "Date In Attribute";
+            public final static String TIME_TAG = "Time Tag";
+            public final static String TIME_IN_ATTRIBUTE = "Time In Attribute";
             public final static String MAIN_ELEMENT = "Main Element";
             public final static String MAIN_ATTRIBUTE = "Main Attribute";
             public final static String DATE_ELEMENT = "Date Element";
@@ -106,6 +106,10 @@ public interface JEVisDriverTypes {
             public final static String VALUE_ELEMENT = "Value Element";
             public final static String VALUE_ATTRIBUTE = "Value Attribute";
             public final static String VALUE_IN_ELEMENT = "Value in Element";
+            public final static String DATE_FORMAT = "Date Format";
+            public final static String DECIMAL_SEPERATOR = "Decimal Separator";
+            public final static String TIME_FORMAT = "Time Format";
+            public final static String THOUSAND_SEPERATOR = "Thousand Separator";
         }
     }
 
@@ -167,6 +171,13 @@ public interface JEVisDriverTypes {
             public final static String NAME = "HTTP Channel";
             public final static String PATH = "Path";
         }
+
+        interface SOAPChannel extends Channel {
+
+            public final static String NAME = "SOAP Channel";
+            public final static String TEMPLATE = "Template";
+            public final static String PATH = "Path";
+        }
     }
 
     public static interface Importer {
@@ -183,6 +194,11 @@ public interface JEVisDriverTypes {
             public final static String NAME = "CSV Data Point Directory";
         }
 
+        interface XMLDataPointDirectory extends DataPointDirectory {
+
+            public final static String NAME = "XML Data Point Directory";
+        }
+
     }
 
     public static interface DataPoint {
@@ -194,6 +210,14 @@ public interface JEVisDriverTypes {
             public final static String NAME = "CSV Data Point";
             public final static String MAPPING_IDENTIFIER = "Mapping Identifier";
             public final static String VALUE_INDEX = "Value Index";
+            public final static String TARGET = "Target";
+        }
+
+        interface XMLDataPoint extends DataPoint {
+
+            public final static String NAME = "XML Data Point";
+            public final static String MAPPING_IDENTIFIER = "Mapping Identifier";
+            public final static String VALUE_INDEX = "Value Identifier";
             public final static String TARGET = "Target";
         }
     }

@@ -32,9 +32,9 @@ public class DataSourceFactory {
 
     public static void initializeDataSource(JEVisDataSource client) {
         try {
-            JEVisClass serviceClass = client.getJEVisClass(JEVisDriverTypes.JEDataCollector.NAME);
-            JEVisClass driverDirClass = client.getJEVisClass(JEVisDriverTypes.DataSourceDriverDirectory.NAME);
-            JEVisClass dataSourceClass = client.getJEVisClass(JEVisDriverTypes.Driver.DataSourceDriver.NAME);
+            JEVisClass serviceClass = client.getJEVisClass(DataCollectorTypes.JEDataCollector.NAME);
+            JEVisClass driverDirClass = client.getJEVisClass(DataCollectorTypes.DataSourceDriverDirectory.NAME);
+            JEVisClass dataSourceClass = client.getJEVisClass(DataCollectorTypes.Driver.DataSourceDriver.NAME);
             List<JEVisObject> dataCollectorServices = client.getObjects(serviceClass, false);
             if (dataCollectorServices.size() == 1) {
                 JEVisObject dataCollectorService = dataCollectorServices.get(0);
@@ -42,13 +42,13 @@ public class DataSourceFactory {
                 if (driverDirs.size() == 1) {
                     JEVisObject driverDir = driverDirs.get(0);
                     for (JEVisObject dataSourceDriver : driverDir.getChildren(dataSourceClass, true)) {
-                        JEVisType fileType = dataSourceDriver.getJEVisClass().getType(JEVisDriverTypes.Driver.SOURCE_FILE);
+                        JEVisType fileType = dataSourceDriver.getJEVisClass().getType(DataCollectorTypes.Driver.SOURCE_FILE);
                         JEVisFile dataSourceFile = DatabaseHelper.getObjectAsFile(dataSourceDriver, fileType);
 
-                        JEVisType classType = dataSourceDriver.getJEVisClass().getType(JEVisDriverTypes.Driver.MAIN_CLASS);
+                        JEVisType classType = dataSourceDriver.getJEVisClass().getType(DataCollectorTypes.Driver.MAIN_CLASS);
                         String className = DatabaseHelper.getObjectAsString(dataSourceDriver, classType);
 
-                        JEVisType jevisType = dataSourceDriver.getJEVisClass().getType(JEVisDriverTypes.Driver.JEVIS_CLASS);
+                        JEVisType jevisType = dataSourceDriver.getJEVisClass().getType(DataCollectorTypes.Driver.JEVIS_CLASS);
                         String jevisName = DatabaseHelper.getObjectAsString(dataSourceDriver, jevisType);
 
                         Class tmpClass = ByteClassLoader.loadDriver(dataSourceFile, className);
