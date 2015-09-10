@@ -112,15 +112,14 @@ public class DatabaseHelper {
     }
 
     public static DateTime getObjectAsDate(JEVisObject jevisObject, JEVisType jevisType, DateTimeFormatter timeFormat) throws JEVisException {
-        String value = null;
+        DateTime datetime = null;
         try {
             if (DatabaseHelper.checkValidStringObject(jevisObject, jevisType)) {
-                value = jevisObject.getAttribute(jevisType).getLatestSample().getValueAsString();
-
+                String value = jevisObject.getAttribute(jevisType).getLatestSample().getValueAsString();
+                datetime = timeFormat.parseDateTime(value);
             }
         } catch (NumberFormatException | JEVisException nfe) {
         }
-        DateTime datetime = timeFormat.parseDateTime(value);
         return datetime;
     }
 
