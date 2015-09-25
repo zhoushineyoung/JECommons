@@ -45,6 +45,31 @@ public interface DataCollectorTypes {
         public final static String NAME = "Importer Driver Directory";
     }
 
+    interface ChannelDirectory {
+
+        public final static String NAME = "Channel Directory";
+
+        interface HTTPChannelDirectory extends ChannelDirectory {
+
+            public final static String NAME = "HTTP Channel Directory";
+        }
+
+        interface SOAPChannelDirectory extends ChannelDirectory {
+
+            public final static String NAME = "SOAP Channel Directory";
+        }
+
+        interface FTPChannelDirectory extends ChannelDirectory {
+
+            public final static String NAME = "FTP Channel Directory";
+        }
+
+        interface sFTPChannelDirectory extends ChannelDirectory {
+
+            public final static String NAME = "sFTP Channel Directory";
+        }
+    }
+
     interface JEDataCollector {
 
         public final static String NAME = "JEDataCollector";
@@ -183,6 +208,18 @@ public interface DataCollectorTypes {
         interface HTTPChannel extends Channel {
 
             public final static String NAME = "HTTP Channel";
+            public final static String PATH = "Path";
+        }
+
+        interface FTPChannel extends Channel {
+
+            public final static String NAME = "FTP Channel";
+            public final static String PATH = "Path";
+        }
+
+        interface sFTPChannel extends Channel {
+
+            public final static String NAME = "sFTP Channel";
             public final static String PATH = "Path";
         }
 
