@@ -17,22 +17,3 @@
  * JECommons is part of the OpenJEVis project, further project information are
  * published at <http://www.OpenJEVis.org/>.
  */
-package org.jevis.commons.driver;
-
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-
-/**
- *
- * @author broder
- */
-public class TimeConverter {
-
-    public static DateTime convertTime(DateTimeZone from, DateTime time) {
-        long timeInMillis = time.getMillis();
-        DateTime dateTime = new DateTime(timeInMillis, from);
-        DateTime tmpTime = dateTime;
-        dateTime = tmpTime.toDateTime(DateTimeZone.UTC);
-        return dateTime;
-    }
-}

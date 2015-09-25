@@ -1,6 +1,21 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * Copyright (C) 2015 Envidatec GmbH <info@envidatec.com>
+ *
+ * This file is part of JECommons.
+ *
+ * JECommons is free software: you can redistribute it and/or modify it under
+ * the terms of the GNU General Public License as published by the Free Software
+ * Foundation in version 3.
+ *
+ * JECommons is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+ * A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * JECommons. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * JECommons is part of the OpenJEVis project, further project information are
+ * published at <http://www.OpenJEVis.org/>.
  */
 package org.jevis.commons.driver;
 
@@ -14,6 +29,9 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+import org.jevis.api.JEVisException;
+import org.jevis.api.JEVisObject;
+import org.jevis.api.JEVisSample;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -23,9 +41,9 @@ import org.joda.time.format.DateTimeFormatter;
  * @author Broder
  */
 public class DataSourceHelper {
-    
-    public static void test(){
-        
+
+    public static void test() {
+
     }
 
     static public void doTrustToCertificates() throws Exception {
@@ -58,6 +76,23 @@ public class DataSourceHelper {
             }
         };
         HttpsURLConnection.setDefaultHostnameVerifier(hv);
+    }
+
+    public static void setLastReadout(JEVisObject channel, DateTime lastDateTime) {
+        try {
+            String currentReadout = null;
+//        JEVisClass channelClass = channel.getJEVisClass();
+//        JEVisType readoutType = channelClass.getType(DataCollectorTypes.Channel.HTTPChannel.LAST_READOUT);
+            String toString = lastDateTime.toString(DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss"));
+
+            JEVisSample buildSample = channel.getAttribute(DataCollectorTypes.Channel.LAST_READOUT).buildSample(new DateTime(), toString);
+            buildSample.commit();
+//        List<JEVisSample> sampleList = new ArrayList<JEVisSample>();
+//        sampleList.add(buildSample);
+//        dp.getJEVisDatapoint().getAttribute(JEVisTypes.DataPoint.LAST_READOUT).addSamples(sampleList);
+        } catch (JEVisException ex) {
+            java.util.logging.Logger.getLogger(DataSourceHelper.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
     }
 
     public static String replaceDateFrom(String template, DateTime date) {
