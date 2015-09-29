@@ -31,21 +31,21 @@ public interface CommonOptions {
     /**
      * JEVisOptions related to the JEVisDataSource
      */
-    public interface DataSoure {
+    public interface DataSource {
 
         /**
          * Group of all datasource options. Will also be used as prefix for
          * parameters
          */
 //        public final String GROUP = "datasource";
-        public final JEVisOption DataSoure = OptionFactory.BuildOption(null, "datasource", "", "JEVis datasource option group");
+        public final JEVisOption DataSource = OptionFactory.BuildOption(null, "datasource", "", "JEVis datasource option group");
 
-        static final JEVisOption HOST = OptionFactory.BuildOption(DataSoure, "host", "openjevis.org", "Hostname URL of the data source");
-        static final JEVisOption PORT = OptionFactory.BuildOption(DataSoure, "port", "3306", "Port of the data source");
-        static final JEVisOption CLASS = OptionFactory.BuildOption(DataSoure, "class", "org.jevis.api.sql.JEVisDataSourceSQL", "Classname of the data source. e.g. 'org.jevis.api.sql.JEVisDataSourceSQL'");
-        static final JEVisOption SCHEMA = OptionFactory.BuildOption(DataSoure, "schema", "jevis", "MySQL Schema of the data source");
-        static final JEVisOption USERNAME = OptionFactory.BuildOption(DataSoure, "username", "jevis", "Username to the data source.");
-        static final JEVisOption PASSWORD = OptionFactory.BuildOption(DataSoure, "password", "jevistest", "Password to the data source");
+        static final JEVisOption HOST = OptionFactory.BuildOption(DataSource, "host", "openjevis.org", "Hostname URL of the data source");
+        static final JEVisOption PORT = OptionFactory.BuildOption(DataSource, "port", "3306", "Port of the data source");
+        static final JEVisOption CLASS = OptionFactory.BuildOption(DataSource, "class", "org.jevis.api.sql.JEVisDataSourceSQL", "Classname of the data source. e.g. 'org.jevis.api.sql.JEVisDataSourceSQL'");
+        static final JEVisOption SCHEMA = OptionFactory.BuildOption(DataSource, "schema", "jevis", "MySQL Schema of the data source");
+        static final JEVisOption USERNAME = OptionFactory.BuildOption(DataSource, "username", "jevis", "Username to the data source.");
+        static final JEVisOption PASSWORD = OptionFactory.BuildOption(DataSource, "password", "jevistest", "Password to the data source");
 
     }
 
