@@ -316,20 +316,20 @@ public class DataSourceHelper {
     }
 
     public static String replaceDateFromUntil(DateTime from, DateTime until, String filePath) {
-        String replacedString = null;
+//        String replacedString = null;
         while (filePath.indexOf("${DF:") != -1 || filePath.indexOf("${DF:") != -1) {
             int fromstartindex = filePath.indexOf("${DF:");
             int untilstartindex = filePath.indexOf("${DU:");
             if (fromstartindex < untilstartindex) {
-                replacedString = replaceDateFrom(filePath, from);
-                replacedString = replaceDateUntil(replacedString, until);
+                filePath = replaceDateFrom(filePath, from);
+                filePath = replaceDateUntil(filePath, until);
             } else {
-                replacedString = replaceDateUntil(filePath, until);
-                replacedString = replaceDateFrom(replacedString, from);
+                filePath = replaceDateUntil(filePath, until);
+                filePath = replaceDateFrom(filePath, from);
             }
 
         }
-        return replacedString;
+        return filePath;
     }
 
     private static DateTime getFolderTime(String name, String[] pathStream) {
