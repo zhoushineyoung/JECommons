@@ -105,21 +105,6 @@ public interface DataCollectorTypes {
 
         public final static String NAME = "Parser";
 
-        interface CSVParser extends Parser {
-
-            public final static String NAME = "CSV Parser";
-            public final static String DATAPOINT_INDEX = "Datapoint Index";
-            public final static String DATE_INDEX = "Date Index";
-            public final static String DELIMITER = "Delimiter";
-            public final static String NUMBER_HEADLINES = "Number Of Headlines";
-            public final static String QUOTE = "Quote";
-            public final static String TIME_INDEX = "Time Index";
-            public final static String DATE_FORMAT = "Date Format";
-            public final static String DECIMAL_SEPERATOR = "Decimal Separator";
-            public final static String TIME_FORMAT = "Time Format";
-            public final static String THOUSAND_SEPERATOR = "Thousand Separator";
-        }
-
         interface XMLParser extends Parser {
 
             public final static String NAME = "XML Parser";
@@ -221,11 +206,6 @@ public interface DataCollectorTypes {
 
         public final static String NAME = "Data Point Directory";
 
-        interface CSVDataPointDirectory extends DataPointDirectory {
-
-            public final static String NAME = "CSV Data Point Directory";
-        }
-
         interface XMLDataPointDirectory extends DataPointDirectory {
 
             public final static String NAME = "XML Data Point Directory";
@@ -236,14 +216,6 @@ public interface DataCollectorTypes {
     public static interface DataPoint {
 
         public final static String NAME = "Data Point";
-
-        interface CSVDataPoint extends DataPoint {
-
-            public final static String NAME = "CSV Data Point";
-            public final static String MAPPING_IDENTIFIER = "Mapping Identifier";
-            public final static String VALUE_INDEX = "Value Index";
-            public final static String TARGET = "Target";
-        }
 
         interface XMLDataPoint extends DataPoint {
 
