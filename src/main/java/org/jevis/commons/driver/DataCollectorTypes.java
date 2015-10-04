@@ -49,11 +49,6 @@ public interface DataCollectorTypes {
 
         public final static String NAME = "Channel Directory";
 
-        interface HTTPChannelDirectory extends ChannelDirectory {
-
-            public final static String NAME = "HTTP Channel Directory";
-        }
-
         interface SOAPChannelDirectory extends ChannelDirectory {
 
             public final static String NAME = "SOAP Channel Directory";
@@ -166,14 +161,6 @@ public interface DataCollectorTypes {
             public final static String HOST = "Host";
             public final static String PORT = "Port";
 
-            interface HTTP extends DataServer {
-
-                public final static String NAME = "HTTP Server";
-                public final static String PASSWORD = "Password";
-                public final static String SSL = "SSL";
-                public final static String USER = "User";
-            }
-
             interface FTP extends DataServer {
 
                 public final static String NAME = "FTP Server";
@@ -204,12 +191,6 @@ public interface DataCollectorTypes {
 
         public final static String NAME = "Channel";
         public final static String LAST_READOUT = "Last Readout";
-
-        interface HTTPChannel extends Channel {
-
-            public final static String NAME = "HTTP Channel";
-            public final static String PATH = "Path";
-        }
 
         interface FTPChannel extends Channel {
 
