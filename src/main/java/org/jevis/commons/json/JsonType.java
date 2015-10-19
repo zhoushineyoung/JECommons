@@ -65,7 +65,7 @@ public class JsonType {
         this.name = name;
     }
 
-    @XmlElement(name = "premitiveType")
+    @XmlElement(name = "primitiveType")
     public int getPrimitiveType() {
         return primitiveType;
     }
