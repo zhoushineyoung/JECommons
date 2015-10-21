@@ -19,78 +19,46 @@
  */
 package org.jevis.commons.driver;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.jar.JarEntry;
-import java.util.jar.JarInputStream;
+import java.net.URL;
+import java.net.URLClassLoader;
 import org.jevis.api.JEVisException;
 import org.jevis.api.JEVisFile;
 
 /**
  *
  * @author broder
+ * @author NeroBurner
  */
-public class ByteClassLoader extends ClassLoader {
+public class ByteClassLoader extends URLClassLoader {
 
-    private Map<String, byte[]> classes = new HashMap<String, byte[]>();
-
-    public ByteClassLoader(byte[] classBytes) {
-        super(ByteClassLoader.class.getClassLoader());
-        try {
-            JarInputStream jis = new JarInputStream(new ByteArrayInputStream(classBytes));
-            JarEntry je = null;
-            String entryName = null;
-            while ((je = jis.getNextJarEntry()) != null) {
-                entryName = je.getName();
-                if (je.getName().endsWith(".class")) {
-                    byte[] tmpclassBytes = readClass(jis);
-                    String canonicalName = entryName.replaceAll("/", ".").replaceAll(".class", "");
-                    classes.put(canonicalName, tmpclassBytes);
-                }
-            }
-            jis.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private byte[] readClass(InputStream stream) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        while (true) {
-            int qwe = stream.read();
-            if (qwe == -1) {
-                break;
-            }
-            baos.write(qwe);
-        }
-        return baos.toByteArray();
-    }
-
-    @Override
-    public Class loadClass(String name) throws ClassNotFoundException {
-        try {
-            return this.getParent().loadClass(name);
-        } catch (ClassNotFoundException e) {
-            return findClass(name);
-        }
-    }
-
-    @Override
-    public Class findClass(String name) throws ClassNotFoundException {
-        byte[] classBytes = classes.get(name);
-        return defineClass(name, classBytes, 0, classBytes.length);
+    private URL url;
+    
+    public ByteClassLoader(URL url) {
+        super(new URL[] { url });
+        this.url = url;
     }
 
     public static Class loadDriver(JEVisFile parserFile, String className) throws JEVisException, MalformedURLException, ClassNotFoundException, IOException {
-        System.out.println("load Driver,"+className);
-        byte[] bytes = parserFile.getBytes();
-        ByteClassLoader loadDriver = new ByteClassLoader(bytes);
-        return loadDriver.loadClass(className);
+        System.out.println("load Driver: "+className);
+        
+        // Write jar from JEVis to temporary file
+        File tmpJar = File.createTempFile(parserFile.getFilename(), ".jar");
+        FileOutputStream fos = new FileOutputStream(tmpJar);
+        fos.write(parserFile.getBytes());
+        
+        // Load jar from temporary file
+        URL url = tmpJar.toURI().toURL();
+        System.out.println("jarURL: " + url.toString());
+        ClassLoader cl = new ByteClassLoader(url);
+        Class c = cl.loadClass(className);
+        
+        // Close temporary file
+        fos.close();
+        return c;
     }
 
 }
