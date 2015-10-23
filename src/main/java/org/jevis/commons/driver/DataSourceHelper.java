@@ -139,26 +139,29 @@ public class DataSourceHelper {
 //                for (FTPFile file : fc.listFiles(folder)) {
 //                    System.out.println(file.getName());
 //                }
-                for (String fileName : fc.listNames(folder)) {
+                fc.changeWorkingDirectory(folder);
+                for (FTPFile file : fc.listFiles()) {
 //                    org.apache.log4j.Logger.getLogger(Launcher.class.getName()).log(org.apache.log4j.Level.ALL, "CurrentFileName: " + fileName);
-                    fileName = removeFoler(fileName, folder);
-//                    fileName = file.getName();
+//                    fileName = removeFoler(fileName, folder);
+                    if (file.getTimestamp().compareTo(lastReadout.toGregorianCalendar()) < 0) {
+                        continue;
+                    }
                     boolean match = false;
-                    System.out.println(fileName);
+                    System.out.println(file.getName());
                     if (DataSourceHelper.containsTokens(fileNameScheme)) {
-                        boolean matchDate = matchDateString(fileName, fileNameScheme);
-                        DateTime folderTime = getFileTime(folder + fileName, pathStream);
+                        boolean matchDate = matchDateString(file.getName(), fileNameScheme);
+                        DateTime folderTime = getFileTime(folder + file.getName(), pathStream);
                         boolean isLater = folderTime.isAfter(lastReadout);
                         if (matchDate && isLater) {
                             match = true;
                         }
                     } else {
                         Pattern p = Pattern.compile(fileNameScheme);
-                        Matcher m = p.matcher(fileName);
+                        Matcher m = p.matcher(file.getName());
                         match = m.matches();
                     }
                     if (match) {
-                        fileNames.add(folder + fileName);
+                        fileNames.add(folder + file.getName());
                     }
                 }
             }

@@ -38,40 +38,12 @@ import org.jevis.commons.DatabaseHelper;
  *
  * @author Broder
  */
-public class ParserFactory {
+public class ParserFactory extends DriverFactory {
 
     private static Map<String, Class> _parserClasses = new HashMap<>();
 
     public static void initializeParser(JEVisDataSource client) {
-        try {
-            JEVisClass serviceClass = client.getJEVisClass(DataCollectorTypes.JEDataCollector.NAME);
-            JEVisClass driverDirClass = client.getJEVisClass(DataCollectorTypes.ParserDriverDirectory.NAME);
-            JEVisClass parserClass = client.getJEVisClass(DataCollectorTypes.Driver.ParserDriver.NAME);
-            List<JEVisObject> dataCollectorServices = client.getObjects(serviceClass, false);
-            if (dataCollectorServices.size() == 1) {
-                JEVisObject dataCollectorService = dataCollectorServices.get(0);
-                List<JEVisObject> driverDirs = dataCollectorService.getChildren(driverDirClass, false);
-                if (driverDirs.size() == 1) {
-                    JEVisObject driverDir = driverDirs.get(0);
-                    for (JEVisObject parserDriver : driverDir.getChildren(parserClass, true)) {
-                        JEVisType fileType = parserDriver.getJEVisClass().getType(DataCollectorTypes.Driver.SOURCE_FILE);
-                        JEVisFile file = DatabaseHelper.getObjectAsFile(parserDriver, fileType);
-
-                        JEVisType classType = parserDriver.getJEVisClass().getType(DataCollectorTypes.Driver.MAIN_CLASS);
-                        String className = DatabaseHelper.getObjectAsString(parserDriver, classType);
-
-                        JEVisType jevisType = parserDriver.getJEVisClass().getType(DataCollectorTypes.Driver.JEVIS_CLASS);
-                        String jevisName = DatabaseHelper.getObjectAsString(parserDriver, jevisType);
-                        Class tmpClass = ByteClassLoader.loadDriver(file, className);
-                        _parserClasses.put(jevisName, tmpClass);
-                    }
-                }
-            }
-        } catch (JEVisException | MalformedURLException | ClassNotFoundException ex) {
-            Logger.getLogger(ParserFactory.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(ParserFactory.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        _parserClasses = initialize(client, DataCollectorTypes.ParserDriverDirectory.NAME, DataCollectorTypes.Driver.ParserDriver.NAME);
     }
 
     public static Parser getParser(JEVisObject jevisParser) {

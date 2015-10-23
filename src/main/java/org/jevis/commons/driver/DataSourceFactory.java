@@ -33,47 +33,19 @@ import org.jevis.api.JEVisFile;
 import org.jevis.api.JEVisObject;
 import org.jevis.api.JEVisType;
 import org.jevis.commons.DatabaseHelper;
+import static org.jevis.commons.driver.DriverFactory.initialize;
 
 /**
  *
  * @author Broder
  */
-public class DataSourceFactory {
+public class DataSourceFactory extends DriverFactory {
 
     private static Map<String, Class> _dataSourceClasses = new HashMap<>();
 //    private static String _folder = "/home/broder/tmp/";
 
     public static void initializeDataSource(JEVisDataSource client) {
-        try {
-            JEVisClass serviceClass = client.getJEVisClass(DataCollectorTypes.JEDataCollector.NAME);
-            JEVisClass driverDirClass = client.getJEVisClass(DataCollectorTypes.DataSourceDriverDirectory.NAME);
-            JEVisClass dataSourceClass = client.getJEVisClass(DataCollectorTypes.Driver.DataSourceDriver.NAME);
-            List<JEVisObject> dataCollectorServices = client.getObjects(serviceClass, false);
-            if (dataCollectorServices.size() == 1) {
-                JEVisObject dataCollectorService = dataCollectorServices.get(0);
-                List<JEVisObject> driverDirs = dataCollectorService.getChildren(driverDirClass, false);
-                if (driverDirs.size() == 1) {
-                    JEVisObject driverDir = driverDirs.get(0);
-                    for (JEVisObject dataSourceDriver : driverDir.getChildren(dataSourceClass, true)) {
-                        JEVisType fileType = dataSourceDriver.getJEVisClass().getType(DataCollectorTypes.Driver.SOURCE_FILE);
-                        JEVisFile dataSourceFile = DatabaseHelper.getObjectAsFile(dataSourceDriver, fileType);
-
-                        JEVisType classType = dataSourceDriver.getJEVisClass().getType(DataCollectorTypes.Driver.MAIN_CLASS);
-                        String className = DatabaseHelper.getObjectAsString(dataSourceDriver, classType);
-
-                        JEVisType jevisType = dataSourceDriver.getJEVisClass().getType(DataCollectorTypes.Driver.JEVIS_CLASS);
-                        String jevisName = DatabaseHelper.getObjectAsString(dataSourceDriver, jevisType);
-
-                        Class tmpClass = ByteClassLoader.loadDriver(dataSourceFile, className);
-                        _dataSourceClasses.put(jevisName, tmpClass);
-                    }
-                }
-            }
-        } catch (JEVisException | MalformedURLException | ClassNotFoundException ex) {
-            Logger.getLogger(ParserFactory.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(DataSourceFactory.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        _dataSourceClasses = initialize(client, DataCollectorTypes.DataSourceDriverDirectory.NAME, DataCollectorTypes.Driver.DataSourceDriver.NAME);
     }
 
     public static DataSource getDataSource(JEVisObject dataSourceJEVis) {

@@ -84,6 +84,7 @@ public interface DataCollectorTypes {
         public final static String SOURCE_FILE = "Source File";
         public final static String MAIN_CLASS = "Main Class";
         public final static String JEVIS_CLASS = "JEVis Class";
+        public final static String ENABLED = "Enabled";
 
         interface DataSourceDriver extends Driver {
 
@@ -268,7 +269,7 @@ public interface DataCollectorTypes {
 
             public final static String NAME = "XML Data Point";
             public final static String MAPPING_IDENTIFIER = "Mapping Identifier";
-            public final static String VALUE_INDEX = "Value Identifier";
+            public final static String VALUE_IDENTIFIER = "Value Identifier";
             public final static String TARGET = "Target";
         }
     }
