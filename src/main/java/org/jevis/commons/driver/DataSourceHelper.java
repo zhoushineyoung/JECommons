@@ -93,23 +93,6 @@ public class DataSourceHelper {
         HttpsURLConnection.setDefaultHostnameVerifier(hv);
     }
 
-    public static void setLastReadout(JEVisObject channel, DateTime lastDateTime) {
-        try {
-            String currentReadout = null;
-//        JEVisClass channelClass = channel.getJEVisClass();
-//        JEVisType readoutType = channelClass.getType(DataCollectorTypes.Channel.HTTPChannel.LAST_READOUT);
-            String toString = lastDateTime.toString(DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss"));
-
-            JEVisSample buildSample = channel.getAttribute(DataCollectorTypes.Channel.LAST_READOUT).buildSample(new DateTime(), toString);
-            buildSample.commit();
-//        List<JEVisSample> sampleList = new ArrayList<JEVisSample>();
-//        sampleList.add(buildSample);
-//        dp.getJEVisDatapoint().getAttribute(JEVisTypes.DataPoint.LAST_READOUT).addSamples(sampleList);
-        } catch (JEVisException ex) {
-            java.util.logging.Logger.getLogger(DataSourceHelper.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-    }
-
     public static List<String> getFTPMatchedFileNames(FTPClient fc, DateTime lastReadout, String filePath) {
         filePath = filePath.replace("\\", "/");
         String[] pathStream = getPathTokens(filePath);

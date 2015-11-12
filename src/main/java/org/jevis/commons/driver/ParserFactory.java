@@ -46,6 +46,10 @@ public class ParserFactory extends DriverFactory {
         _parserClasses = initialize(client, DataCollectorTypes.ParserDriverDirectory.NAME, DataCollectorTypes.Driver.ParserDriver.NAME);
     }
 
+    public static void setParserClasses(Map<String, Class> _parserClasses) {
+        ParserFactory._parserClasses = _parserClasses;
+    }
+
     public static Parser getParser(JEVisObject jevisParser) {
         Parser parser = null;
         try {

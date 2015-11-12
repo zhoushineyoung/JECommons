@@ -39,7 +39,7 @@ public interface Importer {
      * @param result
      * @return
      */
-    public boolean importResult(List<Result> result);
+    public DateTime importResult(List<Result> result);
 
     /**
      * Initialize the importer.
@@ -54,6 +54,6 @@ public interface Importer {
      *
      * @return
      */
-    public DateTime getLatestDatapoint();
+//    public DateTime getLatestDatapoint();
 
 }

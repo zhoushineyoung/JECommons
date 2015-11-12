@@ -34,6 +34,8 @@ import org.jevis.api.JEVisType;
 import org.jevis.commons.DatabaseHelper;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import sun.misc.Launcher;
 
 /**
  *
@@ -42,16 +44,14 @@ import org.joda.time.DateTimeZone;
 public class JEVisImporter implements Importer {
 
     private JEVisDataSource _client = null;
-    private JEVisObject httpObject;
     private DateTimeZone _timezone;
-    private DateTime _latestDateTime;
+//    private DateTime _latestDateTime;
 
     @Override
-    public synchronized boolean importResult(List<Result> results) {
+    public DateTime importResult(List<Result> results) {
         try {
-            Logger.getLogger(JEVisImporter.class.getName()).log(Level.INFO, "Number of imported Data overall: " + results.size());
             if (results.isEmpty()) {
-                return false;
+                return null;
             }
 
             //look into all results and map the sample to the online node
@@ -76,22 +76,20 @@ public class JEVisImporter implements Importer {
                 JEVisSample sample = onlineData.getAttribute("Value").buildSample(convertedDate, s.getValue(), "Imported by JEDataCollector");
                 samples.add(sample);
             }
-
+            DateTime lastDateTime = null;
             for (JEVisObject o : onlineToSampleMap.keySet()) {
                 List<JEVisSample> samples = onlineToSampleMap.get(o);
-                Logger.getLogger(JEVisImporter.class.getName()).log(Level.INFO, samples.size() + " Samples import into ID");
                 o.getAttribute("Value").addSamples(samples);
-                if (_latestDateTime == null || o.getAttribute("Value").getLatestSample().getTimestamp().isBefore(_latestDateTime)) {
-                    _latestDateTime = o.getAttribute("Value").getLatestSample().getTimestamp();
+                if (lastDateTime == null || o.getAttribute("Value").getLatestSample().getTimestamp().isBefore(lastDateTime)) {
+                    lastDateTime = o.getAttribute("Value").getLatestSample().getTimestamp();
                 }
-                Logger.getLogger(JEVisImporter.class.getName()).log(Level.INFO, samples.size() + " Samples imported into ID");
+                Logger.getLogger(JEVisImporter.class.getName()).log(Level.ALL, samples.size() + " Samples import into ID:" + o.getID());
             }
-            Logger.getLogger(JEVisImporter.class.getName()).log(Level.INFO, " Finish imported into ID");
+            return lastDateTime;
         } catch (JEVisException ex) {
             Logger.getLogger(JEVisImporter.class.getName()).log(Level.ERROR, null, ex);
-            return false;
         }
-        return true;
+        return null;
     }
 
     @Override
@@ -107,9 +105,9 @@ public class JEVisImporter implements Importer {
         }
     }
 
-    @Override
-    public DateTime getLatestDatapoint() {
-        return _latestDateTime;
-    }
-
+//    @Override
+//    public DateTime getLatestDatapoint() {
+//        String toString = _latestDateTime.toString(DateTimeFormat.forPattern("HH:mm:ss dd.MM.yyyy"));
+//        return _latestDateTime;
+//    }
 }

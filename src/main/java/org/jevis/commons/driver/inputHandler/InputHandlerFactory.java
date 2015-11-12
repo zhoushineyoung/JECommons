@@ -9,8 +9,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.List;
 import javax.xml.soap.SOAPMessage;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 
 /**
  *
@@ -19,7 +17,6 @@ import org.apache.log4j.Logger;
 public class InputHandlerFactory {
 
     public static InputHandler getInputConverter(Object input) {
-        System.out.println("class," + input.getClass().toString());
         if (input instanceof List) {
             List tmp = (List) input;
             if (tmp.isEmpty()) {
@@ -43,7 +40,6 @@ public class InputHandlerFactory {
         } else if (input instanceof File) {
             return new FileInputHandler((File) input);
         } else if (input instanceof InputStream) {
-            Logger.getLogger(InputHandlerFactory.class.getName()).log(Level.INFO, "Inputstrema this is");
             return new InputStreamHandler((InputStream) input);
         }
         return null;

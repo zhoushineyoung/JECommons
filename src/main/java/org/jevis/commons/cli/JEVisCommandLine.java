@@ -32,6 +32,7 @@ public class JEVisCommandLine {
     private static String USER = "jevis-user";
     private static String PASSWORD = "jevis-pass";
     private static String CONFIG = "jevis-config";
+    private static String DRIVER_FOLDER = "driver-folder";
     private static String HELP = "help";
     private static String DEBUG = "debug";
     private boolean _isUsed = false;
@@ -57,6 +58,7 @@ public class JEVisCommandLine {
         _options.addOption("jc", CONFIG, true, "Path to the JEVis Config File");
         _options.addOption("h", HELP, false, "Show the help list");
         _options.addOption("d", DEBUG, true, "Sets the debug level (INFO, WARN, ALL)");
+        _options.addOption("df", DRIVER_FOLDER, true, "Sets the root folder for the driver structure");
     }
 
     public void addOption(Option option) {
@@ -108,6 +110,10 @@ public class JEVisCommandLine {
         return _cmd.getOptionValue(CONFIG);
     }
 
+    public String getDriverFolder() {
+        return _cmd.getOptionValue(DRIVER_FOLDER);
+    }
+
     private void showHelp() {
         HelpFormatter formatter = new HelpFormatter();
         formatter.printHelp("DataLogger", _options);
@@ -117,11 +123,12 @@ public class JEVisCommandLine {
         String optionValue = _cmd.getOptionValue("debug", "WARN");
         return Level.toLevel(optionValue.toUpperCase());
     }
-    public void setIsUsed(boolean isUsed){
+
+    public void setIsUsed(boolean isUsed) {
         _isUsed = isUsed;
     }
-    
-    public boolean isUsed(){
+
+    public boolean isUsed() {
         return _isUsed;
     }
 }

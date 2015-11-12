@@ -19,20 +19,13 @@
  */
 package org.jevis.commons.driver;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.jevis.api.JEVisClass;
 import org.jevis.api.JEVisDataSource;
 import org.jevis.api.JEVisException;
-import org.jevis.api.JEVisFile;
 import org.jevis.api.JEVisObject;
-import org.jevis.api.JEVisType;
-import org.jevis.commons.DatabaseHelper;
 import static org.jevis.commons.driver.DriverFactory.initialize;
 
 /**
@@ -48,6 +41,10 @@ public class DataSourceFactory extends DriverFactory {
         _dataSourceClasses = initialize(client, DataCollectorTypes.DataSourceDriverDirectory.NAME, DataCollectorTypes.Driver.DataSourceDriver.NAME);
     }
 
+    public static void setDataSourceClasses(Map<String, Class> _dataSourceClasses) {
+        DataSourceFactory._dataSourceClasses = _dataSourceClasses;
+    }
+
     public static DataSource getDataSource(JEVisObject dataSourceJEVis) {
         DataSource dataSource = null;
         try {
@@ -58,6 +55,20 @@ public class DataSourceFactory extends DriverFactory {
             Logger.getLogger(ParserFactory.class.getName()).log(Level.SEVERE, null, ex);
         }
         return dataSource;
+    }
+
+    public static boolean containDataSource(JEVisObject dataSourceJEVis) {
+        boolean contains = false;
+        try {
+            String identifier = dataSourceJEVis.getJEVisClass().getName();
+            Class datasourceClass = _dataSourceClasses.get(identifier);
+            if (datasourceClass != null) {
+                contains = true;
+            }
+        } catch (JEVisException ex) {
+            Logger.getLogger(ParserFactory.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return contains;
     }
 
 }

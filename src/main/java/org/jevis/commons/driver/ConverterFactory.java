@@ -19,6 +19,7 @@
  */
 package org.jevis.commons.driver;
 
+import java.util.Map;
 import org.jevis.api.JEVisDataSource;
 import org.jevis.api.JEVisObject;
 import org.jevis.commons.driver.inputHandler.GenericConverter;
@@ -34,6 +35,9 @@ public class ConverterFactory {
 
     public static Converter getConverter(JEVisObject _dataSourceJEVis) {
         return new GenericConverter();
+    }
+
+    public static void setConverterClasses(Map<String, Class> converterClasses) {
     }
 
 }

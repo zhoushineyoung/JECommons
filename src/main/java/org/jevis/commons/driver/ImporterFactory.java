@@ -19,6 +19,7 @@
  */
 package org.jevis.commons.driver;
 
+import java.util.Map;
 import org.jevis.api.JEVisDataSource;
 import org.jevis.api.JEVisObject;
 
@@ -33,6 +34,9 @@ public class ImporterFactory {
     }
 
     public static void initializeImporter(JEVisDataSource _client) {
+    }
+
+    public static void setImporterClasses(Map<String, Class> parserClasses) {
     }
 
 }

@@ -178,9 +178,9 @@ public class InputStreamHandler extends InputHandler {
         //        filePath.substring("\\$\\{","\\}");
         String[] tokens = StringUtils.split(filePath, "/");
 //         String[] tokens = filePath.trim().split("\\%");
-        for (int i = 0; i < tokens.length; i++) {
-            System.out.println(tokens[i]);
-        }
+//        for (int i = 0; i < tokens.length; i++) {
+//            System.out.println(tokens[i]);
+//        }
         return tokens;
     }
 

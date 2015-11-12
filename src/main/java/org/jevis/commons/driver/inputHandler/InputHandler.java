@@ -128,7 +128,6 @@ public abstract class InputHandler implements Iterable<Object> {
                 BufferedReader buf = new BufferedReader(new InputStreamReader(s));
                 try {
                     while ((tmp = buf.readLine()) != null) {
-                        System.out.println(tmp);
                         buffer.append(tmp);
                     }
                 } catch (IOException ex) {
@@ -163,16 +162,16 @@ public abstract class InputHandler implements Iterable<Object> {
     public void setFilePath(String fileName) {
         _filePath = fileName;
     }
-    
-    public void setFilePattern(String filePattern){
+
+    public void setFilePattern(String filePattern) {
         _filePattern = filePattern;
     }
 
     public String getFilePath() {
         return _filePath;
     }
-    
-    public void setDateTime(DateTime lastReadout){
+
+    public void setDateTime(DateTime lastReadout) {
         _lastReadout = lastReadout;
     }
 }

@@ -53,7 +53,6 @@ public class GenericConverter implements Converter {
         } else if (input instanceof File) {
             return new FileInputHandler((File) input);
         } else if (input instanceof InputStream) {
-            Logger.getLogger(InputHandlerFactory.class.getName()).log(Level.INFO, "Inputstrema this is");
             return new InputStreamHandler((InputStream) input);
         }
         return null;
