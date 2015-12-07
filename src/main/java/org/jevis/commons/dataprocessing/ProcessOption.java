@@ -12,13 +12,16 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @author Florian Simon <florian.simon@envidatec.com>
  */
-@XmlRootElement(name = "Task")
-public interface Option {
+@XmlRootElement(name = "option")
+public interface ProcessOption {
 
 //    @XmlElement(name = "key")
 //    String getKey();
     @XmlElement(name = "value")
     String getValue();
 
-    void setValue(String valie);
+    void setValue(String value);
+
+    String getKey();
+
 }

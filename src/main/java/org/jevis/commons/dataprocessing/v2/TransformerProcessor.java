@@ -30,13 +30,13 @@ import org.jevis.api.JEVisSample;
 import org.jevis.commons.config.Options;
 import org.jevis.commons.dataprocessing.VirtualAttribute;
 import org.jevis.commons.dataprocessing.VirtuelSample;
-import org.jevis.commons.dataprocessing.processor.ConverterProcessor;
+import org.jevis.commons.dataprocessing.function.ConverterFunction;
 
 /**
  *
  * @author Florian Simon
  */
-public class TransformerProcessor implements DataProcessor {
+public class TransformerProcessor implements Function {
 
     public static final String METER_CONSTANT = "Meter Constant";
     public static final String OFFSET = "OFFSET";
@@ -48,7 +48,7 @@ public class TransformerProcessor implements DataProcessor {
 
     @Override
     public String getID() {
-        return WorkflowHelper.GetDataProcessorID(dataProcessorObject);
+        return DataProcessing.GetDataProcessorID(dataProcessorObject);
     }
 
     @Override
@@ -73,8 +73,8 @@ public class TransformerProcessor implements DataProcessor {
 
         System.out.println("");
 
-        m = WorkflowHelper.<Double>GetOptionValue(option, METER_CONSTANT, 1d);
-        b = WorkflowHelper.<Double>GetOptionValue(option, OFFSET, 0d);
+        m = DataProcessing.<Double>GetOptionValue(option, METER_CONSTANT, 1d);
+        b = DataProcessing.<Double>GetOptionValue(option, OFFSET, 0d);
 
 //        if (Options.hasOption(METER_CONSTANT, option)) {
 //
@@ -108,7 +108,7 @@ public class TransformerProcessor implements DataProcessor {
                 double sum = (sample.getValueAsDouble() * m) + b;
                 samples.add(new VirtuelSample(sample.getTimestamp(), sum, dataProcessorObject.getDataSource(), new VirtualAttribute(null)));
             } catch (JEVisException ex) {
-                Logger.getLogger(ConverterProcessor.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ConverterFunction.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
 

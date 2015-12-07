@@ -17,24 +17,50 @@
  * JECommons is part of the OpenJEVis project, further project information are
  * published at <http://www.OpenJEVis.org/>.
  */
-package org.jevis.commons.dataprocessing.v2;
+package org.jevis.commons.object.plugin;
 
-import java.util.List;
+import org.jevis.api.JEVisAttribute;
+import org.jevis.api.JEVisObject;
 
 /**
+ * Interface for an Attributes relationship. If finised this may move into the
+ * JEAPI in some form.
  *
  * @author Florian Simon
  */
-public interface Task {
+public interface Input {
 
-    void setDataProcessor(Function dp);
+    /**
+     * Get the ID of the workflow to use.
+     *
+     * Emty for no workflow, Default for the default worklow.
+     *
+     * @return
+     */
+    String getWorkflowID();
 
-    Function getDataProcessor();
+    /**
+     * Get the id of this input. This id is unique identifier the seperate
+     * inputs.
+     *
+     * @return unique identifier
+     */
+    String getID();
 
-    void setDependency(List<Task> dps);
+    /**
+     * Get the JEVisObject
+     *
+     * @return
+     */
+    JEVisObject getObject();
 
-    List<Task> getDependency();
+    /**
+     * Get the JEVisAttribute
+     *
+     * @return
+     */
+    JEVisAttribute getAttribute();
 
-    Result getResult();
+    void setWorkflowID(String workflow);
 
 }

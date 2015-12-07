@@ -17,39 +17,17 @@
  * JECommons is part of the OpenJEVis project, further project information are
  * published at <http://www.OpenJEVis.org/>.
  */
-package org.jevis.commons.dataprocessing;
+package org.jevis.commons.dataprocessing.v2;
 
 /**
  *
- * @author Florian Simon <florian.simon@envidatec.com>
+ * @author Florian Simon
  */
-public class OptionImp implements Option {
+public interface WorkflowDriver {
 
-//    private String key;
-    private String value;
-
-//    public OptionImp(String key, String value) {
-//        this.key = key;
-//        this.value = value;
-//    }
-    public OptionImp() {
-    }
-
-    public OptionImp(String value) {
-        this.value = value;
-    }
-
-//    @Override
-//    public String getKey() {
-//        return _key;
-//    }
-    @Override
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(String value) {
-        this.value = value;
-    }
+    public static final String ATTRIBUTE_MAINCLASS = "Main Class";
+    public static final String ATTRIBUTE_SOURCE_FILE = "Source File";
+    public static final String ATTRIBUTE_JEVisClass = "JEVis Class";
+    public static final String ATTRIBUTE_ENABLED = "Enabled";
 
 }

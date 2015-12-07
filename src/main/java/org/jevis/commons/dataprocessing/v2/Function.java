@@ -17,36 +17,40 @@
  * JECommons is part of the OpenJEVis project, further project information are
  * published at <http://www.OpenJEVis.org/>.
  */
-package org.jevis.commons.dataprocessing;
+package org.jevis.commons.dataprocessing.v2;
 
 import java.util.List;
-import org.jevis.api.JEVisSample;
+import java.util.logging.Level;
+import org.jevis.api.JEVisObject;
+import org.jevis.api.JEVisOption;
 
 /**
- * An DataProcessor can process the samples from an task an return the result.
  *
- * @author Florian Simon <florian.simon@envidatec.com>
+ * @author Florian Simon
  */
-public interface DataProcessor {
+public interface Function {
+
+    public static final String JEVIS_CLASS = "Data Processor";
+    public static final String ATTRIBUTE_ID = "ID";
+    public static final String ATTRIBUTE_DEBUG_LEVEL = "Debug Level";
+
+    //mybe its not the best to allow the implmentation to choose this
+    String getID();
+
+    Result getResult();
+
+    void setOptions(JEVisOption option);
+
+    void setObject(JEVisObject object);
+
+    void setInput(List<Result> results);
 
     /**
-     * Rertuns the result list from this processor.
+     * Set the workflow this Data Processor belongs to
      *
-     * @param task Task with the options and previus tasks
-     * @return List of JEVisSamples with the result
+     * @param workflow
      */
-    List<JEVisSample> getResult(Task task);
+    void setWorkflow(DataWorkflow workflow);
 
-    /**
-     * Returns the unique name of this processor wich is used to identify it.
-     *
-     * @return unique name
-     */
-    String getName();
-
-    /**
-     * Request an reset od the result
-     */
-    public void resetResult();
-
+//    void setLogLevel(Level level);
 }

@@ -17,7 +17,7 @@
  * JECommons is part of the OpenJEVis project, further project information are
  * published at <http://www.OpenJEVis.org/>.
  */
-package org.jevis.commons.dataprocessing.processor;
+package org.jevis.commons.dataprocessing.function;
 
 import org.jevis.api.JEVisOption;
 

@@ -17,7 +17,7 @@
  * JECommons is part of the OpenJEVis project, further project information are
  * published at <http://www.OpenJEVis.org/>.
  */
-package org.jevis.commons.dataprocessing.processor;
+package org.jevis.commons.dataprocessing.function;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,11 +25,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jevis.api.JEVisException;
 import org.jevis.api.JEVisSample;
-import org.jevis.commons.dataprocessing.DataProcessor;
-import org.jevis.commons.dataprocessing.Options;
-import org.jevis.commons.dataprocessing.Task;
+import org.jevis.commons.dataprocessing.ProcessOption;
+import org.jevis.commons.dataprocessing.BasicProcessOption;
+import org.jevis.commons.dataprocessing.ProcessFunction;
+import org.jevis.commons.dataprocessing.ProcessOptions;
+import org.jevis.commons.dataprocessing.Process;
 import org.jevis.commons.dataprocessing.VirtuelSample;
-import static org.jevis.commons.dataprocessing.Options.getAllTimestamps;
+import static org.jevis.commons.dataprocessing.ProcessOptions.getAllTimestamps;
 import org.jevis.commons.dataprocessing.VirtualAttribute;
 import org.joda.time.DateTime;
 import org.joda.time.Interval;
@@ -38,16 +40,16 @@ import org.joda.time.Interval;
  *
  * @author Florian Simon <florian.simon@envidatec.com>
  */
-public class AggrigatorProcessor implements DataProcessor {
+public class AggrigatorFunction implements ProcessFunction {
 
     public static final String NAME = "Aggrigator";
 
     @Override
-    public List<JEVisSample> getResult(Task mainTask) {
+    public List<JEVisSample> getResult(Process mainTask) {
         List<JEVisSample> result = new ArrayList<>();
 
         List<List<JEVisSample>> allSamples = new ArrayList<>();
-        for (Task task : mainTask.getSubTasks()) {
+        for (Process task : mainTask.getSubProcesses()) {
             allSamples.add(task.getResult());
             System.out.println("Add input result: " + allSamples.size());
         }
@@ -56,7 +58,7 @@ public class AggrigatorProcessor implements DataProcessor {
         if (allTimestamps.isEmpty()) {
             return result;
         }
-        List<Interval> intervals = Options.getIntervals(mainTask, allTimestamps.get(0), allTimestamps.get(allTimestamps.size() - 1));
+        List<Interval> intervals = ProcessOptions.getIntervals(mainTask, allTimestamps.get(0), allTimestamps.get(allTimestamps.size() - 1));
 
         System.out.println("intervals: " + intervals.size());
 
@@ -85,7 +87,7 @@ public class AggrigatorProcessor implements DataProcessor {
                     try {
                         sum += sample.getValueAsDouble();
                     } catch (JEVisException ex) {
-                        Logger.getLogger(AggrigatorProcessor.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(AggrigatorFunction.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
 
@@ -94,7 +96,7 @@ public class AggrigatorProcessor implements DataProcessor {
                 try {
                     System.out.println("resultSum: " + resultSum.getTimestamp() + "  " + resultSum.getValueAsDouble());
                 } catch (JEVisException ex) {
-                    Logger.getLogger(AggrigatorProcessor.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(AggrigatorFunction.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
 
@@ -110,5 +112,12 @@ public class AggrigatorProcessor implements DataProcessor {
 
     @Override
     public void resetResult() {
+    }
+
+    @Override
+    public List<ProcessOption> getAvailableOptions() {
+        List<ProcessOption> options = new ArrayList<>();
+
+        return options;
     }
 }

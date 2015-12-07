@@ -33,7 +33,7 @@ import org.jevis.api.JEVisSample;
  *
  * @author Florian Simon
  */
-public class InputProcessor implements DataProcessor {
+public class InputProcessor implements Function {
 
     private JEVisObject dpObject;
     private JEVisOption option;
@@ -42,7 +42,7 @@ public class InputProcessor implements DataProcessor {
 
     @Override
     public String getID() {
-        return WorkflowHelper.GetDataProcessorID(dpObject);
+        return DataProcessing.GetDataProcessorID(dpObject);
     }
 
     @Override

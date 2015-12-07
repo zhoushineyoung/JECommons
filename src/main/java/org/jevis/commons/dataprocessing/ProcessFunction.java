@@ -17,17 +17,38 @@
  * JECommons is part of the OpenJEVis project, further project information are
  * published at <http://www.OpenJEVis.org/>.
  */
-package org.jevis.commons.dataprocessing.v2;
+package org.jevis.commons.dataprocessing;
+
+import java.util.List;
+import org.jevis.api.JEVisSample;
 
 /**
+ * An DataProcessor can process the samples from an task an return the result.
  *
- * @author Florian Simon
+ * @author Florian Simon <florian.simon@envidatec.com>
  */
-public interface DataProcessorDriver {
+public interface ProcessFunction {
 
-    public static final String ATTRIBUTE_MAINCLASS = "Main Class";
-    public static final String ATTRIBUTE_SOURCE_FILE = "Source File";
-    public static final String ATTRIBUTE_JEVisClass = "JEVis Class";
-    public static final String ATTRIBUTE_ENABLED = "Enabled";
+    /**
+     * Rertuns the result list from this processor.
+     *
+     * @param task Task with the options and previus tasks
+     * @return List of JEVisSamples with the result
+     */
+    List<JEVisSample> getResult(Process task);
+
+    /**
+     * Returns the unique name of this processor wich is used to identify it.
+     *
+     * @return unique name
+     */
+    String getName();
+
+    /**
+     * Request an reset od the result
+     */
+    public void resetResult();
+
+    List<ProcessOption> getAvailableOptions();
 
 }

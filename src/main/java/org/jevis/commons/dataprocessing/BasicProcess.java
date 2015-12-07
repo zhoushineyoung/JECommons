@@ -19,15 +19,9 @@
  */
 package org.jevis.commons.dataprocessing;
 
-import org.jevis.commons.json.JsonTask;
-import org.jevis.commons.dataprocessing.processor.NullProcessor;
-import com.google.gson.Gson;
+import org.jevis.commons.dataprocessing.function.NullFunction;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import org.jevis.api.JEVisDataSource;
 import org.jevis.api.JEVisObject;
 import org.jevis.api.JEVisSample;
@@ -37,43 +31,62 @@ import org.jevis.commons.utils.Benchmark;
  *
  * @author Florian Simon <florian.simon@envidatec.com>
  */
-@XmlRootElement(name = "Task")
-public class TaskImp implements Task {
+public class BasicProcess implements Process {
 
-    private DataProcessor _processor = new NullProcessor();
-    private Map<String, String> _options = new HashMap<>();
-//    private List<List<JEVisSample>> _imputSamples = new ArrayList<>();
+    private ProcessFunction _processor = new NullFunction();
+    private List<ProcessOption> _options = new ArrayList<>();
     private List<JEVisSample> _result;
-    private List<Task> tasks = new ArrayList<>();
+    private List<Process> tasks = new ArrayList<>();
     private boolean isDone = false;
     private String _id = "*MISSING*";
     private JEVisDataSource _ds;
     private JEVisObject _originalObject = null;
+    private Process _parent;
 
-    public TaskImp() {
+    public BasicProcess() {
     }
 
-    public TaskImp(JEVisDataSource ds, JsonTask task) {
-        initTask(ds, task, null);
-
-    }
-
-    public TaskImp(JEVisDataSource ds, JsonTask task, JEVisObject object) {
-        initTask(ds, task, object);
+    public BasicProcess(JEVisDataSource ds, JsonProcess task, Process parentTask) {
+        initTask(ds, task, parentTask, null);
 
     }
 
-    public void initTask(JEVisDataSource ds, JsonTask task, JEVisObject parent) {
-        setOptions(task.getOptions());
-        setProcessor(Tasks.getProcessor(task.getProcessor()));
-        setID(task.getId());
-        setJEVisDataSource(ds);
-        setObject(parent);
-//        List<Task> subTask = new ArrayList<>();
-        for (JsonTask jt : task.getTasks()) {
-            System.out.println("make new subtak: " + jt);
-            tasks.add(new TaskImp(ds, jt, parent));
+    public BasicProcess(JEVisDataSource ds, JsonProcess task, Process parentTask, JEVisObject object) {
+        initTask(ds, task, parentTask, object);
+
+    }
+
+    public void initTask(JEVisDataSource ds, JsonProcess jTask, Process parentTask, JEVisObject parentObj) {
+        for (JsonProcessOption opt : jTask.getOptions()) {
+            _options.add(new BasicProcessOption(opt));
         }
+
+        setFunction(ProcessChains.getFunction(jTask.getFunction()));
+        setID(jTask.getID());
+        setJEVisDataSource(ds);
+        setObject(parentObj);
+        for (JsonProcess jt : jTask.getSubTasks()) {
+            System.out.println("make new subtak: " + jt);
+            tasks.add(new BasicProcess(ds, jt, parentTask, parentObj));
+        }
+        _parent = parentTask;
+    }
+
+    @Override
+    public void setParent(Process parent) {
+        if (parent != null) {
+            if (!parent.getSubProcesses().contains(this)) {
+                parent.getSubProcesses().add(this);
+            }
+
+            this._parent = parent;
+        }
+
+    }
+
+    @Override
+    public Process getParent() {
+        return _parent;
     }
 
     @Override
@@ -82,37 +95,23 @@ public class TaskImp implements Task {
     }
 
     @Override
-    @XmlElement(name = "processor")
-    public void setProcessor(DataProcessor processor) {
-        System.out.println("setProcessor: " + processor.getName());
+    public void setFunction(ProcessFunction processor) {
+        System.out.println("setProcess: " + processor.getName());
         _processor = processor;
     }
 
     @Override
-    public DataProcessor getProcessor() {
+    public ProcessFunction getFunction() {
         return _processor;
     }
 
-//    @Override
-//    public List<List<JEVisSample>> getImputSamples() {
-//        if (_imputSamples == null && _prevTask != null) {
-//            _imputSamples = new ArrayList<>();
-//            for (Task task : _prevTask) {
-//                _imputSamples.add(task.getResult());
-//            }
-//
-//            return _imputSamples;
-//        } else {
-//            return _imputSamples;
-//        }
-//    }
     @Override
-    public void setSubTasks(List<Task> tasks) {
+    public void setSubProcesses(List<Process> tasks) {
         this.tasks = tasks;
     }
 
     @Override
-    public List<Task> getSubTasks() {
+    public List<Process> getSubProcesses() {
         return tasks;
 
     }
@@ -134,11 +133,11 @@ public class TaskImp implements Task {
         }
 
         if (!isDone) {
-            if (getSubTasks().isEmpty()) {
+            if (getSubProcesses().isEmpty()) {
 //            System.out.println("[" + _id + "]  No more sub tasks!");
 
             } else {
-                for (Task task : getSubTasks()) {
+                for (Process task : getSubProcesses()) {
                     task.getResult();
                 }
 //            System.out.println("[" + _id + "] All subtask are done!");
@@ -148,23 +147,12 @@ public class TaskImp implements Task {
         }
 
         Benchmark bench = new Benchmark();
-        _result = getProcessor().getResult(this);
+        _result = getFunction().getResult(this);
         System.out.println("[" + _id + "] [" + _processor.getName() + "]  Result size: " + _result.size());
 
         bench.printBechmark(" Task " + getID());
         return _result;
 
-//        if (getSubTasks().isEmpty()) {
-////            System.out.println("[" + _id + "]  No more sub tasks!");
-//
-//        } else {
-//            for (Task task : getSubTasks()) {
-//                task.getResult();
-//            }
-////            System.out.println("[" + _id + "] All subtask are done!");
-//        }
-//        bench.printBechmark(" Task " + getID());
-//        return getProcessor().getResult(this);
     }
 
     @Override
@@ -178,41 +166,29 @@ public class TaskImp implements Task {
     }
 
     @Override
-    @XmlElement(name = "id")
     public String getID() {
         return _id;
     }
 
     @Override
-    public void addOption(String key, String option) {
-        _options.put(key, option);
-//        _options.put(option.getKey(), option);
-    }
-
-    @Override
-    public String getOption(String key) {
-        return _options.get(key);
-    }
-
-    @Override
-    public Map<String, String> getOptions() {
+    public List<ProcessOption> getOptions() {
         return _options;
     }
 
     @Override
-    public void setOptions(Map<String, String> options) {
+    public void setOptions(List<ProcessOption> options) {
         _options = options;
     }
 
     @Override
     public String toString() {
-        return "TaskImp{" + "_processor=" + _processor + ", _options=" + _options + ", _result=" + _result + ", _prevTask=" + tasks.size() + ", isDone=" + isDone + ", _id=" + _id + ", _ds=" + _ds + '}';
+        return "ProcessImp{" + "_processor=" + _processor + ", _options=" + _options + ", _result=" + _result + ", _prevTask=" + tasks.size() + ", isDone=" + isDone + ", _id=" + _id + ", _ds=" + _ds + '}';
     }
 
     public void print() {
         System.out.println(toString());
-        for (Task task : getSubTasks()) {
-            ((TaskImp) task).print();
+        for (Process task : getSubProcesses()) {
+            ((BasicProcess) task).print();
 //            System.out.println("--- " + task.toString());
         }
     }
@@ -221,7 +197,7 @@ public class TaskImp implements Task {
     public void restResult() {
         _result = null;
         _processor.resetResult();
-        for (Task subt : getSubTasks()) {
+        for (Process subt : getSubProcesses()) {
             subt.restResult();
         }
     }

@@ -17,7 +17,7 @@
  * JECommons is part of the OpenJEVis project, further project information are
  * published at <http://www.OpenJEVis.org/>.
  */
-package org.jevis.commons.dataprocessing.processor;
+package org.jevis.commons.dataprocessing.function;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,26 +27,28 @@ import org.jevis.api.JEVisAttribute;
 import org.jevis.api.JEVisException;
 import org.jevis.api.JEVisObject;
 import org.jevis.api.JEVisSample;
-import org.jevis.commons.dataprocessing.DataProcessor;
-import org.jevis.commons.dataprocessing.Options;
-import org.jevis.commons.dataprocessing.Task;
+import org.jevis.commons.dataprocessing.ProcessOption;
+import org.jevis.commons.dataprocessing.BasicProcessOption;
+import org.jevis.commons.dataprocessing.ProcessFunction;
+import org.jevis.commons.dataprocessing.ProcessOptions;
+import org.jevis.commons.dataprocessing.Process;
 import org.joda.time.DateTime;
 
 /**
  *
  * @author Florian Simon <florian.simon@envidatec.com>
  */
-public class InputProcessor implements DataProcessor {
+public class InputFunction implements ProcessFunction {
 
     public final static String NAME = "Input";
     public final static String OBJECT_ID = "object-id";
     public final static String ATTRIBUTE_ID = "attribute-id";
     private List<JEVisSample> _result = null;
 
-    public InputProcessor() {
+    public InputFunction() {
     }
 
-    public InputProcessor(List<JEVisSample> resultSamples) {
+    public InputFunction(List<JEVisSample> resultSamples) {
         _result = resultSamples;
     }
 
@@ -56,19 +58,19 @@ public class InputProcessor implements DataProcessor {
     }
 
     @Override
-    public List<JEVisSample> getResult(Task task) {
+    public List<JEVisSample> getResult(Process task) {
         if (_result != null) {
             return _result;
         } else {
             _result = new ArrayList<>();
 
             JEVisObject object = null;
-            if (task.getOptions().containsKey(OBJECT_ID) && !task.getOptions().get(OBJECT_ID).isEmpty()) {
-                long oid = Long.valueOf(task.getOptions().get(OBJECT_ID));
+            if (ProcessOptions.ContainsOption(task, OBJECT_ID)) {
+                long oid = Long.valueOf((ProcessOptions.GetLatestOption(task, OBJECT_ID, new BasicProcessOption(OBJECT_ID, "")).getValue()));
                 try {
                     object = task.getJEVisDataSource().getObject(oid);
                 } catch (JEVisException ex) {
-                    Logger.getLogger(InputProcessor.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(InputFunction.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } else if (task.getObject() != null) {
                 try {
@@ -77,21 +79,22 @@ public class InputProcessor implements DataProcessor {
                 }
             }
 
-            if (object != null && task.getOptions().containsKey(ATTRIBUTE_ID)) {
+            if (object != null && ProcessOptions.ContainsOption(task, ATTRIBUTE_ID)) {
 
                 try {
                     System.out.println("Parent object: " + object);
 //                    long oid = Long.valueOf(task.getOptions().get(OBJECT_ID));
 //                    JEVisObject object = task.getJEVisDataSource().getObject(oid);
-                    JEVisAttribute att = object.getAttribute(task.getOptions().get(ATTRIBUTE_ID));
 
-                    DateTime[] startEnd = Options.getStartAndEnd(task);
+                    JEVisAttribute att = object.getAttribute(ProcessOptions.GetLatestOption(task, ATTRIBUTE_ID, new BasicProcessOption(ATTRIBUTE_ID, "")).getValue());
+
+                    DateTime[] startEnd = ProcessOptions.getStartAndEnd(task);
                     System.out.println("start: " + startEnd[0] + " end: " + startEnd[1]);
 
                     _result = att.getSamples(startEnd[0], startEnd[1]);
                     System.out.println("Input result: " + _result.size());
                 } catch (JEVisException ex) {
-                    Logger.getLogger(InputProcessor.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(InputFunction.class.getName()).log(Level.SEVERE, null, ex);
                 }
             } else {
                 System.out.println("Missing options " + OBJECT_ID + " and " + ATTRIBUTE_ID);
@@ -103,5 +106,16 @@ public class InputProcessor implements DataProcessor {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public List<ProcessOption> getAvailableOptions() {
+        List<ProcessOption> options = new ArrayList<>();
+
+        options.add(new BasicProcessOption("Object"));
+        options.add(new BasicProcessOption("Attribute"));
+        options.add(new BasicProcessOption("Workflow"));
+
+        return options;
     }
 }

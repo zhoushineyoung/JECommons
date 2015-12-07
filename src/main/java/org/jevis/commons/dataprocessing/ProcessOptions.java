@@ -19,7 +19,7 @@
  */
 package org.jevis.commons.dataprocessing;
 
-import org.jevis.commons.dataprocessing.processor.AggrigatorProcessor;
+import org.jevis.commons.dataprocessing.function.AggrigatorFunction;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,8 +27,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.jevis.api.JEVisAttribute;
 import org.jevis.api.JEVisException;
+import org.jevis.api.JEVisOption;
 import org.jevis.api.JEVisSample;
+import org.jevis.commons.config.Options;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Interval;
@@ -37,11 +40,15 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 /**
- * This class helps hadaling commen problems with tasks like parsing Options.
+ * This class contains various methods for manipulating ProcessOptions.
  *
  * @author Florian Simon <florian.simon@envidatec.com>
  */
-public class Options {
+public class ProcessOptions {
+
+    public static String ROOT_OPTION_NAME = "Data Processing";
+    public static String DEFAULT_OPTION_NAME = "Default";
+    public static String PROSESS_CHAIN_OPTION_NAME = "Workflows";//Rename into ProcessChain
 
     public static final String PERIOD = "period";
     public static final String OFFSET = "offset";
@@ -49,15 +56,60 @@ public class Options {
     public static final String TS_END = "date-end";
     public static final String TS_PATTERN = "yyyy-MM-dd hh:mm:ssZ";
 
-    public static void setStartEnd(Task task, DateTime from, DateTime until, boolean overwrite, boolean childrenToo) {
+    //@todo: add recursion?!
+    public static boolean ContainsOption(Process task, String optionKey) {
+        for (ProcessOption option : task.getOptions()) {
+            if (option.getKey().equalsIgnoreCase(optionKey)) {
+                return true;
+            }
+        }
 
-        if (!task.getOptions().containsKey(TS_START) || overwrite) {
-            task.getOptions().put(TS_START, DateTimeFormat.forPattern(TS_PATTERN).print(from));
-            task.getOptions().put(TS_END, DateTimeFormat.forPattern(TS_PATTERN).print(until));
+        return false;
+    }
+
+    public static ProcessOption GetLatestOption(Process task, String key, ProcessOption defaultOption) {
+        List<ProcessOption> options = new ArrayList<>();
+        FindOptions(task, key, options);
+
+        if (options.isEmpty()) {
+            return defaultOption;
+        } else {
+            //TODO take latest based on ts
+            return options.get(options.size() - 1);
+        }
+
+    }
+
+    public static List<ProcessOption> GetOption(Process task, String key) {
+        List<ProcessOption> options = new ArrayList<>();
+        FindOptions(task, key, options);
+        return options;
+    }
+
+    /**
+     * Recursion helper to get all Options with the key
+     *
+     * @param task
+     * @param key
+     * @param option
+     */
+    private static void FindOptions(Process task, String key, List<ProcessOption> options) {
+        for (ProcessOption option : task.getOptions()) {
+            if (option.getKey().equalsIgnoreCase(key)) {
+                options.add(option);
+            }
+        }
+    }
+
+    public static void setStartEnd(Process task, DateTime from, DateTime until, boolean overwrite, boolean childrenToo) {
+
+        if (ContainsOption(task, TS_START) || overwrite) {
+            task.getOptions().add(new BasicProcessOption(TS_START, DateTimeFormat.forPattern(TS_PATTERN).print(from)));
+            task.getOptions().add(new BasicProcessOption(TS_END, DateTimeFormat.forPattern(TS_PATTERN).print(until)));
         }
 
         if (childrenToo) {
-            for (Task t : task.getSubTasks()) {
+            for (Process t : task.getSubProcesses()) {
                 setStartEnd(t, from, until, overwrite, childrenToo);
             }
 
@@ -71,15 +123,16 @@ public class Options {
      * @param task
      * @return
      */
-    public static DateTime[] getStartAndEnd(Task task) {
+    public static DateTime[] getStartAndEnd(Process task) {
 
         DateTime[] result = new DateTime[2];
         result[0] = null;
         result[1] = null;
 
-        if (task.getOptions().containsKey(TS_START)) {
+        if (ContainsOption(task, TS_START)) {
             try {
-                result[0] = DateTime.parse(task.getOptions().get(TS_START), DateTimeFormat.forPattern(TS_PATTERN));
+                result[0] = DateTime.parse(GetLatestOption(task, TS_START, new BasicProcessOption(TS_START, "")).getValue(), DateTimeFormat.forPattern(TS_PATTERN));
+//                result[0] = DateTime.parse(task.getOptions().get(TS_START), DateTimeFormat.forPattern(TS_PATTERN));
             } catch (Exception e) {
                 System.out.println("error while parsing " + TS_START + " option");
             }
@@ -87,9 +140,10 @@ public class Options {
             System.out.println("No " + TS_START + " option is missing");
         }
 
-        if (task.getOptions().containsKey(TS_END)) {
+        if (ContainsOption(task, TS_END)) {
             try {
-                result[1] = DateTime.parse(task.getOptions().get(TS_END), DateTimeFormat.forPattern(TS_PATTERN));
+                result[1] = DateTime.parse(GetLatestOption(task, TS_END, new BasicProcessOption(TS_END, "")).getValue(), DateTimeFormat.forPattern(TS_PATTERN));
+//                result[1] = DateTime.parse(task.getOptions().get(TS_END), DateTimeFormat.forPattern(TS_PATTERN));
             } catch (Exception ex) {
                 System.out.println("error while parsing " + TS_END + " option");
             }
@@ -114,7 +168,7 @@ public class Options {
         DateTime startD = new DateTime();
         DateTime fistPeriod = offset;
 //        System.out.println("week: " + date.getWeekOfWeekyear());
-//        
+//
         while (fistPeriod.isBefore(date) || fistPeriod.isEqual(date)) {
             fistPeriod = fistPeriod.plus(period);
         }
@@ -128,7 +182,7 @@ public class Options {
     /**
      * @return
      */
-    public static DateTime getOffset(Task task) {
+    public static DateTime getOffset(Process task) {
         DateTimeZone zone = DateTimeZone.forID("Europe/Berlin");
 //        Chronology coptic = CopticChronology.getInstance(zone);
         DateTime _offset = new DateTime(2007, 1, 1, 0, 0, 0, zone);
@@ -184,7 +238,7 @@ public class Options {
                         result.add(sample.getTimestamp());
                     }
                 } catch (JEVisException ex) {
-                    Logger.getLogger(AggrigatorProcessor.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(AggrigatorFunction.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
 
@@ -202,21 +256,21 @@ public class Options {
      * @param until
      * @return
      */
-    public static List<Interval> getIntervals(Task task, DateTime from, DateTime until) {
+    public static List<Interval> getIntervals(Process task, DateTime from, DateTime until) {
         Period period = Period.days(1);
         DateTime offset = new DateTime(2001, 01, 01, 00, 00, 00);
 
-        if (!task.getOptions().containsKey(PERIOD)) {
+        if (ContainsOption(task, PERIOD)) {
             System.out.println("Error missing period option");
         }
-        if (!task.getOptions().containsKey(OFFSET)) {
+        if (ContainsOption(task, OFFSET)) {
             System.out.println("Error missing offset option");
-            task.getOptions().put(OFFSET, "2001-01-01 00:00:00");
+            task.getOptions().add(new BasicProcessOption(OFFSET, "2001-01-01 00:00:00"));
         }
 
-        for (Map.Entry<String, String> entry : task.getOptions().entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
+        for (ProcessOption option : task.getOptions()) {
+            String key = option.getKey();
+            String value = option.getValue();
             System.out.println("key: " + key);
             switch (key) {
                 case PERIOD:
@@ -251,6 +305,86 @@ public class Options {
         }
 
         return result;
+    }
+
+    /**
+     * Check if this attribute has an dataProcessing option
+     *
+     * @param attribute
+     * @return
+     */
+    public static boolean HasDataProcess(JEVisAttribute attribute) {
+        JEVisOption opt = GetProcessOptionRoot(attribute);
+        if (opt == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    /**
+     * Returns the root Option node of this Attribute
+     *
+     * @param attribute
+     * @return returns the dataProcessing root or null
+     */
+    public static JEVisOption GetProcessOptionRoot(JEVisAttribute attribute) {
+
+        if (attribute.getOptions() != null && !attribute.getOptions().isEmpty()) {
+            System.out.println("Optiones exists");
+            for (JEVisOption option : attribute.getOptions()) {
+                System.out.println("opt: " + option.getKey());
+                if (option.getKey().equalsIgnoreCase(ROOT_OPTION_NAME)) {
+//                    JEVisOption dpOption = option.getOption(ROOT_OPTION_NAME);
+
+                    return option;
+                }
+            }
+        }
+        return null;
+
+    }
+
+    /**
+     * Returns the name of the default DataProcess.
+     *
+     * @param att
+     * @return Name of the default process, emty String if no default is set.
+     */
+    public static String GetDefaultProcessName(JEVisAttribute att) {
+        JEVisOption rootOpt = GetProcessOptionRoot(att);
+
+        if (Options.hasOption(DEFAULT_OPTION_NAME, rootOpt)) {
+            JEVisOption defaultOpt = Options.getFirstOption(DEFAULT_OPTION_NAME, rootOpt);
+
+            return defaultOpt.getValue();
+        }
+        return "";
+    }
+
+    /**
+     * Returns an list of all DataProcess configurations.
+     *
+     * @param att
+     * @return
+     */
+    public static List<JEVisOption> GetConfiguredProcesses(JEVisAttribute att) {
+        List<JEVisOption> confDPs = new ArrayList<>();
+        try {
+            JEVisOption root = GetProcessOptionRoot(att);
+            System.out.println("root option: " + root.getKey());
+
+            JEVisOption dpChainRoot = Options.getFirstOption(PROSESS_CHAIN_OPTION_NAME, root);
+
+            for (JEVisOption process : dpChainRoot.getOptions()) {
+                confDPs.add(process);
+            }
+        } catch (Exception ex) {
+            //TODO implement an error handling
+            ex.printStackTrace();
+        }
+
+        return confDPs;
     }
 
 }

@@ -17,17 +17,18 @@
  * JECommons is part of the OpenJEVis project, further project information are
  * published at <http://www.OpenJEVis.org/>.
  */
-package org.jevis.commons.dataprocessing.processor;
+package org.jevis.commons.dataprocessing.function;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jevis.api.JEVisException;
 import org.jevis.api.JEVisSample;
-import org.jevis.commons.dataprocessing.DataProcessor;
-import org.jevis.commons.dataprocessing.Task;
+import org.jevis.commons.dataprocessing.ProcessOption;
+import org.jevis.commons.dataprocessing.BasicProcessOption;
+import org.jevis.commons.dataprocessing.ProcessFunction;
+import org.jevis.commons.dataprocessing.Process;
 import org.jevis.commons.dataprocessing.VirtualAttribute;
 import org.jevis.commons.dataprocessing.VirtuelSample;
 
@@ -35,7 +36,7 @@ import org.jevis.commons.dataprocessing.VirtuelSample;
  *
  * @author Florian Simon <florian.simon@envidatec.com>
  */
-public class CounterProcessor implements DataProcessor {
+public class CounterFunction implements ProcessFunction {
 
     public static final String NAME = "Counter Processor";
 
@@ -52,13 +53,13 @@ public class CounterProcessor implements DataProcessor {
     }
 
     @Override
-    public List<JEVisSample> getResult(Task task) {
+    public List<JEVisSample> getResult(Process task) {
         if (_result != null) {
             return _result;
         } else {
             _result = new ArrayList<>();
 
-            if (task.getSubTasks().size() != 1) {
+            if (task.getSubProcesses().size() != 1) {
                 System.out.println("Waring Counter processor can only handel one input. using first only!");
             }
 
@@ -66,7 +67,7 @@ public class CounterProcessor implements DataProcessor {
 
             TS_MODE mode = TS_MODE.BEGINNING;//TODO get from options
 
-            for (JEVisSample sample : task.getSubTasks().get(0).getResult()) {
+            for (JEVisSample sample : task.getSubProcesses().get(0).getResult()) {
 
                 if (lastSample == null) {
                     lastSample = sample;
@@ -87,7 +88,7 @@ public class CounterProcessor implements DataProcessor {
                             System.out.println("Error counter is smaler the the previsus. maybe an counter overflow?");
                         }
                     } catch (JEVisException ex) {
-                        Logger.getLogger(CounterProcessor.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(CounterFunction.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     lastSample = sample;
                 }
@@ -101,6 +102,16 @@ public class CounterProcessor implements DataProcessor {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public List<ProcessOption> getAvailableOptions() {
+        List<ProcessOption> options = new ArrayList<>();
+
+        options.add(new BasicProcessOption("Counter Overflow"));
+        options.add(new BasicProcessOption("Counter Start"));
+
+        return options;
     }
 
 }

@@ -133,4 +133,10 @@ public class JsonJEVisClass {
     public void setUnique(boolean unique) {
         this.unique = unique;
     }
+
+    @Override
+    public String toString() {
+        return "JsonJEVisClass{" + "name=" + name + ", description=" + description + ", inheritance=" + inheritance + ", unique=" + unique + ", types=" + types + ", relationships=" + relationships + ", jclass=" + jclass + '}';
+    }
+
 }

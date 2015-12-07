@@ -19,6 +19,7 @@
  */
 package org.jevis.commons.userregistration;
 
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.unit.NonSI;
@@ -40,7 +41,26 @@ import org.joda.time.DateTime;
  */
 public class UserFactory {
 
-    public static boolean buildMobileDemoStructure(JEVisDataSource ds, JEVisObject parentOrgaDir, String username, String password, String email, String firstName, String lastName, String orgaNmae) {
+    /**
+     * Very basic implementaion of an factory to create an default demo user
+     *
+     * @TODO implement an rollback function
+     * @TODO use some public static names for the classes and types
+     * @TODO add dataprocessing
+     * @TODO check if user exists allready
+     *
+     * @param ds
+     * @param parentOrgaDir
+     * @param username
+     * @param password
+     * @param email
+     * @param firstName
+     * @param lastName
+     * @param orgaNmae
+     * @param demoGroups
+     * @return
+     */
+    public static boolean buildMobileDemoStructure(JEVisDataSource ds, JEVisObject parentOrgaDir, String username, String password, String email, String firstName, String lastName, String orgaNmae, List<JEVisObject> demoGroups) {
 
         try {
             //Create Organization
@@ -94,21 +114,20 @@ public class UserFactory {
             JEVisObject dataOutdoor = dataDir.buildObject("Outdoor Temperature", ds.getJEVisClass("Data"));
             JEVisObject dataWater = dataDir.buildObject("Water Main Meter", ds.getJEVisClass("Data"));
 
-            JEVisObject dpEl = dataElectric.buildObject("Transformer", ds.getJEVisClass("Data Processor"));
-            JEVisAttribute taskEl = dpEl.getAttribute("Task Description");
-            JEVisSample taskSampleEl = taskEl.buildSample(new DateTime(), buildComulativProcessor(dataElectric));
-            taskSampleEl.commit();
-
-            JEVisObject dpHeat = dataHeat.buildObject("Transformer", ds.getJEVisClass("Data Processor"));
-            JEVisAttribute taskHeat = dpHeat.getAttribute("Task Description");
-            JEVisSample taskSampleHeat = taskHeat.buildSample(new DateTime(), buildComulativProcessor(dataHeat));
-            taskSampleHeat.commit();
-
-            JEVisObject spWater = dataWater.buildObject("Transformer", ds.getJEVisClass("Data Processor"));
-            JEVisAttribute taskWater = spWater.getAttribute("Task Description");
-            JEVisSample taskSampleWater = taskWater.buildSample(new DateTime(), buildComulativProcessor(dataWater));
-            taskSampleWater.commit();
-
+//            JEVisObject dpEl = dataElectric.buildObject("Transformer", ds.getJEVisClass("Data Processor"));
+//            JEVisAttribute taskEl = dpEl.getAttribute("Task Description");
+//            JEVisSample taskSampleEl = taskEl.buildSample(new DateTime(), buildComulativProcessor(dataElectric));
+//            taskSampleEl.commit();
+//
+//            JEVisObject dpHeat = dataHeat.buildObject("Transformer", ds.getJEVisClass("Data Processor"));
+//            JEVisAttribute taskHeat = dpHeat.getAttribute("Task Description");
+//            JEVisSample taskSampleHeat = taskHeat.buildSample(new DateTime(), buildComulativProcessor(dataHeat));
+//            taskSampleHeat.commit();
+//
+//            JEVisObject spWater = dataWater.buildObject("Transformer", ds.getJEVisClass("Data Processor"));
+//            JEVisAttribute taskWater = spWater.getAttribute("Task Description");
+//            JEVisSample taskSampleWater = taskWater.buildSample(new DateTime(), buildComulativProcessor(dataWater));
+//            taskSampleWater.commit();
             //Set Units
             dataOutdoor.getAttribute("Value").setInputUnit(new JEVisUnitImp(SI.CELSIUS));
             dataOutdoor.getAttribute("Value").setDisplayUnit(new JEVisUnitImp(SI.CELSIUS));
@@ -132,11 +151,14 @@ public class UserFactory {
             RelationshipFactory.buildMembership(group, user, JEVisConstants.ObjectRelationship.MEMBER_WRITE);
             RelationshipFactory.buildRoot(group, myNewOrganisation);
 
+            for (JEVisObject demoObj : demoGroups) {
+                RelationshipFactory.buildMembership(demoObj, user, JEVisConstants.ObjectRelationship.MEMBER_READ);
+            }
+
             return true;
         } catch (JEVisException ex) {
             Logger.getLogger(UserFactory.class.getName()).log(Level.SEVERE, null, ex);
 
-            //TODO delete if error
         }
 
         return false;

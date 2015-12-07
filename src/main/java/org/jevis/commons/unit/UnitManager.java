@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.quantity.*;
+import javax.measure.unit.AlternateUnit;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
@@ -684,6 +685,8 @@ public class UnitManager {
         additonalUnits.add(SI.OHM.divide(SI.CENTIMETER.pow(2)));
         additonalUnits.add(SI.CENTIMETER.pow(2));
         additonalUnits.add(SI.KILOMETER.pow(2));
+
+        additonalUnits.add(Dimensionless.UNIT.ONE.times(1E-6));//ppm
 
         //kWh/m²kWh/m²
         additonalUnits.add(((SI.KILO(SI.WATT).times(NonSI.HOUR)).divide(SI.SQUARE_METRE)));

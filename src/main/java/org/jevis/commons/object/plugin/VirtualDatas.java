@@ -17,34 +17,38 @@
  * JECommons is part of the OpenJEVis project, further project information are
  * published at <http://www.OpenJEVis.org/>.
  */
-package org.jevis.commons.dataprocessing.processor;
+package org.jevis.commons.object.plugin;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.jevis.api.JEVisAttribute;
+import org.jevis.api.JEVisDataSource;
+import org.jevis.api.JEVisException;
+import org.jevis.api.JEVisObject;
+import org.jevis.api.JEVisOption;
 import org.jevis.api.JEVisSample;
-import org.jevis.commons.dataprocessing.DataProcessor;
-import org.jevis.commons.dataprocessing.Task;
+import org.jevis.api.JEVisType;
+import org.jevis.api.JEVisUnit;
+import org.joda.time.DateTime;
+import org.joda.time.Period;
 
 /**
  *
- * @author Florian Simon <florian.simon@envidatec.com>
+ * @author Florian Simon
  */
-public class LimitCheckerProcessor implements DataProcessor {
+public class VirtualDatas {
 
-    public static final String NAME = "Limit Checker";
+    public static List<JEVisSample> GetVirtualSamples(JEVisObject obj, DateTime from, DateTime until) throws JEVisException {
 
-    @Override
-    public void resetResult() {
+        if (obj.getJEVisClass().getName().equals("List Calculation")) {
+            return GetListVirtualsample(obj, from, until);
+        }
+
+        return new ArrayList<>();
     }
 
-    @Override
-    public List<JEVisSample> getResult(Task task) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public String getName() {
-        return NAME;
+    public static List<JEVisSample> GetListVirtualsample(JEVisObject obj, DateTime from, DateTime until) {
+        return new ArrayList<>();
     }
 
 }

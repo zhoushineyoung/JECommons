@@ -17,19 +17,21 @@
  * JECommons is part of the OpenJEVis project, further project information are
  * published at <http://www.OpenJEVis.org/>.
  */
-package org.jevis.commons.dataprocessing.processor;
+package org.jevis.commons.dataprocessing.function;
 
 import java.util.ArrayList;
 import java.util.List;
 import org.jevis.api.JEVisSample;
-import org.jevis.commons.dataprocessing.DataProcessor;
-import org.jevis.commons.dataprocessing.Task;
+import org.jevis.commons.dataprocessing.ProcessOption;
+import org.jevis.commons.dataprocessing.BasicProcessOption;
+import org.jevis.commons.dataprocessing.ProcessFunction;
+import org.jevis.commons.dataprocessing.Process;
 
 /**
  *
  * @author Florian Simon <florian.simon@envidatec.com>
  */
-public class NullProcessor implements DataProcessor {
+public class NullFunction implements ProcessFunction {
 
     public static final String NAME = "null";
 
@@ -38,7 +40,7 @@ public class NullProcessor implements DataProcessor {
     }
 
     @Override
-    public List<JEVisSample> getResult(Task task) {
+    public List<JEVisSample> getResult(Process task) {
         System.out.println("Waring no Processor is set");
         return new ArrayList<>();
     }
@@ -46,6 +48,13 @@ public class NullProcessor implements DataProcessor {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public List<ProcessOption> getAvailableOptions() {
+        List<ProcessOption> options = new ArrayList<>();
+
+        return options;
     }
 
 }

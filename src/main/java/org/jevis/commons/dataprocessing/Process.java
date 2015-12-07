@@ -6,9 +6,6 @@
 package org.jevis.commons.dataprocessing;
 
 import java.util.List;
-import java.util.Map;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import org.jevis.api.JEVisDataSource;
 import org.jevis.api.JEVisObject;
 import org.jevis.api.JEVisSample;
@@ -17,8 +14,7 @@ import org.jevis.api.JEVisSample;
  *
  * @author Florian Simon <florian.simon@envidatec.com>
  */
-@XmlRootElement(name = "Task")
-public interface Task {
+public interface Process {
 
     /**
      * Set the JEVisDatasource
@@ -47,57 +43,36 @@ public interface Task {
      *
      * @return
      */
-    @XmlElement(name = "id")
     String getID();
-
-    /**
-     * Add an option to this task
-     *
-     * @param option
-     */
-    void addOption(String key, String option);
-
-    /**
-     * Return an option by its key.
-     *
-     * @param key
-     * @return
-     */
-    String getOption(String key);
 
     /**
      * Returns an list of all Options for this task
      *
      * @return
      */
-    @XmlElement(name = "options")
-    Map<String, String> getOptions();
+    List<ProcessOption> getOptions();
 
     /**
      * Returns the processor type.
      *
      * @return
      */
-    @XmlElement(name = "processor")
-    DataProcessor getProcessor();
+    ProcessFunction getFunction();
 
     /**
      * Set The processor used to this task
      *
      * @param processor
      */
-    void setProcessor(DataProcessor processor);
+    void setFunction(ProcessFunction processor);
 
     /**
      * Set the options for this task
      *
      * @param options
      */
-    void setOptions(Map<String, String> options);
+    void setOptions(List<ProcessOption> options);
 
-//    List<JEVisSample> getImputSamples();
-//    void setInputSamples(List<List<JEVisSample>> samples);
-//    void setResult(List<JEVisSample> result);
     /**
      * returns the result of this task
      *
@@ -105,9 +80,9 @@ public interface Task {
      */
     List<JEVisSample> getResult();
 
-    void setSubTasks(List<Task> tasks);
+    void setSubProcesses(List<Process> processes);
 
-    List<Task> getSubTasks();
+    List<Process> getSubProcesses();
 
     public void setObject(JEVisObject object);
 
@@ -115,4 +90,14 @@ public interface Task {
 
     public void restResult();
 
+    public Process getParent();
+
+    /**
+     * Note will not set the child in the parent....
+     *
+     * @param parent
+     */
+    public void setParent(Process parent);
+
+//    public Task setParent(Task parent);
 }

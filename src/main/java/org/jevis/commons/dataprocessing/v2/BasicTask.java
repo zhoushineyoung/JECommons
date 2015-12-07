@@ -28,7 +28,7 @@ import java.util.List;
  */
 public class BasicTask implements Task {
 
-    private DataProcessor dp;
+    private Function dp;
     private List<Task> dependency;
 
     @Override
@@ -44,12 +44,12 @@ public class BasicTask implements Task {
     }
 
     @Override
-    public void setDataProcessor(DataProcessor dp) {
+    public void setDataProcessor(Function dp) {
         this.dp = dp;
     }
 
     @Override
-    public DataProcessor getDataProcessor() {
+    public Function getDataProcessor() {
         return this.dp;
     }
 

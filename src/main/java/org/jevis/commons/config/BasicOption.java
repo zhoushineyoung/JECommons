@@ -41,6 +41,12 @@ public class BasicOption implements JEVisOption {
     public BasicOption() {
     }
 
+    public BasicOption(String key, String value, String description) {
+        this.value = value;
+        this.key = key;
+        this.description = description;
+    }
+
     public BasicOption(JsonOption jopt) {
         key = jopt.getKey();
         value = jopt.getValue();

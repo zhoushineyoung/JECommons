@@ -29,14 +29,14 @@ import org.jevis.api.JEVisOption;
 import org.jevis.api.JEVisSample;
 import org.jevis.commons.dataprocessing.VirtualAttribute;
 import org.jevis.commons.dataprocessing.VirtuelSample;
-import org.jevis.commons.dataprocessing.processor.CounterProcessor;
+import org.jevis.commons.dataprocessing.function.CounterFunction;
 import static org.jevis.commons.dataprocessing.v2.TransformerProcessor.METER_CONSTANT;
 
 /**
  *
  * @author Florian Simon
  */
-public class DifferentialProcessor implements DataProcessor {
+public class DifferentialProcessor implements Function {
 
     private JEVisObject dpObject;
     private JEVisOption option;
@@ -50,7 +50,7 @@ public class DifferentialProcessor implements DataProcessor {
 
     @Override
     public String getID() {
-        return WorkflowHelper.GetDataProcessorID(dpObject);
+        return DataProcessing.GetDataProcessorID(dpObject);
     }
 
     @Override
@@ -71,7 +71,7 @@ public class DifferentialProcessor implements DataProcessor {
 
         TS_MODE mode = TS_MODE.BEGINNING;//TODO get from options
 
-        double overFlow = WorkflowHelper.<Double>GetOptionValue(option, METER_CONSTANT, Double.MAX_VALUE);
+        double overFlow = DataProcessing.<Double>GetOptionValue(option, METER_CONSTANT, Double.MAX_VALUE);
 
         for (JEVisSample sample : this.inputs.get(0).getSamples()) {//TODO replace get(0)
 
@@ -95,7 +95,7 @@ public class DifferentialProcessor implements DataProcessor {
 //                        System.out.println("Error counter is smaler the the previsus. maybe an counter overflow?");
                     }
                 } catch (JEVisException ex) {
-                    Logger.getLogger(CounterProcessor.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(CounterFunction.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 lastSample = sample;
             }

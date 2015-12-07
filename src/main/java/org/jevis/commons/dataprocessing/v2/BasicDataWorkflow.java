@@ -95,14 +95,14 @@ public class BasicDataWorkflow implements DataWorkflow {
             try {
                 System.out.println("Null?: " + this.workflowObject);
                 System.out.println("2: " + this.workflowObject.getDataSource());
-                JEVisClass processorClass = this.workflowObject.getDataSource().getJEVisClass(DataProcessor.JEVIS_CLASS);
+                JEVisClass processorClass = this.workflowObject.getDataSource().getJEVisClass(Function.JEVIS_CLASS);
                 System.out.println("first DP: " + processorClass.getName());
 
                 for (JEVisObject processor : this.workflowObject.getChildren(processorClass, true)) {
                     System.out.println("whhhafirst DP: " + processor.getName());
                     //should have only one......
                     //TODO: more checks and exeption handling
-                    this.tasks = WorkflowHelper.BuildTask(null, processor, options, this);
+                    this.tasks = DataProcessing.BuildTask(null, processor, options, this);
                 }
             } catch (JEVisException ex) {
                 Logger.getLogger(BasicDataWorkflow.class.getName()).log(Level.SEVERE, null, ex);

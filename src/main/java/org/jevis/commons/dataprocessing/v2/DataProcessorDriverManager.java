@@ -33,8 +33,8 @@ import org.jevis.api.JEVisObject;
  */
 public class DataProcessorDriverManager {
 
-    public static DataProcessor loadDriver(JEVisObject obj) throws MalformedURLException, ClassNotFoundException, JEVisException, InstantiationException, IllegalAccessException {
-        DataProcessor dp = null;
+    public static Function loadDriver(JEVisObject obj) throws MalformedURLException, ClassNotFoundException, JEVisException, InstantiationException, IllegalAccessException {
+        Function dp = null;
 
         //Workaround befor the driver loading is implementet
         if (obj.getAttribute("ID").getLatestSample().getValueAsString().equals("Transformer")) {

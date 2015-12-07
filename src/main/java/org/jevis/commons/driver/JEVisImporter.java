@@ -57,36 +57,44 @@ public class JEVisImporter implements Importer {
             //look into all results and map the sample to the online node
             Map<JEVisObject, List<JEVisSample>> onlineToSampleMap = new HashMap<JEVisObject, List<JEVisSample>>();
             for (Result s : results) {
-                long onlineID = s.getOnlineID();
-                JEVisObject onlineData = null;
-                //look for the correct jevis object
-                for (JEVisObject j : onlineToSampleMap.keySet()) {
-                    if (j.getID() == onlineID) {
-                        onlineData = j;
-                        break;
+                try {
+                    long onlineID = s.getOnlineID();
+                    JEVisObject onlineData = null;
+                    //look for the correct jevis object
+                    for (JEVisObject j : onlineToSampleMap.keySet()) {
+                        if (j.getID() == onlineID) {
+                            onlineData = j;
+                            break;
+                        }
                     }
+                    //jevis object is not in the map
+                    if (onlineData == null) {
+                        onlineData = _client.getObject(onlineID);
+                        onlineToSampleMap.put(onlineData, new ArrayList<JEVisSample>());
+                    }
+                    List<JEVisSample> samples = onlineToSampleMap.get(onlineData);
+                    DateTime convertedDate = TimeConverter.convertTime(_timezone, s.getDate());
+                    JEVisSample sample = onlineData.getAttribute("Value").buildSample(convertedDate, s.getValue(), "Imported by JEDataCollector");
+                    samples.add(sample);
+                } catch (Exception ex1) {
+                    Logger.getLogger(JEVisImporter.class.getName()).log(Level.ERROR, "Error while importing samples", ex1);
                 }
-                //jevis object is not in the map
-                if (onlineData == null) {
-                    onlineData = _client.getObject(onlineID);
-                    onlineToSampleMap.put(onlineData, new ArrayList<JEVisSample>());
-                }
-                List<JEVisSample> samples = onlineToSampleMap.get(onlineData);
-                DateTime convertedDate = TimeConverter.convertTime(_timezone, s.getDate());
-                JEVisSample sample = onlineData.getAttribute("Value").buildSample(convertedDate, s.getValue(), "Imported by JEDataCollector");
-                samples.add(sample);
             }
             DateTime lastDateTime = null;
             for (JEVisObject o : onlineToSampleMap.keySet()) {
-                List<JEVisSample> samples = onlineToSampleMap.get(o);
-                o.getAttribute("Value").addSamples(samples);
-                if (lastDateTime == null || o.getAttribute("Value").getLatestSample().getTimestamp().isBefore(lastDateTime)) {
-                    lastDateTime = o.getAttribute("Value").getLatestSample().getTimestamp();
+                try {
+                    List<JEVisSample> samples = onlineToSampleMap.get(o);
+                    o.getAttribute("Value").addSamples(samples);
+                    if (lastDateTime == null || o.getAttribute("Value").getLatestSample().getTimestamp().isBefore(lastDateTime)) {
+                        lastDateTime = o.getAttribute("Value").getLatestSample().getTimestamp();
+                    }
+                    Logger.getLogger(JEVisImporter.class.getName()).log(Level.ALL, samples.size() + " Samples import into ID:" + o.getID());
+                } catch (Exception ex2) {
+                    Logger.getLogger(JEVisImporter.class.getName()).log(Level.ERROR, "Error while setting last readout", ex2);
                 }
-                Logger.getLogger(JEVisImporter.class.getName()).log(Level.ALL, samples.size() + " Samples import into ID:" + o.getID());
             }
             return lastDateTime;
-        } catch (JEVisException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(JEVisImporter.class.getName()).log(Level.ERROR, null, ex);
         }
         return null;

@@ -19,30 +19,41 @@
  */
 package org.jevis.commons.dataprocessing;
 
-import com.google.gson.Gson;
-import org.jevis.api.JEVisAttribute;
-import org.jevis.api.JEVisException;
-import org.jevis.api.JEVisObject;
-import org.jevis.commons.json.JsonTask;
-
 /**
  *
  * @author Florian Simon <florian.simon@envidatec.com>
  */
-public class ProcessorObjectHandler {
+public class BasicProcessOption implements ProcessOption {
 
-    public static Task getTask(JEVisObject object) throws JEVisException {
-        if (!object.getJEVisClass().getName().equalsIgnoreCase("Data Processor")) {
-            throw new IllegalArgumentException("Object is not from the Class Data Processor!");
-        }
+    private String key;
+    private String value;
 
-        JEVisAttribute taskAttribute = object.getAttribute("Task Description");
-        String jsonString = taskAttribute.getLatestSample().getValueAsString();
+    public BasicProcessOption(JsonProcessOption json) {
+        this.key = json.getKey();
+        this.value = json.getValue();
+    }
 
-        Gson gson = new Gson();
-        JsonTask jTask = gson.fromJson(jsonString, JsonTask.class);
-        Task newTask = new TaskImp(object.getDataSource(), jTask, object);
-        return newTask;
+    public BasicProcessOption(String key, String value) {
+        this.key = key;
+        this.value = value;
+    }
+
+    public BasicProcessOption(String key) {
+        this.key = key;
+    }
+
+    @Override
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    @Override
+    public String getKey() {
+        return key;
     }
 
 }

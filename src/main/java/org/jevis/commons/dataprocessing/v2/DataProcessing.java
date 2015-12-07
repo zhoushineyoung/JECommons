@@ -30,20 +30,41 @@ import org.jevis.api.JEVisDataSource;
 import org.jevis.api.JEVisException;
 import org.jevis.api.JEVisObject;
 import org.jevis.api.JEVisOption;
+import org.jevis.api.JEVisSample;
 import org.jevis.commons.config.Options;
+import org.jevis.commons.object.plugin.VirtualSumData;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.ISODateTimeFormat;
 
 /**
- *
+ * @TODO: should this have an interface?!
  * @author Florian Simon
  */
-public class WorkflowHelper {
+public class DataProcessing {
 
     private static final String DATA_PROCESSING = "Data Processing";
     private static final String WORKFLOW_OPTION = "Workflows";
     private static final String DETFAULT_DATAPROCESSING = "Default";
+
+    public static List<JEVisSample> getSamples(JEVisAttribute attribute, DateTime from, DateTime until, String dataProcess) throws JEVisException {
+        System.out.println("DataProcessing.getSamples: " + attribute + "    from: " + from + "   until: " + until + "     process: " + dataProcess);
+        //TODO: this hast du be some kinde of driver structure where we can add new VirtualData without changing this code
+        if (attribute.getObject().getJEVisClass().getName().equals("Virtual Sum")) {
+            System.out.println("is Virtual sum ");
+            VirtualSumData vd = new VirtualSumData(attribute.getObject());
+            //TODO: this result can also use an addional DataProcessor
+            List<JEVisSample> result = vd.getResult(from, until);
+
+//            DataWorkflow dwf = GetConfiguredWorkflow(attribute, dataProcess);
+//
+//            Result result = dwf.getResult();
+            return result;
+
+        } else {
+            System.out.println("is raw data");
+            return attribute.getSamples(from, until);
+        }
+    }
 
     public static List<String> GetConfiguredWorkflowNames(JEVisAttribute attribute) {
         List<String> names = new ArrayList<>();
@@ -112,7 +133,7 @@ public class WorkflowHelper {
     }
 
     public static JEVisObject GetDataProcessor(JEVisDataSource ds, String name) throws JEVisException {
-        JEVisClass processorClass = ds.getJEVisClass(DataProcessor.JEVIS_CLASS);
+        JEVisClass processorClass = ds.getJEVisClass(Function.JEVIS_CLASS);
 
         List<JEVisObject> objects = ds.getObjects(processorClass, true);
         for (JEVisObject obj : objects) {
@@ -208,7 +229,7 @@ public class WorkflowHelper {
 
     public static String GetDataProcessorID(JEVisObject dataProcessorObject) {
         try {
-            return dataProcessorObject.getAttribute(DataProcessor.ATTRIBUTE_ID).getLatestSample().getValueAsString();
+            return dataProcessorObject.getAttribute(Function.ATTRIBUTE_ID).getLatestSample().getValueAsString();
         } catch (JEVisException ex) {
             Logger.getLogger(InputProcessor.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -253,9 +274,9 @@ public class WorkflowHelper {
         System.out.println("--BuildTask--");
         System.out.println("Parent: " + parent + " pro: " + processor.getName() + " opt: " + options.getKey());
         Task task = new BasicTask();
-        JEVisClass processorClass = processor.getDataSource().getJEVisClass(DataProcessor.JEVIS_CLASS);
+        JEVisClass processorClass = processor.getDataSource().getJEVisClass(Function.JEVIS_CLASS);
 
-        DataProcessor dp;
+        Function dp;
         try {
             dp = DataProcessorDriverManager.loadDriver(processor);
 
@@ -284,13 +305,13 @@ public class WorkflowHelper {
             task.setDependency(dependency);
 
         } catch (MalformedURLException ex) {
-            Logger.getLogger(WorkflowHelper.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DataProcessing.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(WorkflowHelper.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DataProcessing.class.getName()).log(Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            Logger.getLogger(WorkflowHelper.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DataProcessing.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            Logger.getLogger(WorkflowHelper.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DataProcessing.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return task;

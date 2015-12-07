@@ -17,7 +17,7 @@
  * JECommons is part of the OpenJEVis project, further project information are
  * published at <http://www.OpenJEVis.org/>.
  */
-package org.jevis.commons.dataprocessing.processor;
+package org.jevis.commons.dataprocessing.function;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +25,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.jevis.api.JEVisException;
 import org.jevis.api.JEVisSample;
-import org.jevis.commons.dataprocessing.DataProcessor;
-import org.jevis.commons.dataprocessing.Task;
+import org.jevis.commons.dataprocessing.ProcessOption;
+import org.jevis.commons.dataprocessing.BasicProcessOption;
+import org.jevis.commons.dataprocessing.ProcessOptions;
+import org.jevis.commons.dataprocessing.ProcessFunction;
+import org.jevis.commons.dataprocessing.Process;
 import org.jevis.commons.dataprocessing.VirtualAttribute;
 import org.jevis.commons.dataprocessing.VirtuelSample;
 
@@ -34,7 +37,7 @@ import org.jevis.commons.dataprocessing.VirtuelSample;
  *
  * @author Florian Simon <florian.simon@envidatec.com>
  */
-public class ConverterProcessor implements DataProcessor {
+public class ConverterFunction implements ProcessFunction {
 
     public final static String NAME = "Converter";
     public static final String MULTIPLAYER = "multiplier";
@@ -47,7 +50,7 @@ public class ConverterProcessor implements DataProcessor {
     }
 
     @Override
-    public List<JEVisSample> getResult(Task mainTask) {
+    public List<JEVisSample> getResult(Process mainTask) {
         if (_result != null) {
             return _result;
         } else {
@@ -56,32 +59,22 @@ public class ConverterProcessor implements DataProcessor {
             double m = 1;
             double b = 0;
 
-            if (!mainTask.getOptions().containsKey(MULTIPLAYER)) {
-                System.out.println("Converter Processor missing option " + MULTIPLAYER);
-                //todo throw
-            } else {
-                m = Double.parseDouble(mainTask.getOption(MULTIPLAYER));
-            }
+            m = Double.parseDouble(ProcessOptions.GetLatestOption(mainTask, MULTIPLAYER, new BasicProcessOption(MULTIPLAYER, "1")).getValue());//TYPO MULTIPLAYER
+            b = Double.parseDouble(ProcessOptions.GetLatestOption(mainTask, OFFSET, new BasicProcessOption(OFFSET, "0")).getValue());
 
-            if (!mainTask.getOptions().containsKey(OFFSET)) {
-                System.out.println("Converter Processor missing option " + OFFSET);
-            } else {
-                b = Double.parseDouble(mainTask.getOption(OFFSET));
-            }
-
-            if (mainTask.getSubTasks().size() != 1) {
+            if (mainTask.getSubProcesses().size() != 1) {
                 System.out.println("Waring Counter processor can only handel one input. using first only!");
             }
 
             System.out.println("Using M:" + m + "  B:" + b);
-            for (JEVisSample sample : mainTask.getSubTasks().get(0).getResult()) {
+            for (JEVisSample sample : mainTask.getSubProcesses().get(0).getResult()) {
 
                 try {
                     double sum = (sample.getValueAsDouble() * m) + b;
 //                    System.out.println("TS: " + sample.getTimestamp() + " new Value: " + sum);
                     _result.add(new VirtuelSample(sample.getTimestamp(), sum, mainTask.getJEVisDataSource(), new VirtualAttribute(null)));
                 } catch (JEVisException ex) {
-                    Logger.getLogger(ConverterProcessor.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(ConverterFunction.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
 
@@ -92,6 +85,16 @@ public class ConverterProcessor implements DataProcessor {
     @Override
     public String getName() {
         return NAME;
+    }
+
+    @Override
+    public List<ProcessOption> getAvailableOptions() {
+        List<ProcessOption> options = new ArrayList<>();
+
+        options.add(new BasicProcessOption(MULTIPLAYER));
+        options.add(new BasicProcessOption(OFFSET));
+
+        return options;
     }
 
 }

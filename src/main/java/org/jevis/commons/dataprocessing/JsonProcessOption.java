@@ -17,40 +17,45 @@
  * JECommons is part of the OpenJEVis project, further project information are
  * published at <http://www.OpenJEVis.org/>.
  */
-package org.jevis.commons.dataprocessing.v2;
+package org.jevis.commons.dataprocessing;
 
-import java.util.List;
-import java.util.logging.Level;
-import org.jevis.api.JEVisObject;
-import org.jevis.api.JEVisOption;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
  * @author Florian Simon
  */
-public interface DataProcessor {
+@XmlRootElement(name = "option")
+public class JsonProcessOption implements ProcessOption {
 
-    public static final String JEVIS_CLASS = "Data Processor";
-    public static final String ATTRIBUTE_ID = "ID";
-    public static final String ATTRIBUTE_DEBUG_LEVEL = "Debug Level";
+    private String value = "";
+    private String key = "";
 
-    //mybe its not the best to allow the implmentation to choose this
-    String getID();
+    public JsonProcessOption(ProcessOption opt) {
+        value = opt.getValue();
+        key = opt.getKey();
+    }
 
-    Result getResult();
+    @Override
+    @XmlElement(name = "value")
+    public String getValue() {
+        return value;
+    }
 
-    void setOptions(JEVisOption option);
+    @Override
+    public void setValue(String value) {
+        this.value = value;
+    }
 
-    void setObject(JEVisObject object);
+    @Override
+    @XmlElement(name = "key")
+    public String getKey() {
+        return key;
+    }
 
-    void setInput(List<Result> results);
+    public void setKey(String key) {
+        this.key = key;
+    }
 
-    /**
-     * Set the workflow this Data Processor belongs to
-     *
-     * @param workflow
-     */
-    void setWorkflow(DataWorkflow workflow);
-
-//    void setLogLevel(Level level);
 }

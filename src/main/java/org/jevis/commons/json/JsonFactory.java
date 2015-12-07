@@ -137,6 +137,42 @@ public class JsonFactory {
         return json;
     }
 
+    /**
+     * @TODO: combine this with buildJEVisClassComplete via an attribute to
+     * switch mode
+     * @param jclass
+     * @return
+     * @throws JEVisException
+     */
+    public static JsonJEVisClass buildJEVisClassWithType(JEVisClass jclass) throws JEVisException {
+        JsonJEVisClass json = new JsonJEVisClass();
+        json.setName(jclass.getName());
+        if (jclass.getInheritance() != null) {
+            json.setInheritance(jclass.getInheritance().getName());
+        } else {
+            json.setInheritance("null");
+        }
+
+        json.setUnique(jclass.isUnique());
+        json.setDescription(jclass.getDescription());
+        List<JsonType> types = new ArrayList<>();
+        for (JEVisType type : jclass.getTypes()) {
+            if (jclass.getInheritance() != null) {
+                if (jclass.getInheritance().getTypes().contains(type)) {
+                    System.out.println("Dont export inherit class");
+                    continue;
+                }
+            }
+
+            types.add(buildType(type));
+
+        }
+
+        json.setTypes(types);
+
+        return json;
+    }
+
     public static JsonAttribute buildAttribute(JEVisAttribute att, boolean allSamples) throws JEVisException {
         JsonAttribute json = new JsonAttribute();
         DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
