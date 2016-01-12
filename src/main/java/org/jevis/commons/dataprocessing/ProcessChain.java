@@ -19,36 +19,34 @@
  */
 package org.jevis.commons.dataprocessing;
 
-import java.util.List;
-import org.jevis.api.JEVisSample;
+import org.jevis.api.JEVisAttribute;
+import org.jevis.api.JEVisException;
+import org.jevis.api.JEVisObject;
 
 /**
- * An ProcessFunction can process the samples from an task an return the result.
  *
- * @author Florian Simon <florian.simon@envidatec.com>
+ * @author Florian Simon
  */
-public interface ProcessFunction {
+public class ProcessChain {
 
-    /**
-     * Rertuns the result list from this processor.
-     *
-     * @param task Task with the options and previus tasks
-     * @return List of JEVisSamples with the result
-     */
-    List<JEVisSample> getResult(Process task);
+    private final String ATTRIBUTE_DATA = "Data";
 
-    /**
-     * Returns the unique name of this processor wich is used to identify it.
-     *
-     * @return unique name
-     */
-    String getName();
+    final private JEVisObject obj;
 
-    /**
-     * Request an reset od the result
-     */
-    public void resetResult();
+    public ProcessChain(JEVisObject obj) {
+        this.obj = obj;
+    }
 
-    List<ProcessOption> getAvailableOptions();
+    public String getName() {
+        return obj.getName();
+    }
+
+    public JEVisAttribute getData() throws JEVisException {
+        return obj.getAttribute(ATTRIBUTE_DATA);
+    }
+
+    public JEVisObject getObject() {
+        return obj;
+    }
 
 }

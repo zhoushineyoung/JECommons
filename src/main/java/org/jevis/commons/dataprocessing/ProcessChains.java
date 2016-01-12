@@ -24,6 +24,7 @@ import com.google.gson.GsonBuilder;
 import java.util.ArrayList;
 import java.util.List;
 import org.jevis.api.JEVisAttribute;
+import org.jevis.api.JEVisClass;
 import org.jevis.api.JEVisDataSource;
 import org.jevis.api.JEVisException;
 import org.jevis.api.JEVisObject;
@@ -35,7 +36,6 @@ import org.jevis.commons.dataprocessing.function.InputFunction;
 import org.jevis.commons.dataprocessing.function.LimitCheckerFunction;
 import org.jevis.commons.dataprocessing.function.MathFunction;
 import org.jevis.commons.dataprocessing.function.NullFunction;
-import org.jevis.commons.dataprocessing.v2.DifferentialProcessor;
 
 /**
  * This class contains various methods for manipulating ProcessChains.
@@ -68,7 +68,7 @@ public class ProcessChains {
      */
     public static Process getProcessChain(JEVisObject object) throws JEVisException {
         if (!object.getJEVisClass().getName().equalsIgnoreCase(CLASS_PROCESS_CHAIN)) {
-            throw new IllegalArgumentException("Object is not from the Class Data Processor!");
+            throw new IllegalArgumentException("Object is not from the Class " + CLASS_PROCESS_CHAIN);
         }
 
         JEVisAttribute taskAttribute = object.getAttribute(ATTRIBUTE_DATA);
@@ -132,13 +132,27 @@ public class ProcessChains {
 
     }
 
+    public static List<ProcessChain> getAvailableProcessChains(JEVisDataSource ds) throws JEVisException {
+        List<ProcessChain> returnList = new ArrayList<>();
+        JEVisClass processChain = ds.getJEVisClass(CLASS_PROCESS_CHAIN);
+
+        List<JEVisObject> objects = ds.getObjects(processChain, true);
+
+        for (JEVisObject obj : objects) {
+            returnList.add(new ProcessChain(obj));
+        }
+
+        return returnList;
+
+    }
+
     /**
      * Retuns all default ProcessOptions for an ProcessFunction
      *
      * @param pf
      * @return
      */
-    private static List<ProcessOption> getDefaultOptions(ProcessFunction pf) {
+    public static List<ProcessOption> getDefaultOptions(ProcessFunction pf) {
         List<ProcessOption> map = new ArrayList<>();
 
         for (ProcessOption o : pf.getAvailableOptions()) {
