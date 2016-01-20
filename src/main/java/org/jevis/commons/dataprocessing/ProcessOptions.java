@@ -19,7 +19,6 @@
  */
 package org.jevis.commons.dataprocessing;
 
-import org.jevis.commons.dataprocessing.function.AggrigatorFunction;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,6 +31,7 @@ import org.jevis.api.JEVisException;
 import org.jevis.api.JEVisOption;
 import org.jevis.api.JEVisSample;
 import org.jevis.commons.config.Options;
+import org.jevis.commons.dataprocessing.function.AggrigatorFunction;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Interval;
@@ -48,13 +48,29 @@ public class ProcessOptions {
 
     public static String ROOT_OPTION_NAME = "Data Processing";
     public static String DEFAULT_OPTION_NAME = "Default";
-    public static String PROSESS_CHAIN_OPTION_NAME = "Workflows";//Rename into ProcessChain
+    public static String PROSESS_CHAIN_OPTION_NAME = "Process Chains";//Rename into ProcessChain
 
     public static final String PERIOD = "period";
     public static final String OFFSET = "offset";
     public static final String TS_START = "date-start";
     public static final String TS_END = "date-end";
     public static final String TS_PATTERN = "yyyy-MM-dd hh:mm:ssZ";
+
+    public static List<ProcessOption> ToProcessOption(Process process, JEVisOption option) {
+        List<ProcessOption> pOptions = new ArrayList<>();
+
+        for (JEVisOption jOpt : option.getOptions()) {
+            ProcessOption po = new BasicProcessOption(jOpt.getKey(), jOpt.getValue());
+
+            //Problem: JEVisOptions are herahic and the Processoption are flat but the Process him self has an herachie
+            //match option to the right process
+            //? replace ProcessOption with JEVisOption
+            pOptions.add(po);
+
+        }
+
+        return pOptions;
+    }
 
     //@todo: add recursion?!
     public static boolean ContainsOption(Process task, String optionKey) {
