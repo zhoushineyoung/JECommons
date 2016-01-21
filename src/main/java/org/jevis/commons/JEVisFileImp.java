@@ -49,6 +49,11 @@ public class JEVisFileImp implements JEVisFile {
         loadFromFile(file);
     }
 
+    public JEVisFileImp(String fileName, byte[] bytes) throws FileNotFoundException, IOException {
+        this.fileName = fileName;
+        this.bytes = bytes;
+    }
+
     public JEVisFileImp() {
     }
 
