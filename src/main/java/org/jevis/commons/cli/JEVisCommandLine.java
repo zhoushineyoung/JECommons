@@ -35,6 +35,7 @@ public class JEVisCommandLine {
     private static String DRIVER_FOLDER = "driver-folder";
     private static String HELP = "help";
     private static String DEBUG = "debug";
+    private static String SINGLE = "single";
     private boolean _isUsed = false;
 
     private JEVisCommandLine() {
@@ -59,6 +60,7 @@ public class JEVisCommandLine {
         _options.addOption("h", HELP, false, "Show the help list");
         _options.addOption("d", DEBUG, true, "Sets the debug level (INFO, WARN, ALL)");
         _options.addOption("df", DRIVER_FOLDER, true, "Sets the root folder for the driver structure");
+        _options.addOption("si", SINGLE, true, "set a single equipment to start");
     }
 
     public void addOption(Option option) {
@@ -130,5 +132,14 @@ public class JEVisCommandLine {
 
     public boolean isUsed() {
         return _isUsed;
+    }
+
+    public Long getSingleObject() {
+        if (_cmd.hasOption(SINGLE)) {
+            String optionValue = _cmd.getOptionValue(SINGLE);
+            return Long.parseLong(_cmd.getOptionValue(SINGLE));
+        } else {
+            return null;
+        }
     }
 }
