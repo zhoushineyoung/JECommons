@@ -27,7 +27,9 @@ import java.security.SecureRandom;
 import java.security.Security;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Vector;
 import java.util.regex.Matcher;
@@ -41,11 +43,6 @@ import javax.net.ssl.X509TrustManager;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
-import org.jevis.api.JEVisException;
-import org.jevis.api.JEVisObject;
-import org.jevis.api.JEVisSample;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -126,7 +123,11 @@ public class DataSourceHelper {
                 for (FTPFile file : fc.listFiles()) {
 //                    org.apache.log4j.Logger.getLogger(Launcher.class.getName()).log(org.apache.log4j.Level.ALL, "CurrentFileName: " + fileName);
 //                    fileName = removeFoler(fileName, folder);
-                    if (file.getTimestamp().compareTo(lastReadout.toGregorianCalendar()) < 0) {
+                    DateTimeFormatter dateFormat = DateTimeFormat.forPattern("yyyyMMddHHmmss");
+                    String fileName = file.getName();
+                    String timePart = fc.getModificationTime(folder + fileName).split(" ")[1].trim();
+                    DateTime modificationTime = dateFormat.parseDateTime(timePart);
+                    if (modificationTime.isBefore(lastReadout)) {
                         continue;
                     }
                     boolean match = false;
