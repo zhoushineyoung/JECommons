@@ -30,11 +30,20 @@ public class Result {
     private final Object _value;
     private final DateTime _date;
     private final Long _datapoint;
+    private final String _attribute;
 
     public Result(Long datapoint, Object val, DateTime date) {
         _datapoint = datapoint;
         _value = val;
         _date = date;
+        _attribute = "Value";//fallback
+    }
+
+    public Result(Long datapoint, String attribute, Object val, DateTime date) {
+        _datapoint = datapoint;
+        _value = val;
+        _date = date;
+        _attribute = attribute;//fallback
     }
 
     public Object getValue() {
@@ -48,4 +57,9 @@ public class Result {
     public Long getOnlineID() {
         return _datapoint;
     }
+
+    public String getAttribute() {
+        return _attribute;
+    }
+
 }

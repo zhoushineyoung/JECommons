@@ -478,4 +478,8 @@ public class DataSourceHelper {
         }
         return arrayList;
     }
+
+    public static void setLastReadout(JEVisObject channel, Object latestDatapoint) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

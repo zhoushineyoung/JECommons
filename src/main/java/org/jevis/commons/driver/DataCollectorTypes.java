@@ -19,6 +19,8 @@
  */
 package org.jevis.commons.driver;
 
+import org.jevis.api.JEVisObject;
+
 /**
  *
  * @author bf
@@ -185,5 +187,8 @@ public interface DataCollectorTypes {
     public static interface DataPoint {
 
         public final static String NAME = "Data Point";
+
+        public void setDataPointObject(JEVisObject dp);
     }
+
 }

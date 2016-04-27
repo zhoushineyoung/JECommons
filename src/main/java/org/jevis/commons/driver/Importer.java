@@ -48,6 +48,8 @@ public interface Importer {
      */
     public void initialize(JEVisObject dataSource);
 
+    public Object getLatestDatapoint();
+
     /**
      * Gets the date of the latest imported data point. This information is
      * needed to set the lastreadout.

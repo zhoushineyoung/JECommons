@@ -86,7 +86,8 @@ public class JEVisImporter implements Importer {
                         continue;
                     }
 
-                    JEVisAttribute valueAtt = onlineData.getAttribute("Value");
+//                    JEVisAttribute valueAtt = onlineData.getAttribute("Value");
+                    JEVisAttribute valueAtt = onlineData.getAttribute(s.getAttribute());
                     if (valueAtt == null) {
                         Logger.getLogger(JEVisImporter.class.getName()).log(Level.ERROR, "Target has no Attribute 'Value'");
                         targetErrors.add(s.getOnlineID());
@@ -341,4 +342,8 @@ public class JEVisImporter implements Importer {
 //        String toString = _latestDateTime.toString(DateTimeFormat.forPattern("HH:mm:ss dd.MM.yyyy"));
 //        return _latestDateTime;
 //    }
+    @Override
+    public Object getLatestDatapoint() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
