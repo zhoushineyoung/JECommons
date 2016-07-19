@@ -45,8 +45,8 @@ public class ConfigurationHelper {
     public static String DATASOURCE_PREFIX = "jevis.datasource";
 
     /**
-     * Will create a new ConfigurationHelper for the given argument[] arrays
-     * and the Options
+     * Will create a new ConfigurationHelper for the given argument[] arrays and
+     * the Options
      *
      * TODO: implement
      *
