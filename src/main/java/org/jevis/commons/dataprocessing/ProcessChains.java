@@ -135,11 +135,15 @@ public class ProcessChains {
     public static List<ProcessChain> getAvailableProcessChains(JEVisDataSource ds) throws JEVisException {
         List<ProcessChain> returnList = new ArrayList<>();
         JEVisClass processChain = ds.getJEVisClass(CLASS_PROCESS_CHAIN);
+        if (processChain != null) {
+            List<JEVisObject> objects = ds.getObjects(processChain, true);
 
-        List<JEVisObject> objects = ds.getObjects(processChain, true);
+            if (objects != null) {
+                for (JEVisObject obj : objects) {
+                    returnList.add(new ProcessChain(obj));
+                }
+            }
 
-        for (JEVisObject obj : objects) {
-            returnList.add(new ProcessChain(obj));
         }
 
         return returnList;
