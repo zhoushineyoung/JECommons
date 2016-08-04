@@ -144,8 +144,9 @@ public class DriverHelper {
                 try {
                     Class c = cl.loadClass(driverProp.getClassName());
                     classes.put(driverProp.getJevisName(), c);
+                    Logger.getLogger(DriverHelper.class.getName()).log(Level.INFO, String.format("Done loading driver: %s", c));
                 } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(DriverHelper.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(DriverHelper.class.getName()).log(Level.SEVERE, String.format("Fail loading driver: %s", driverProp.getClassName()), ex);
                 }
             } catch (MalformedURLException ex) {
                 Logger.getLogger(DriverHelper.class.getName()).log(Level.SEVERE, null, ex);
