@@ -36,6 +36,9 @@ public class JEVisCommandLine {
     private static String HELP = "help";
     private static String DEBUG = "debug";
     private static String SINGLE = "single";
+    private static String DEAMONCYLCE = "daemon-cycle";
+    private static String SERVICE = "service";
+
     private boolean _isUsed = false;
 
     private JEVisCommandLine() {
@@ -61,6 +64,9 @@ public class JEVisCommandLine {
         _options.addOption("d", DEBUG, true, "Sets the debug level (INFO, WARN, ALL)");
         _options.addOption("df", DRIVER_FOLDER, true, "Sets the root folder for the driver structure");
         _options.addOption("si", SINGLE, true, "set a single equipment to start");
+        _options.addOption("d", SERVICE, false, "Start in service(deamon) mode");
+        _options.addOption("dc", DEAMONCYLCE, false, "service(deamon) mode spleep time between run cyclesin seconds. Default is 3600sec");
+
     }
 
     public void addOption(Option option) {
@@ -114,6 +120,19 @@ public class JEVisCommandLine {
 
     public String getDriverFolder() {
         return _cmd.getOptionValue(DRIVER_FOLDER);
+    }
+
+    public boolean isService() {
+        return _cmd.hasOption(SERVICE);
+    }
+
+    public int getCycleSeepTime() {
+        try {
+            return Integer.parseInt(_cmd.getOptionValue(DEAMONCYLCE, "3600"));
+        } catch (Exception px) {
+            return 3600;
+        }
+
     }
 
     private void showHelp() {

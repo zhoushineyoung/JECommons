@@ -49,7 +49,7 @@ public class JEVisImporter implements Importer {
     //TODO: support other attributes then "Value"
     @Override
     public DateTime importResult(List<Result> results) {
-        Logger.getLogger(JEVisImporter.class.getName()).log(Level.DEBUG, "--Starting SampleImport v2less F  --");
+        Logger.getLogger(JEVisImporter.class.getName()).log(Level.DEBUG, "--Starting SampleImport v2.5  --");
         try {
             DateTime lastTSTotal = null;
             if (results.isEmpty()) {
@@ -193,131 +193,6 @@ public class JEVisImporter implements Importer {
             }
             return lastTSTotal;//TODO: do we have to converte the date with the timezone?
 
-            ///old --------------------------------------------------------------
-//            for (Result s : results) {
-//                try {
-//                    JEVisObject onlineData = _client.getObject(s.getOnlineID());
-//
-//                    if (onlineData == null) {
-//                        Logger.getLogger(JEVisImporter.class.getName()).log(Level.DEBUG, "Target Object not found: " + s.getOnlineID());
-//                        errorImport++;
-//                        continue;
-//                    }
-//
-//                    //TODO the JEDC should also work with non Data.Value objects.
-//                    JEVisAttribute valueAtt = onlineData.getAttribute("Value");
-//                    if (valueAtt == null) {
-//                        Logger.getLogger(JEVisImporter.class.getName()).log(Level.DEBUG, "Target has no Attribute 'Value'");
-//                        errorImport++;
-//                        continue;
-//                    }
-//
-//                    if (_timezone == null) {
-//                        Logger.getLogger(JEVisImporter.class.getName()).log(Level.DEBUG, "timezone missing for " + onlineData.getID());
-//                        errorImport++;
-//                        continue;
-//                    }
-//
-//                    DateTime convertedDate = TimeConverter.convertTime(_timezone, s.getDate());
-//
-//                    JEVisSample sample = onlineData.getAttribute("Value").buildSample(convertedDate, s.getValue());
-//                    toImportList.add(sample);
-//                } catch (Exception ex) {
-//
-//                }
-//
-//            }
-//
-//            //look into all results and map the sample to the online node
-//            Map<JEVisObject, List<JEVisSample>> onlineToSampleMap = new HashMap<JEVisObject, List<JEVisSample>>();
-//
-//            for (Result s : results) {
-//                try {
-//                    long onlineID = s.getOnlineID();
-//                    JEVisObject onlineData = null;
-//                    //look for the correct jevis object
-//                    for (JEVisObject j : onlineToSampleMap.keySet()) {
-//                        if (j.getID() == onlineID) {
-//                            onlineData = j;
-//                            break;
-//                        }
-//                    }
-//                    //jevis object is not in the map
-//                    if (onlineData == null) {
-//                        onlineData = _client.getObject(onlineID);
-//
-//                        if (onlineData == null) {
-//                            Logger.getLogger(JEVisImporter.class.getName()).log(Level.DEBUG, "Target Object not found: " + onlineID);
-//                            errorImport++;
-//                            continue;
-//                        }
-//
-//                        onlineToSampleMap.put(onlineData, new ArrayList<JEVisSample>());
-//                    }
-//                    List<JEVisSample> samples = onlineToSampleMap.get(onlineData);
-//
-//                    if (samples == null) {
-//                        Logger.getLogger(JEVisImporter.class.getName()).log(Level.DEBUG, "Sample list ist null for " + onlineID);
-//                        errorImport++;
-//                        continue;
-//                    }
-//
-//                    if (_timezone == null) {
-//                        Logger.getLogger(JEVisImporter.class.getName()).log(Level.DEBUG, "timezone missing for " + onlineID);
-//                        errorImport++;
-//                        continue;
-//                    }
-//
-//                    DateTime convertedDate = TimeConverter.convertTime(_timezone, s.getDate());
-//
-//                    if (convertedDate == null) {
-//                        Logger.getLogger(JEVisImporter.class.getName()).log(Level.DEBUG, "Could not convert time for" + onlineID);
-//                        errorImport++;
-//                        continue;
-//                    }
-//
-//                    //TODO the JEDC should also work with non Data.Value objects.
-//                    if (onlineData.getAttribute("Value") == null) {
-//                        Logger.getLogger(JEVisImporter.class.getName()).log(Level.DEBUG, "Target has no Attribute 'Value'");
-//                        errorImport++;
-//                        continue;
-//                    }
-//
-//                    System.out.print("|");
-//
-//                    if (s.getValue() == null) {
-//                        Logger.getLogger(JEVisImporter.class.getName()).log(Level.DEBUG, "Sample has no value");
-//                        errorImport++;
-//                        continue;
-//                    }
-//
-//                    JEVisSample sample = onlineData.getAttribute("Value").buildSample(convertedDate, s.getValue());
-//                    samples.add(sample);
-//                    System.out.print("+");
-//                } catch (Exception ex1) {
-//                    errorImport++;
-//                    Logger.getLogger(JEVisImporter.class.getName()).log(Level.DEBUG, "Exception while importing samples", ex1);
-//                }
-//            }
-//
-//            DateTime lastDateTime = null;
-//            for (JEVisObject o : onlineToSampleMap.keySet()) {
-//                try {
-//                    List<JEVisSample> samples = onlineToSampleMap.get(o);
-////                    Logger.getLogger(JEVisImporter.class.getName()).log(Level.INFO, "Start import for " + samples.size() + " sampples into Object: " + o.getID() + " " + o.getName());
-//                    o.getAttribute("Value").addSamples(samples);
-//
-//                    Logger.getLogger(JEVisImporter.class.getName()).log(Level.INFO,
-//                            "Object: [" + o.getID() + "] " + o.getName() + "  Imported: " + samples.size() + " Error: " + errorImport);
-//
-//                    if (lastDateTime == null || o.getAttribute("Value").getLatestSample().getTimestamp().isBefore(lastDateTime)) {
-//                        lastDateTime = o.getAttribute("Value").getLatestSample().getTimestamp();
-//                    }
-//                } catch (Exception ex2) {
-//                    Logger.getLogger(JEVisImporter.class.getName()).log(Level.ERROR, "Error while setting last readout", ex2);
-//                }
-//            }
-//            return lastDateTime;
         } catch (Exception ex) {
             Logger.getLogger(JEVisImporter.class.getName()).log(Level.ERROR, null, ex);
         }
